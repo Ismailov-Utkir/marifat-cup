@@ -2023,6 +2023,30 @@ function getAudioCtx() {
   return _audioCtx;
 }
 
+// 🔓 Audio'ni birinchi bosishda "ochish" (brauzer xavfsizligi talabi)
+let _audioUnlocked = false;
+function _unlockAudio() {
+  if (_audioUnlocked) return;
+  try {
+    if (!_audioCtx) _audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+    if (_audioCtx.state === 'suspended') _audioCtx.resume();
+    // Jim buffer chalish (iOS/Safari uchun ham ochish)
+    const buf = _audioCtx.createBuffer(1, 1, 22050);
+    const src = _audioCtx.createBufferSource();
+    src.buffer = buf;
+    src.connect(_audioCtx.destination);
+    src.start(0);
+    _audioUnlocked = true;
+    console.log('[Ma\'rifat Cup] Audio ochildi ✓');
+  } catch (e) {
+    console.warn('[Ma\'rifat Cup] Audio ocha olmadi:', e.message);
+  }
+}
+// Birinchi marta tegilganda audio ochiladi
+document.addEventListener('click', _unlockAudio, { once: false, passive: true });
+document.addEventListener('touchend', _unlockAudio, { once: false, passive: true });
+document.addEventListener('keydown', _unlockAudio, { once: false, passive: true });
+
 function playTone(freq, duration, type = 'sine', volume = 0.15, when = 0) {
   if (_audioMuted) return;
   const ctx = getAudioCtx();
@@ -2064,6 +2088,8 @@ function playNoise(duration, volume = 0.05) {
 // 🎵 Kahoot uslubidagi gevarvon bg music — savol davomida
 function startQuizMusic() {
   if (_audioMuted) return;
+  // Audio'ni qulfdan chiqarish (har ehtimolga qarshi)
+  _unlockAudio();
   stopQuizMusic();
   // Am - F - C - G akkord progressiyasi (mashhur "happy/tense" combo)
   const bassPattern = [110.00, 110.00, 110.00, 110.00, 174.61, 174.61, 174.61, 174.61, 130.81, 130.81, 130.81, 130.81, 196.00, 196.00, 196.00, 196.00];
@@ -2087,18 +2113,18 @@ function startQuizMusic() {
       osc.type = 'sine';
       osc.frequency.setValueAtTime(150, ctx.currentTime);
       osc.frequency.exponentialRampToValueAtTime(40, ctx.currentTime + 0.1);
-      gain.gain.setValueAtTime(0.25, ctx.currentTime);
+      gain.gain.setValueAtTime(0.4, ctx.currentTime);
       gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.15);
       osc.start();
       osc.stop(ctx.currentTime + 0.15);
     }
     // Hi-hat (offbeat)
-    if (beat % 2 === 1) playNoise(0.04, 0.04);
+    if (beat % 2 === 1) playNoise(0.04, 0.08);
     // Bass synth
-    playTone(bassPattern[beat % bassPattern.length], 0.2, 'sawtooth', 0.06);
+    playTone(bassPattern[beat % bassPattern.length], 0.2, 'sawtooth', 0.12);
     // Melody (har bir beat)
     const [mf, md] = melodyPattern[beat % melodyPattern.length];
-    playTone(mf, md, 'square', 0.04);
+    playTone(mf, md, 'square', 0.08);
     beat++;
   };
   playBeat(); // birinchi beat darhol
@@ -2142,6 +2168,11 @@ function toggleAudioMute() {
     b.textContent = _audioMuted ? '🔇' : '🔊';
     b.title = _audioMuted ? 'Musiqani yoqish' : 'Musiqani o\'chirish';
   });
+  // Yoqilsa, test ovozi chalamiz — foydalanuvchi audio ishlayotganini biladi
+  if (!_audioMuted) {
+    _unlockAudio();
+    setTimeout(() => playCorrectSound(), 100);
+  }
   if (typeof toast === 'function') toast(_audioMuted ? '🔇 Musiqa o\'chirildi' : '🔊 Musiqa yoqildi', '');
 }
 
@@ -2662,9 +2693,16 @@ async function openLesson(idx) {
   const isDone = user.completedLessons.has(`${c.id}::${lesson.title}`);
   const completeBtn = document.getElementById('complete-lesson-btn');
   const nextBtn = document.getElementById('next-lesson-btn');
+  const hasQuestions = lesson.questions && lesson.questions.length > 0;
+  // Mavzuda savollar bo'lsa, tugmaga test ekanini ko'rsatamiz
+  completeBtn.textContent = hasQuestions
+    ? `✓ Mavzuni tamomlash + Test (${lesson.questions.length} ta savol)`
+    : '✓ Mavzuni tamomlash';
   if (isDone) {
     completeBtn.style.display = 'none';
     nextBtn.style.display = idx < c.lessons.length - 1 ? '' : 'none';
+    nextBtn.textContent = idx < c.lessons.length - 1 ? 'Keyingi →' : '🎓 Yakuniy testga →';
+    nextBtn.onclick = idx < c.lessons.length - 1 ? nextLesson : openTestIntro;
   } else {
     completeBtn.style.display = '';
     nextBtn.style.display = 'none';
@@ -2766,20 +2804,100 @@ async function renderLessonVideo(frame, lesson, videoUrl) {
 function completeLesson() {
   const c = state.currentCourse;
   const lesson = c.lessons[state.currentLessonIdx];
+  // Agar bu mavzuda test savollari bo'lsa — mini-test boshlanadi
+  if (lesson.questions && lesson.questions.length > 0) {
+    startMavzuTest();
+    return;
+  }
+  // Agar savol yo'q bo'lsa — to'g'ridan-to'g'ri tugatamiz
+  markLessonComplete();
+}
+
+function markLessonComplete() {
+  const c = state.currentCourse;
+  const lesson = c.lessons[state.currentLessonIdx];
   const key = `${c.id}::${lesson.title}`;
   if (!user.completedLessons.has(key)) {
     user.completedLessons.add(key);
     saveUser();
-    addCoins(COIN_PER_LESSON, 'dars tugadi');
+    addCoins(COIN_PER_LESSON, 'mavzu tugadi');
   }
   document.getElementById('complete-lesson-btn').style.display = 'none';
   if (state.currentLessonIdx < c.lessons.length - 1) {
     document.getElementById('next-lesson-btn').style.display = '';
+    document.getElementById('next-lesson-btn').textContent = 'Keyingi →';
+    document.getElementById('next-lesson-btn').onclick = nextLesson;
   } else {
     document.getElementById('next-lesson-btn').style.display = '';
     document.getElementById('next-lesson-btn').textContent = '🎓 Yakuniy testga →';
     document.getElementById('next-lesson-btn').onclick = openTestIntro;
   }
+}
+
+function startMavzuTest() {
+  const c = state.currentCourse;
+  const lesson = c.lessons[state.currentLessonIdx];
+  // Savollar tartibini ham tasodifiy aralashtiramiz
+  const questions = [...lesson.questions].sort(() => Math.random() - 0.5);
+  state.mode = 'test';
+  state.isMavzuTest = true;
+  state.currentQuiz = { title: lesson.title, questions };
+  state.currentQ = 0;
+  state.myScore = 0;
+  state.myAnswers = [];
+  state.testCorrect = 0;
+  state.players = [{ name: user.name, isMe: true, score: 0, avatar: user.name.charAt(0).toUpperCase(), color: '#14b8a6', skill: 1, lastPoints: 0 }];
+  showQuestion();
+}
+
+function finishMavzuTest() {
+  const c = state.currentCourse;
+  const lesson = c.lessons[state.currentLessonIdx];
+  const total = state.currentQuiz.questions.length;
+  const correct = state.testCorrect;
+  const percent = Math.round((correct / total) * 100);
+  // Mavzuni tugatilgan deb belgilash
+  const key = `${c.id}::${lesson.title}`;
+  if (!user.completedLessons.has(key)) {
+    user.completedLessons.add(key);
+    saveUser();
+    addCoins(COIN_PER_LESSON, 'mavzu tugadi');
+  }
+  // To'g'ri javoblar uchun tanga
+  const bonusCoins = correct * COIN_PER_CORRECT;
+  if (bonusCoins > 0) {
+    user.coins += bonusCoins;
+    saveUser();
+    updateTopbar();
+  }
+  state.isMavzuTest = false;
+  state.mode = null;
+  // Natija ekranini ko'rsatamiz
+  const isLast = state.currentLessonIdx >= c.lessons.length - 1;
+  document.getElementById('test-result-icon').textContent = correct === total ? '🎉' : (correct >= total/2 ? '👍' : '📚');
+  document.getElementById('test-result-title').textContent = `Mavzu tugadi`;
+  document.getElementById('test-result-title').className = 'test-result-title pass';
+  document.getElementById('score-percent').textContent = percent + '%';
+  document.getElementById('score-circle').style.setProperty('--p', percent + '%');
+  document.getElementById('score-detail').textContent = `"${lesson.title}" — ${correct}/${total} ta to'g'ri javob`;
+  document.getElementById('rewards-earned').innerHTML = `<div class="reward-chip">🪙 +${COIN_PER_LESSON + bonusCoins} tanga</div>`;
+  document.getElementById('view-cert-btn').style.display = 'none';
+  // Tugmalarni dinamik o'zgartiramiz: "Keyingi mavzu" yoki "Yakuniy testga"
+  const actions = document.querySelector('#test-result-screen .final-actions');
+  if (actions) {
+    if (isLast) {
+      actions.innerHTML = `
+        <button class="btn btn-accent" onclick="openTestIntro()">🎓 Yakuniy testga →</button>
+        <button class="btn btn-secondary" onclick="backToCourseDetail()">← Kursga qaytish</button>
+      `;
+    } else {
+      actions.innerHTML = `
+        <button class="btn btn-primary" onclick="openLesson(state.currentLessonIdx + 1)">📚 Keyingi mavzu →</button>
+        <button class="btn btn-secondary" onclick="backToCourseDetail()">← Kursga qaytish</button>
+      `;
+    }
+  }
+  showScreen('test-result-screen');
 }
 
 function nextLesson() {
@@ -2851,9 +2969,8 @@ function startCourseTest() {
 }
 
 function finishCourseTest() {
-  // 🎵 Yakuniy g'alaba musiqasi
+  // Kurs testida musiqa yo'q — jim
   stopQuizMusic();
-  playFinalSound();
 
   const total = state.currentQuiz.questions.length;
   const correct = state.testCorrect;
@@ -3314,8 +3431,10 @@ function showQuestion() {
   state.questionStartTime = Date.now();
   state.answered = false;
   state.myAnswerIdx = -1;
-  // 🎵 Kahoot-style fon musiqasi savol davomida
-  startQuizMusic();
+  // 🎵 Musiqa faqat kviz o'yinlar uchun (kurs/mavzu testlari uchun emas)
+  if (state.mode !== 'test') {
+    startQuizMusic();
+  }
 
   document.getElementById('q-counter').textContent = `Savol ${state.currentQ + 1}/${state.currentQuiz.questions.length}`;
   document.getElementById('q-score').textContent = `${state.myScore} ball`;
@@ -3534,10 +3653,12 @@ function buildHostPlayersList() {
 }
 
 function showResult(isCorrect, points) {
-  // 🎵 Fon musiqasini to'xtatib, to'g'ri/xato ovozini chiqaramiz
-  stopQuizMusic();
-  if (isCorrect) playCorrectSound();
-  else playWrongSound();
+  // 🎵 Musiqa va effekt ovozlari faqat kviz uchun (test uchun jim)
+  if (state.mode !== 'test') {
+    stopQuizMusic();
+    if (isCorrect) playCorrectSound();
+    else playWrongSound();
+  }
 
   const badge = document.getElementById('result-badge');
   if (state.mode === 'test') {
@@ -3594,7 +3715,9 @@ function renderMiniBoard() {
 function nextQuestion() {
   state.currentQ++;
   if (state.currentQ >= state.currentQuiz.questions.length) {
-    if (state.mode === 'test') {
+    if (state.isMavzuTest) {
+      finishMavzuTest();
+    } else if (state.mode === 'test') {
       finishCourseTest();
     } else {
       if (state.mode === 'host') {
