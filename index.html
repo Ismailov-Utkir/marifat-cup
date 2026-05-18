@@ -1293,6 +1293,7 @@
       <span class="logo-mark"></span> Ma'rifat <span class="badge">Cup</span>
     </div>
     <div class="topbar-right">
+      <button class="audio-mute-btn" onclick="toggleAudioMute()" title="Musiqani o'chirish" style="background: rgba(255,255,255,0.1); border: 2px solid rgba(255,255,255,0.2); color: white; width: 40px; height: 40px; border-radius: 50%; font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center;">🔊</button>
       <div class="coin-display">🪙 <span id="topbar-coins">0</span></div>
       <button class="profile-btn" onclick="goToProfile()">
         <span class="avatar" id="topbar-avatar">A</span>
@@ -1851,6 +1852,7 @@
       <div class="q-counter" id="q-counter">Savol 1/5</div>
       <div class="q-timer" id="q-timer">30</div>
       <div class="q-score" id="q-score">0 ball</div>
+      <button class="audio-mute-btn" onclick="toggleAudioMute()" title="Musiqani o'chirish" style="background: rgba(255,255,255,0.15); border: none; color: white; width: 44px; height: 44px; border-radius: 50%; font-size: 22px; cursor: pointer; display: flex; align-items: center; justify-content: center;">🔊</button>
     </div>
     <div class="question-display">
       <div class="question-text" id="question-text">Savol matni</div>
@@ -2007,6 +2009,142 @@ const BOT_NAMES = [
 ];
 
 // ====================================================================
+// AUDIO SYSTEM — Kahoot-style musiqa (Web Audio API orqali sintezlanadi)
+// ====================================================================
+let _audioCtx = null;
+let _bgmInterval = null;
+let _audioMuted = localStorage.getItem('mc_audio_muted') === '1';
+
+function getAudioCtx() {
+  if (!_audioCtx) {
+    try { _audioCtx = new (window.AudioContext || window.webkitAudioContext)(); } catch (e) {}
+  }
+  if (_audioCtx && _audioCtx.state === 'suspended') _audioCtx.resume();
+  return _audioCtx;
+}
+
+function playTone(freq, duration, type = 'sine', volume = 0.15, when = 0) {
+  if (_audioMuted) return;
+  const ctx = getAudioCtx();
+  if (!ctx) return;
+  const t = ctx.currentTime + when;
+  const osc = ctx.createOscillator();
+  const gain = ctx.createGain();
+  osc.connect(gain);
+  gain.connect(ctx.destination);
+  osc.frequency.value = freq;
+  osc.type = type;
+  gain.gain.setValueAtTime(0.0001, t);
+  gain.gain.exponentialRampToValueAtTime(volume, t + 0.01);
+  gain.gain.exponentialRampToValueAtTime(0.0001, t + duration);
+  osc.start(t);
+  osc.stop(t + duration);
+}
+
+function playNoise(duration, volume = 0.05) {
+  if (_audioMuted) return;
+  const ctx = getAudioCtx();
+  if (!ctx) return;
+  const bufferSize = Math.floor(ctx.sampleRate * duration);
+  const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+  const data = buffer.getChannelData(0);
+  for (let i = 0; i < bufferSize; i++) data[i] = (Math.random() * 2 - 1) * 0.5;
+  const src = ctx.createBufferSource();
+  const gain = ctx.createGain();
+  const hp = ctx.createBiquadFilter();
+  hp.type = 'highpass'; hp.frequency.value = 6000;
+  src.buffer = buffer;
+  src.connect(hp); hp.connect(gain); gain.connect(ctx.destination);
+  gain.gain.setValueAtTime(volume, ctx.currentTime);
+  gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + duration);
+  src.start();
+  src.stop(ctx.currentTime + duration);
+}
+
+// 🎵 Kahoot uslubidagi gevarvon bg music — savol davomida
+function startQuizMusic() {
+  if (_audioMuted) return;
+  stopQuizMusic();
+  // Am - F - C - G akkord progressiyasi (mashhur "happy/tense" combo)
+  const bassPattern = [110.00, 110.00, 110.00, 110.00, 174.61, 174.61, 174.61, 174.61, 130.81, 130.81, 130.81, 130.81, 196.00, 196.00, 196.00, 196.00];
+  const melodyPattern = [
+    [659.25, 0.3], [783.99, 0.3], [659.25, 0.3], [523.25, 0.3],
+    [698.46, 0.3], [880.00, 0.3], [698.46, 0.3], [523.25, 0.3],
+    [659.25, 0.3], [783.99, 0.3], [987.77, 0.3], [783.99, 0.3],
+    [783.99, 0.3], [880.00, 0.3], [659.25, 0.3], [587.33, 0.3]
+  ];
+  let beat = 0;
+  const beatDuration = 250; // ms
+  const playBeat = () => {
+    if (_audioMuted) { stopQuizMusic(); return; }
+    const ctx = getAudioCtx();
+    if (!ctx) return;
+    // Bass drum (kick)
+    if (beat % 2 === 0) {
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.connect(gain); gain.connect(ctx.destination);
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(150, ctx.currentTime);
+      osc.frequency.exponentialRampToValueAtTime(40, ctx.currentTime + 0.1);
+      gain.gain.setValueAtTime(0.25, ctx.currentTime);
+      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.15);
+      osc.start();
+      osc.stop(ctx.currentTime + 0.15);
+    }
+    // Hi-hat (offbeat)
+    if (beat % 2 === 1) playNoise(0.04, 0.04);
+    // Bass synth
+    playTone(bassPattern[beat % bassPattern.length], 0.2, 'sawtooth', 0.06);
+    // Melody (har bir beat)
+    const [mf, md] = melodyPattern[beat % melodyPattern.length];
+    playTone(mf, md, 'square', 0.04);
+    beat++;
+  };
+  playBeat(); // birinchi beat darhol
+  _bgmInterval = setInterval(playBeat, beatDuration);
+}
+
+function stopQuizMusic() {
+  if (_bgmInterval) { clearInterval(_bgmInterval); _bgmInterval = null; }
+}
+
+// 🎉 To'g'ri javob — yorqin yuksaluvchi akkord
+function playCorrectSound() {
+  if (_audioMuted) return;
+  playTone(523.25, 0.12, 'triangle', 0.18, 0);     // C5
+  playTone(659.25, 0.12, 'triangle', 0.18, 0.08);  // E5
+  playTone(783.99, 0.12, 'triangle', 0.18, 0.16);  // G5
+  playTone(1046.50, 0.35, 'triangle', 0.18, 0.24); // C6
+}
+
+// ❌ Xato javob — pasayuvchi disgarmonik
+function playWrongSound() {
+  if (_audioMuted) return;
+  playTone(220, 0.15, 'sawtooth', 0.1, 0);      // A3
+  playTone(196, 0.15, 'sawtooth', 0.1, 0.1);    // G3
+  playTone(155.56, 0.4, 'sawtooth', 0.1, 0.2);  // D#3
+}
+
+// 🏆 Yakuniy — g'alaba fanfari
+function playFinalSound() {
+  if (_audioMuted) return;
+  const notes = [523.25, 659.25, 783.99, 1046.50, 783.99, 1046.50, 1318.51];
+  notes.forEach((n, i) => playTone(n, 0.25, 'triangle', 0.18, i * 0.15));
+}
+
+function toggleAudioMute() {
+  _audioMuted = !_audioMuted;
+  localStorage.setItem('mc_audio_muted', _audioMuted ? '1' : '0');
+  if (_audioMuted) stopQuizMusic();
+  // UI yangilash
+  document.querySelectorAll('.audio-mute-btn').forEach(b => {
+    b.textContent = _audioMuted ? '🔇' : '🔊';
+    b.title = _audioMuted ? 'Musiqani yoqish' : 'Musiqani o\'chirish';
+  });
+  if (typeof toast === 'function') toast(_audioMuted ? '🔇 Musiqa o\'chirildi' : '🔊 Musiqa yoqildi', '');
+}
+
 // DEMO DATA
 // ====================================================================
 const DEMO_QUIZ = {
@@ -2309,6 +2447,7 @@ function signOut() {
 // ====================================================================
 function goHome() {
   clearTimer();
+  stopQuizMusic();
   leavePeerConnections();
   updateTopbar();
   showScreen('home-screen');
@@ -2712,6 +2851,10 @@ function startCourseTest() {
 }
 
 function finishCourseTest() {
+  // 🎵 Yakuniy g'alaba musiqasi
+  stopQuizMusic();
+  playFinalSound();
+
   const total = state.currentQuiz.questions.length;
   const correct = state.testCorrect;
   const percent = Math.round((correct / total) * 100);
@@ -3171,6 +3314,8 @@ function showQuestion() {
   state.questionStartTime = Date.now();
   state.answered = false;
   state.myAnswerIdx = -1;
+  // 🎵 Kahoot-style fon musiqasi savol davomida
+  startQuizMusic();
 
   document.getElementById('q-counter').textContent = `Savol ${state.currentQ + 1}/${state.currentQuiz.questions.length}`;
   document.getElementById('q-score').textContent = `${state.myScore} ball`;
@@ -3389,6 +3534,11 @@ function buildHostPlayersList() {
 }
 
 function showResult(isCorrect, points) {
+  // 🎵 Fon musiqasini to'xtatib, to'g'ri/xato ovozini chiqaramiz
+  stopQuizMusic();
+  if (isCorrect) playCorrectSound();
+  else playWrongSound();
+
   const badge = document.getElementById('result-badge');
   if (state.mode === 'test') {
     badge.textContent = isCorrect ? "To'g'ri!" : (state.myAnswerIdx === -1 ? 'Vaqt tugadi' : 'Xato!');
@@ -3458,6 +3608,10 @@ function nextQuestion() {
 }
 
 function showFinal() {
+  // 🏆 G'alaba musiqasi
+  stopQuizMusic();
+  playFinalSound();
+
   const sorted = [...state.players].sort((a, b) => b.score - a.score);
   const myRank = sorted.findIndex(p => p.isMe) + 1;
   const correctCount = state.myAnswers.filter(a => a.correct).length;
@@ -4470,6 +4624,11 @@ async function initApp() {
   loadAnnouncements();
   loadEbooks();
   loadMeetings();
+  // 🎵 Audio mute holatini yangilash (saqlangan tanlovga qarab)
+  document.querySelectorAll('.audio-mute-btn').forEach(b => {
+    b.textContent = _audioMuted ? '🔇' : '🔊';
+    b.title = _audioMuted ? 'Musiqani yoqish' : 'Musiqani o\'chirish';
+  });
   if (user) {
     updateTopbar();
     trackUserActivity();
