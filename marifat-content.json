@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "exportedAt": "2026-05-18T13:28:36.808Z",
+  "exportedAt": "2026-05-18T13:30:25.326Z",
   "source": "marifat-cup-admin-auto",
   "courses": [
     {
@@ -1322,18 +1322,6 @@
   "quizzes": [],
   "slides": [],
   "announcements": [],
-  "ebooks": [
-    {
-      "id": "b_1779099550978",
-      "title": "Liderlar kitobi",
-      "author": "Otabek Xasanov",
-      "description": "Lider — oldinda yuradigan emas, ortidan ergashtira oladigan inson.",
-      "emoji": "📖",
-      "color": 3,
-      "pdfStored": true,
-      "pdfUrl": null,
-      "date": 1779099550978
-    }
-  ],
+  "ebooks": [],
   "meetings": []
 }
