@@ -8,6 +8,7 @@
 <meta name="googlebot" content="noindex, nofollow">
 <meta name="referrer" content="no-referrer">
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/mammoth@1.6.0/mammoth.browser.min.js"></script>
 <style>
   :root {
     --bg: #0d1421; --bg-2: #1a2942;
@@ -414,40 +415,68 @@
         💡 <b>Cheklov yo'q!</b> Bitta kursga istalgancha mavzu qo'shing — 10, 20, 50 ham mumkin.
         Quyidagi tugma orqali yangi mavzu qo'shing.
       </p>
+
+      <details style="background: #fef3c7; border: 2px solid #f59e0b; border-radius: 12px; padding: 12px 16px; margin-bottom: 14px;">
+        <summary style="cursor: pointer; font-weight: 800; color: #92400e; font-size: 14px;">
+          📄 Word fayldan savollarni qanday yuklash kerak? (qadamma-qadam)
+        </summary>
+        <div style="margin-top: 10px; font-size: 13px; color: #78350f; line-height: 1.7;">
+          <p><b>Word fayl formati:</b></p>
+          <pre style="background: white; padding: 12px; border-radius: 8px; border: 1px solid #fbbf24; font-family: 'Courier New', monospace; font-size: 12px; line-height: 1.5; white-space: pre-wrap;">1. Savol matni shu yerda?
+A) Variant 1
+<b>B) To'g'ri javob (JIRNIY belgilangan)</b>
+C) Variant 3
+D) Variant 4
+
+2. Ikkinchi savol?
+<b>A) To'g'ri javob</b>
+B) Noto'g'ri
+C) Noto'g'ri
+D) Noto'g'ri</pre>
+          <p style="margin-top: 8px;"><b>Sehrli xususiyatlar:</b></p>
+          <ul style="margin-left: 18px; line-height: 1.7;">
+            <li>✅ Word'da <b>jirniy (bold)</b> qilingan javob — to'g'ri javob deb belgilanadi</li>
+            <li>✅ Jirniy belgi avtomatik <b>olib tashlanadi</b> (saytda jirniy ko'rinmaydi)</li>
+            <li>✅ 4 ta variant <b>tasodifiy aralashtiriladi</b> — ma'ruzachi A ga qo'ygan bo'lsa ham, saytda boshqa joyga tushadi</li>
+            <li>✅ Numeratsiya turlari: <code>1.</code> <code>1)</code> <code>A)</code> <code>а)</code> — barchasi qabul qilinadi</li>
+            <li>✅ Faqat <b>.docx</b> format (Word 2007+). Eski <code>.doc</code> ishlamaydi.</li>
+          </ul>
+          <p style="margin-top: 8px; font-style: italic;">
+            📥 Har bir mavzuning yashil bo'limidan <b>"Word fayldan yuklash"</b> tugmasini bosing — fayl tanlanganda savollar avtomatik qo'shiladi.
+          </p>
+        </div>
+      </details>
+
       <div id="lessons-container"></div>
       <button class="add-btn" onclick="addLessonBlock()" style="font-size: 17px; padding: 18px; background: linear-gradient(135deg, #f0fdfa, #ccfbf1); border: 3px dashed var(--primary); color: var(--primary-dark); font-weight: 800;">
         ➕ Yangi mavzu qo'shish (istalgancha qo'shing)
       </button>
       <h3 class="section-divider">🎯 Yakuniy test sozlamalari</h3>
-      <div style="background: linear-gradient(135deg, #f0fdfa, #ccfbf1); border: 2px solid var(--primary); border-radius: var(--radius); padding: 16px; margin-bottom: 14px;">
-        <p style="font-size: 14px; line-height: 1.6; margin-bottom: 12px;">
-          <b>🎲 Yakuniy test avtomatik tasodifiy savollardan iborat!</b><br>
-          Har bir mavzuga qo'shgan savollaringizdan saytni o'zi tasodifiy tanlaydi.
-          Har bir o'quvchi <b>boshqacha savollar</b> oladi — bu chinakam test!
+      <div style="background: linear-gradient(135deg, #f0fdfa, #ccfbf1); border: 3px solid var(--primary); border-radius: var(--radius); padding: 18px; margin-bottom: 14px;">
+        <p style="font-size: 15px; line-height: 1.6; margin-bottom: 14px; font-weight: 600;">
+          <b>🎲 Yakuniy test — avtomatik!</b><br>
+          Yuqoridagi <b>barcha mavzulardagi savollar</b>dan sayt o'zi tasodifiy tanlaydi.
+          Har bir o'quvchi <b>boshqa-boshqa savollar</b> oladi — bu chinakam test!
         </p>
         <div class="field" style="margin-bottom: 8px;">
-          <label>O'quvchiga nechta savol tushsin?</label>
-          <input class="input" type="number" id="course-random-count" min="1" value="30" style="max-width: 150px;">
+          <label>📊 O'quvchiga nechta savol tushsin?</label>
+          <input class="input" type="number" id="course-random-count" min="1" value="30" style="max-width: 180px; font-size: 18px; font-weight: 800; text-align: center;">
         </div>
-        <p style="font-size: 13px; color: var(--primary-dark); font-weight: 700;">
-          📊 Jami mavjud savollar: <span id="total-questions-display">0</span> ta
+        <p style="font-size: 14px; color: var(--primary-dark); font-weight: 700; margin-top: 10px;">
+          📦 Hozir jami mavjud: <span id="total-questions-display" style="font-size: 18px;">0</span> ta savol
           (barcha mavzulardan)
         </p>
-        <p style="font-size: 12px; color: var(--ink-2); margin-top: 6px;">
-          💡 Misol: Agar 120 ta savol bo'lsa va 30 ta deb sozlasangiz, o'quvchi 120 dan 30 ta tasodifiy savolga javob beradi.
+        <p style="font-size: 13px; color: var(--ink-2); margin-top: 8px; line-height: 1.6;">
+          💡 <b>Misol:</b> Agar 10 ta mavzu va har biriga 12 ta savol qo'shsangiz (jami 120 ta),
+          "O'quvchiga nechta savol tushsin?" ga <code>30</code> deb yozsangiz —
+          o'quvchi 120 dan tasodifiy 30 ta savolga javob beradi.
+        </p>
+        <p style="font-size: 12px; color: var(--ink-2); margin-top: 8px; font-style: italic;">
+          ⚙️ Yakuniy test uchun alohida savol qo'shish kerakmas — bu mavzulardan avtomatik.
         </p>
       </div>
-
-      <details style="margin-bottom: 16px;">
-        <summary style="cursor: pointer; font-weight: 700; color: var(--ink-2); padding: 8px;">
-          🔧 Qo'shimcha — to'g'ridan-to'g'ri yakuniy test savollari (ixtiyoriy)
-        </summary>
-        <p class="sub" style="margin-top: 8px;">
-          Agar mavzularga savol qo'shmagan bo'lsangiz yoki qo'shimcha aniq savollar bo'lishini xohlasangiz, bu yerga qo'shing.
-        </p>
-        <div id="test-questions-container"></div>
-        <button class="add-btn" onclick="addQuestionBlock('test-questions-container')">+ Qo'shimcha savol</button>
-      </details>
+      <!-- Eski fallback (yashirin) — eski kurslar bilan moslik uchun -->
+      <div id="test-questions-container" style="display: none;"></div>
 
       <div class="actions-bar">
         <button class="btn btn-secondary" onclick="showView('courses')">Bekor qilish</button>
@@ -473,7 +502,15 @@
         <input class="input" id="quiz-title" placeholder="Masalan: Tarix bo'yicha bilim"></div>
       <h3 class="section-divider">❓ Savollar</h3>
       <div id="quiz-questions-container"></div>
-      <button class="add-btn" onclick="addQuestionBlock('quiz-questions-container')">+ Savol qo'shish</button>
+      <div style="display: flex; gap: 8px; margin-top: 8px; flex-wrap: wrap;">
+        <button type="button" class="add-btn" onclick="addQuestionBlock('quiz-questions-container')" style="flex: 1; min-width: 180px; margin: 0;">
+          + Qo'lda savol qo'shish
+        </button>
+        <button type="button" class="add-btn" onclick="document.getElementById('docx-quiz').click()" style="flex: 1; min-width: 180px; margin: 0; background: #fef3c7; border-color: #f59e0b; color: #92400e;">
+          📄 Word fayldan yuklash
+        </button>
+        <input type="file" id="docx-quiz" accept=".docx" style="display:none" onchange="importDocxQuestions(event, 'quiz-questions-container', this)">
+      </div>
       <div class="actions-bar">
         <button class="btn btn-secondary" onclick="showView('quizzes')">Bekor qilish</button>
         <button class="btn btn-primary" onclick="saveQuiz()">💾 Saqlash</button>
@@ -1201,9 +1238,15 @@ function addLessonBlock(initial = null) {
         Bu mavzu bo'yicha savollar qo'shing. Yakuniy testda barcha mavzulardagi savollardan tasodifiy tanlanadi.
       </p>
       <div id="${qContainerId}" class="mavzu-questions-container" style="margin-top: 10px;"></div>
-      <button type="button" class="add-btn" onclick="addMavzuQuestion('${qContainerId}', this)" style="margin: 8px 0 0 0; font-size: 13px; padding: 10px;">
-        + Mavzuga savol qo'shish
-      </button>
+      <div style="display: flex; gap: 8px; margin-top: 8px; flex-wrap: wrap;">
+        <button type="button" class="add-btn" onclick="addMavzuQuestion('${qContainerId}', this)" style="flex: 1; min-width: 180px; font-size: 13px; padding: 10px; margin: 0;">
+          + Qo'lda savol qo'shish
+        </button>
+        <button type="button" class="add-btn" onclick="document.getElementById('docx-${qContainerId}').click()" style="flex: 1; min-width: 180px; font-size: 13px; padding: 10px; margin: 0; background: #fef3c7; border-color: #f59e0b; color: #92400e;">
+          📄 Word fayldan yuklash
+        </button>
+        <input type="file" id="docx-${qContainerId}" accept=".docx" style="display:none" onchange="importDocxQuestions(event, '${qContainerId}', this)">
+      </div>
     </details>
   `;
   container.appendChild(block);
@@ -1304,12 +1347,12 @@ function addQuestionBlock(containerId, initial = null) {
       `).join('')}
     </div>
     <div class="time-row">
-      <div class="chip">⏱️ Vaqt:
+      <div class="chip">⏱️ Vaqt (savol qiyinligiga qarab tanlang):
         <select class="q-time">
-          <option value="10" ${q.time===10?'selected':''}>10 soniya</option>
-          <option value="20" ${q.time===20?'selected':''}>20 soniya</option>
-          <option value="30" ${q.time===30?'selected':''}>30 soniya</option>
-          <option value="60" ${q.time===60?'selected':''}>60 soniya</option>
+          <option value="20" ${q.time===20?'selected':''}>20 soniya (oson)</option>
+          <option value="30" ${q.time===30?'selected':''}>30 soniya (o'rtacha)</option>
+          <option value="40" ${q.time===40?'selected':''}>40 soniya (qiyin)</option>
+          <option value="60" ${q.time===60?'selected':''}>60 soniya (juda qiyin)</option>
         </select>
       </div>
     </div>
@@ -1325,6 +1368,116 @@ function deleteQuestionBlock(btn, containerId) {
   // Mavzu savol sonini va umumiy savol sonini yangilash
   if (lessonBlock) updateMavzuQCount(lessonBlock);
   updateTotalQuestionsDisplay();
+}
+
+// ============================================================
+// WORD FAYL IMPORT — savollarni .docx fayldan olish
+// ============================================================
+function shuffleArray(arr) {
+  const a = arr.slice();
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+async function parseWordQuestions(file) {
+  if (typeof mammoth === 'undefined') {
+    throw new Error("Word kutubxonasi yuklanmagan. Internetni tekshiring.");
+  }
+  const arrayBuffer = await file.arrayBuffer();
+  const result = await mammoth.convertToHtml({ arrayBuffer });
+  const html = result.value;
+  const div = document.createElement('div');
+  div.innerHTML = html;
+  // Har bir paragraf — alohida qator
+  const lines = [];
+  div.querySelectorAll('p, li').forEach(el => {
+    const text = el.textContent.replace(/\s+/g, ' ').trim();
+    if (!text) return;
+    // Bold (jirniy) qismlarni topish
+    let boldText = '';
+    el.querySelectorAll('strong, b').forEach(b => {
+      boldText += ' ' + b.textContent.trim();
+    });
+    boldText = boldText.trim();
+    lines.push({ text, boldText, hasBold: boldText.length > 0 });
+  });
+  // Savol boshini aniqlash (1. 2. ... yoki Savol N:)
+  const QUESTION_RE = /^(?:\d+[\.\)]\s+|Savol\s*\d+[:\.\s]+|#\d+[\.\)]\s+|Q\d+[\.\)]\s+)(.+)/i;
+  // Variantlar prefiksini olib tashlash (A) B) 1) a. va h.k.)
+  const OPTION_PREFIX_RE = /^(?:[A-Da-dА-Га-г]|\d)[\.\)]\s*/;
+  const questions = [];
+  let i = 0;
+  while (i < lines.length) {
+    const line = lines[i];
+    const qMatch = line.text.match(QUESTION_RE);
+    if (!qMatch) { i++; continue; }
+    const qText = qMatch[1].trim();
+    const options = [];
+    let j = i + 1;
+    while (j < lines.length && options.length < 4) {
+      const optLine = lines[j];
+      // Yangi savol boshlandi — to'xtaymiz
+      if (QUESTION_RE.test(optLine.text)) break;
+      // Variantlar prefiksini olib tashlash
+      const cleanText = optLine.text.replace(OPTION_PREFIX_RE, '').trim();
+      if (!cleanText) { j++; continue; }
+      // Bold qismdan ham prefiksni olib tashlaymiz
+      const cleanBold = optLine.boldText.replace(OPTION_PREFIX_RE, '').trim();
+      // To'g'ri javob: bold matn variantning kamida 40% ini qoplasa
+      const isCorrect = optLine.hasBold && cleanBold.length >= cleanText.length * 0.4;
+      options.push({ text: cleanText, isCorrect });
+      j++;
+    }
+    if (options.length === 4) {
+      let correctIndex = options.findIndex(o => o.isCorrect);
+      if (correctIndex < 0) correctIndex = 0; // Bold topilmasa, default A
+      questions.push({ text: qText, options, correctIndex });
+    }
+    i = j > i ? j : i + 1;
+  }
+  // Har bir savol uchun javoblar tartibini tasodifiy aralashtirish
+  return questions.map(q => {
+    const correctText = q.options[q.correctIndex].text;
+    const shuffled = shuffleArray(q.options);
+    return {
+      text: q.text,
+      answers: shuffled.map(o => o.text),
+      correct: shuffled.findIndex(o => o.text === correctText),
+      time: 20
+    };
+  });
+}
+
+async function importDocxQuestions(event, containerId, fileInput) {
+  const file = event.target.files[0];
+  if (!file) return;
+  if (!file.name.toLowerCase().endsWith('.docx')) {
+    toast("❌ Faqat .docx (Word) fayllar qabul qilinadi. Eski .doc qabul qilinmaydi.", 'error');
+    fileInput.value = '';
+    return;
+  }
+  toast("📄 Word fayl o'qilmoqda...", '');
+  try {
+    const questions = await parseWordQuestions(file);
+    if (questions.length === 0) {
+      toast("❌ Faylda 4 ta variantli savollar topilmadi. Formatni tekshiring.", 'error');
+      fileInput.value = '';
+      return;
+    }
+    questions.forEach(q => addQuestionBlock(containerId, q));
+    // Hisoblagichlarni yangilash
+    const lessonBlock = fileInput.closest('.lesson-block');
+    if (lessonBlock) updateMavzuQCount(lessonBlock);
+    updateTotalQuestionsDisplay();
+    toast(`✅ ${questions.length} ta savol qo'shildi! Javoblar tasodifiy aralashtirildi, jirniy javoblar avtomatik to'g'ri deb belgilandi.`, 'success');
+  } catch (err) {
+    toast("❌ Xato: " + err.message, 'error');
+  } finally {
+    fileInput.value = '';
+  }
 }
 
 function toggleCorrect(btn) {
