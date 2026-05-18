@@ -1,0 +1,1569 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Ma'rifat Cup — Admin Panel</title>
+<meta name="robots" content="noindex, nofollow, noarchive, nosnippet">
+<meta name="googlebot" content="noindex, nofollow">
+<meta name="referrer" content="no-referrer">
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0d1421; --bg-2: #1a2942;
+    --primary: #14b8a6; --primary-dark: #0d9488;
+    --secondary: #7c3aed; --accent: #fbbf24;
+    --danger: #ef4444; --success: #10b981;
+    --ink: #0f0a1f; --ink-2: #6b6480;
+    --border: #e5e7eb; --bg-soft: #f9fafb;
+    --radius: 12px; --radius-lg: 20px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    background: linear-gradient(135deg, var(--bg) 0%, var(--bg-2) 100%);
+    background-attachment: fixed;
+    color: var(--ink); min-height: 100vh;
+  }
+  .screen { display: none; min-height: 100vh; padding: 20px; }
+  .screen.active { display: flex; flex-direction: column; align-items: center; }
+  .auth-screen { justify-content: center; }
+  .auth-card {
+    background: white; border-radius: var(--radius-lg); padding: 36px;
+    max-width: 440px; width: 100%;
+    box-shadow: 0 20px 50px -10px rgba(0,0,0,0.45);
+  }
+  .auth-logo {
+    font-family: 'Bricolage Grotesque'; font-weight: 900;
+    font-size: 26px; letter-spacing: -0.02em; text-align: center;
+    margin-bottom: 6px; display: flex; align-items: center;
+    justify-content: center; gap: 8px;
+  }
+  .auth-logo .badge {
+    background: var(--secondary); color: white; padding: 4px 10px;
+    border-radius: 8px; font-size: 11px;
+    font-weight: 800; text-transform: uppercase;
+  }
+  .auth-subtitle {
+    text-align: center; color: var(--ink-2);
+    margin-bottom: 22px; font-size: 14px;
+  }
+  .lock-icon {
+    width: 72px; height: 72px; margin: 0 auto 18px;
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    color: white; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 32px;
+    box-shadow: 0 12px 30px -8px rgba(124,58,237,0.5);
+  }
+  .field { margin-bottom: 14px; }
+  .field label {
+    display: block; font-weight: 700; font-size: 12px;
+    text-transform: uppercase; letter-spacing: 0.05em;
+    margin-bottom: 6px; color: var(--ink-2);
+  }
+  .input, .textarea, .select {
+    width: 100%; padding: 12px 14px; border: 2px solid var(--border);
+    border-radius: var(--radius); font-family: inherit; font-size: 15px;
+    background: var(--bg-soft);
+  }
+  .input:focus, .textarea:focus, .select:focus {
+    outline: none; border-color: var(--primary); background: white;
+    box-shadow: 0 0 0 4px rgba(20,184,166,0.1);
+  }
+  .textarea { resize: vertical; min-height: 70px; }
+  .btn {
+    font-family: inherit; font-weight: 700; border: none; cursor: pointer;
+    padding: 12px 22px; border-radius: var(--radius); font-size: 15px;
+    display: inline-flex; align-items: center; gap: 8px; justify-content: center;
+    transition: transform 0.15s;
+  }
+  .btn:hover { transform: translateY(-1px); }
+  .btn:active { transform: translateY(1px); }
+  .btn-primary { background: var(--primary); color: white; box-shadow: 0 3px 0 var(--primary-dark); }
+  .btn-secondary { background: #f3f4f6; color: var(--ink); }
+  .btn-danger { background: var(--danger); color: white; box-shadow: 0 3px 0 #b91c1c; }
+  .btn-accent { background: var(--accent); color: var(--ink); box-shadow: 0 3px 0 #d97706; }
+  .btn-full { width: 100%; }
+  .btn-sm { padding: 8px 14px; font-size: 13px; }
+  .admin-header {
+    background: white; border-radius: var(--radius-lg); padding: 14px 20px;
+    width: 100%; max-width: 1100px; margin-bottom: 14px;
+    display: flex; justify-content: space-between; align-items: center;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.2); gap: 12px; flex-wrap: wrap;
+  }
+  .admin-logo {
+    font-family: 'Bricolage Grotesque'; font-weight: 900; font-size: 20px;
+    letter-spacing: -0.02em; display: flex; align-items: center; gap: 8px;
+  }
+  .admin-logo .badge {
+    background: var(--secondary); color: white; padding: 3px 8px;
+    border-radius: 6px; font-size: 10px;
+    font-weight: 800; text-transform: uppercase;
+  }
+  .admin-header-right { display: flex; align-items: center; gap: 10px; }
+  .session-badge {
+    background: #f0fdfa; color: var(--primary-dark);
+    padding: 6px 12px; border-radius: 100px; font-size: 12px; font-weight: 700;
+  }
+  .nav-tabs {
+    background: white; border-radius: var(--radius-lg); padding: 6px;
+    width: 100%; max-width: 1100px; margin-bottom: 14px;
+    display: flex; gap: 4px; box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+    flex-wrap: wrap;
+  }
+  .nav-tab {
+    background: transparent; border: none; padding: 10px 16px;
+    border-radius: 10px; cursor: pointer; font-family: inherit;
+    font-weight: 700; font-size: 14px; color: var(--ink-2);
+    display: flex; align-items: center; gap: 6px;
+    transition: all 0.15s; flex: 1; justify-content: center; min-width: 100px;
+  }
+  .nav-tab:hover { background: #f3f4f6; }
+  .nav-tab.active { background: var(--primary); color: white; }
+  .admin-content {
+    background: white; border-radius: var(--radius-lg); padding: 24px;
+    width: 100%; max-width: 1100px; box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+    margin-bottom: 20px;
+  }
+  .view { display: none; }
+  .view.active { display: block; }
+  .view-header {
+    display: flex; justify-content: space-between; align-items: center;
+    margin-bottom: 18px; flex-wrap: wrap; gap: 10px;
+  }
+  .view h1 { font-family: 'Bricolage Grotesque'; font-size: 26px; letter-spacing: -0.02em; }
+  .view p.sub { color: var(--ink-2); margin-bottom: 20px; font-size: 14px; }
+  .stats-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 14px; margin-bottom: 24px;
+  }
+  .stat-card {
+    background: linear-gradient(135deg, #f9fafb, #f3f4f6);
+    border: 2px solid var(--border); border-radius: var(--radius-lg);
+    padding: 18px; text-align: center;
+  }
+  .stat-card .num {
+    font-family: 'Bricolage Grotesque'; font-size: 38px;
+    font-weight: 900; color: var(--primary); margin-bottom: 4px; line-height: 1;
+  }
+  .stat-card .label {
+    font-size: 12px; color: var(--ink-2);
+    text-transform: uppercase; letter-spacing: 0.05em; font-weight: 700;
+  }
+  .info-banner {
+    background: #f0fdfa; border: 2px solid #5eead4; border-radius: var(--radius);
+    padding: 14px 18px; margin-bottom: 18px; font-size: 14px; color: var(--primary-dark);
+  }
+  .info-banner b { font-weight: 800; }
+  .item-list { display: flex; flex-direction: column; gap: 10px; }
+  .item-row {
+    background: var(--bg-soft); border-radius: var(--radius);
+    padding: 14px; display: flex; align-items: center; gap: 14px;
+    border: 2px solid var(--border);
+  }
+  .item-row .ico {
+    width: 50px; height: 50px; border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 26px; color: white; flex-shrink: 0;
+  }
+  .item-row .info { flex-grow: 1; min-width: 0; }
+  .item-row .info h3 {
+    font-family: 'Bricolage Grotesque'; font-size: 17px; margin-bottom: 2px; line-height: 1.2;
+  }
+  .item-row .info p { color: var(--ink-2); font-size: 13px; }
+  .item-row .actions { display: flex; gap: 6px; flex-shrink: 0; }
+  .icon-btn {
+    background: white; border: 2px solid var(--border);
+    width: 38px; height: 38px; border-radius: 10px; cursor: pointer;
+    font-size: 16px; display: flex; align-items: center; justify-content: center;
+    transition: all 0.15s;
+  }
+  .icon-btn:hover { transform: translateY(-1px); }
+  .icon-btn.edit:hover { background: var(--accent); border-color: var(--accent); }
+  .icon-btn.del:hover { background: var(--danger); color: white; border-color: var(--danger); }
+  .empty-msg {
+    text-align: center; padding: 40px 20px; color: var(--ink-2);
+    background: var(--bg-soft); border-radius: var(--radius); border: 2px dashed var(--border);
+  }
+  .empty-msg .ico { font-size: 48px; margin-bottom: 12px; }
+  .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .section-divider {
+    margin: 22px 0 12px; font-family: 'Bricolage Grotesque';
+    font-size: 18px; padding-bottom: 8px; border-bottom: 2px solid var(--border);
+  }
+  .block {
+    background: var(--bg-soft); border: 2px solid var(--border);
+    border-radius: var(--radius); padding: 16px; margin-bottom: 10px; position: relative;
+  }
+  .block .block-num {
+    position: absolute; top: -10px; left: 14px;
+    background: var(--primary); color: white;
+    padding: 3px 10px; border-radius: 100px; font-size: 11px; font-weight: 800;
+  }
+  .block .block-del {
+    position: absolute; top: 8px; right: 8px;
+    background: transparent; border: none; cursor: pointer;
+    color: var(--danger); font-size: 22px; width: 30px; height: 30px; border-radius: 50%;
+  }
+  .block .block-del:hover { background: rgba(239,68,68,0.1); }
+  .add-btn {
+    width: 100%; padding: 14px; background: white;
+    border: 2px dashed var(--primary); border-radius: var(--radius);
+    color: var(--primary); font-weight: 700; cursor: pointer;
+    font-family: inherit; font-size: 14px; margin-top: 8px; margin-bottom: 14px;
+  }
+  .add-btn:hover { background: #f0fdfa; border-style: solid; }
+  .ans-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 10px; }
+  .ans-row {
+    display: flex; align-items: center; gap: 8px;
+    background: white; border: 2px solid var(--border);
+    border-radius: var(--radius); padding: 4px;
+  }
+  .ans-row.correct { border-color: var(--success); background: #f0fdf4; }
+  .ans-shape {
+    width: 32px; height: 32px; border-radius: 8px;
+    display: flex; align-items: center; justify-content: center;
+    color: white; font-size: 14px; flex-shrink: 0;
+  }
+  .ans-shape.red { background: #e11d48; }
+  .ans-shape.blue { background: #2563eb; }
+  .ans-shape.yellow { background: #eab308; }
+  .ans-shape.green { background: #16a34a; }
+  .ans-row .input {
+    border: none; background: transparent; padding: 6px; font-weight: 500; flex-grow: 1;
+  }
+  .ans-row .input:focus { box-shadow: none; }
+  .check-btn {
+    width: 26px; height: 26px; border-radius: 50%;
+    background: var(--border); border: none; cursor: pointer;
+    color: white; font-size: 13px; flex-shrink: 0; margin-right: 4px;
+  }
+  .check-btn.on { background: var(--success); }
+  .time-row { display: flex; gap: 10px; align-items: center; margin-top: 12px; flex-wrap: wrap; }
+  .chip {
+    background: white; border: 2px solid var(--border); border-radius: 100px;
+    padding: 6px 12px; font-size: 12px; font-weight: 600; color: var(--ink-2);
+    display: inline-flex; align-items: center; gap: 6px;
+  }
+  .chip select {
+    border: none; background: transparent; font-family: inherit;
+    font-weight: 700; color: var(--ink); cursor: pointer; font-size: 13px;
+  }
+  .settings-block {
+    border: 2px solid var(--border); border-radius: var(--radius-lg);
+    padding: 18px; margin-bottom: 14px;
+  }
+  .settings-block h3 { font-family: 'Bricolage Grotesque'; font-size: 18px; margin-bottom: 4px; }
+  .settings-block p { color: var(--ink-2); font-size: 13px; margin-bottom: 12px; }
+  .settings-block.danger { border-color: #fecaca; background: #fef2f2; }
+  .settings-block.danger h3 { color: var(--danger); }
+  .actions-bar {
+    display: flex; gap: 10px; justify-content: flex-end;
+    margin-top: 20px; padding-top: 20px; border-top: 2px solid var(--border);
+    flex-wrap: wrap;
+  }
+  .toast {
+    position: fixed; top: 20px; left: 50%; transform: translateX(-50%);
+    background: var(--ink); color: white; padding: 12px 22px;
+    border-radius: 100px; font-weight: 700;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.4); z-index: 1000;
+    animation: toastIn 0.3s, toastOut 0.3s 2.5s forwards;
+  }
+  .toast.success { background: var(--success); }
+  .toast.error { background: var(--danger); }
+  @keyframes toastIn { from { opacity: 0; transform: translateX(-50%) translateY(-20px); } }
+  @keyframes toastOut { to { opacity: 0; transform: translateX(-50%) translateY(-20px); } }
+  .modal-bg {
+    position: fixed; inset: 0; background: rgba(0,0,0,0.7);
+    display: none; align-items: center; justify-content: center;
+    z-index: 500; padding: 20px;
+  }
+  .modal-bg.active { display: flex; }
+  .modal {
+    background: white; border-radius: var(--radius-lg);
+    padding: 26px; max-width: 440px; width: 100%;
+  }
+  .modal h3 { font-family: 'Bricolage Grotesque'; font-size: 22px; margin-bottom: 8px; }
+  .modal p { color: var(--ink-2); margin-bottom: 16px; }
+  .modal-actions { display: flex; gap: 8px; justify-content: flex-end; flex-wrap: wrap; }
+  @media (max-width: 640px) {
+    .field-row, .ans-grid { grid-template-columns: 1fr; }
+    .stats-grid { grid-template-columns: 1fr 1fr; }
+    .admin-content { padding: 18px; }
+    .nav-tab { padding: 8px 10px; font-size: 12px; min-width: 80px; }
+    .admin-logo { font-size: 16px; }
+    .auth-card { padding: 26px; }
+    .view h1 { font-size: 22px; }
+  }
+</style>
+</head>
+<body>
+
+<div id="setup-screen" class="screen auth-screen">
+  <div class="auth-card">
+    <div class="lock-icon">🔐</div>
+    <div class="auth-logo">Ma'rifat <span class="badge">Admin</span></div>
+    <p class="auth-subtitle">Birinchi kirish — yangi parol o'rnating</p>
+    <div class="field">
+      <label>Yangi parol (kamida 4 ta belgi)</label>
+      <input class="input" type="password" id="setup-pwd-1" placeholder="•••••••">
+    </div>
+    <div class="field">
+      <label>Parolni tasdiqlang</label>
+      <input class="input" type="password" id="setup-pwd-2" placeholder="•••••••">
+    </div>
+    <button class="btn btn-primary btn-full" onclick="setupPassword()">Parolni o'rnatish</button>
+    <p style="margin-top: 14px; text-align: center; font-size: 12px; color: var(--ink-2);">
+      Parolingizni xavfsiz joyda saqlang. Uni qaytib tiklab bo'lmaydi.
+    </p>
+  </div>
+</div>
+
+<div id="login-screen" class="screen auth-screen">
+  <div class="auth-card">
+    <div class="lock-icon">🔒</div>
+    <div class="auth-logo">Ma'rifat <span class="badge">Admin</span></div>
+    <p class="auth-subtitle">Boshqaruv paneli — parolni kiriting</p>
+    <div class="field">
+      <label>Parol</label>
+      <input class="input" type="password" id="login-pwd" placeholder="•••••••">
+    </div>
+    <button class="btn btn-primary btn-full" onclick="login()">Kirish</button>
+    <p id="login-err" style="margin-top: 12px; text-align: center; font-size: 13px; color: var(--danger); display: none;"></p>
+    <p style="margin-top: 14px; text-align: center;">
+      <a onclick="forgotPassword()" style="color: var(--ink-2); font-size: 12px; cursor: pointer; text-decoration: underline;">Parolni unutdingizmi? Hammasini o'chirib qayta boshlash</a>
+    </p>
+  </div>
+</div>
+
+<div id="admin-app" class="screen">
+  <div class="admin-header">
+    <div class="admin-logo">🛠️ Ma'rifat <span class="badge">Admin Panel</span></div>
+    <div class="admin-header-right">
+      <span class="session-badge">✓ Tizimga kirildi</span>
+      <button class="btn btn-secondary btn-sm" onclick="logout()">Chiqish</button>
+    </div>
+  </div>
+  <div class="nav-tabs">
+    <button class="nav-tab active" data-tab="dashboard" onclick="showView('dashboard')">📊 Boshqaruv</button>
+    <button class="nav-tab" data-tab="courses" onclick="showView('courses')">📚 Kurslar</button>
+    <button class="nav-tab" data-tab="quizzes" onclick="showView('quizzes')">🎯 Kvizlar</button>
+    <button class="nav-tab" data-tab="slides" onclick="showView('slides')">📊 Slaydlar</button>
+    <button class="nav-tab" data-tab="ebooks" onclick="showView('ebooks')">📖 E-kitoblar</button>
+    <button class="nav-tab" data-tab="meetings" onclick="showView('meetings')">📹 Yig'ilishlar</button>
+    <button class="nav-tab" data-tab="announcements" onclick="showView('announcements')">📢 E'lonlar</button>
+    <button class="nav-tab" data-tab="settings" onclick="showView('settings')">⚙️ Sozlamalar</button>
+  </div>
+
+  <div class="admin-content">
+    <div class="view active" id="view-dashboard">
+      <h1>Salom, admin! 👋</h1>
+      <p class="sub">Ma'rifat Cup platformasi boshqaruv markazi</p>
+      <div class="stats-grid">
+        <div class="stat-card"><div class="num" id="stat-courses">0</div><div class="label">Kurslar</div></div>
+        <div class="stat-card"><div class="num" id="stat-lessons">0</div><div class="label">Darslar</div></div>
+        <div class="stat-card"><div class="num" id="stat-quizzes">0</div><div class="label">Kvizlar</div></div>
+        <div class="stat-card"><div class="num" id="stat-slides">0</div><div class="label">Slaydlar</div></div>
+        <div class="stat-card"><div class="num" id="stat-ebooks">0</div><div class="label">E-kitoblar</div></div>
+        <div class="stat-card"><div class="num" id="stat-meetings">0</div><div class="label">Yig'ilishlar</div></div>
+        <div class="stat-card"><div class="num" id="stat-questions">0</div><div class="label">Savollar</div></div>
+      </div>
+      <div class="info-banner">
+        <b>📌 Eslatma:</b> Bu yerda yaratgan kontentingiz xuddi shu qurilmadagi <b>marifat-cup.html</b> sayti foydalanuvchilariga ko'rinadi.
+        Boshqa qurilmalarga uzatish uchun <b>Sozlamalar → Export</b> ni ishlating.
+      </div>
+      <div class="view-header" style="margin-top: 20px;"><h1 style="font-size: 20px;">Tezkor harakatlar</h1></div>
+      <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+        <button class="btn btn-primary" onclick="openCourseEditor()">📚 Yangi kurs</button>
+        <button class="btn btn-accent" onclick="openQuizEditor()">🎯 Yangi kviz</button>
+        <button class="btn btn-secondary" onclick="exportData()">📥 Export</button>
+      </div>
+    </div>
+
+    <div class="view" id="view-courses">
+      <div class="view-header">
+        <h1>📚 Kurslar</h1>
+        <button class="btn btn-primary" onclick="openCourseEditor()">+ Yangi kurs</button>
+      </div>
+      <p class="sub">Video darslar va yakuniy testdan iborat kurslarni boshqaring</p>
+      <div id="courses-list" class="item-list"></div>
+    </div>
+
+    <div class="view" id="view-course-editor">
+      <div class="view-header">
+        <h1 id="course-editor-title">Yangi kurs</h1>
+        <button class="btn btn-secondary btn-sm" onclick="showView('courses')">← Ortga</button>
+      </div>
+      <div class="field"><label>Kurs nomi *</label>
+        <input class="input" id="course-title" placeholder="Masalan: Ma'naviyat asoslari"></div>
+      <div class="field"><label>Qisqa tavsif</label>
+        <textarea class="textarea" id="course-desc" placeholder="Kurs haqida..."></textarea></div>
+      <div class="field-row">
+        <div class="field"><label>Emoji belgisi</label>
+          <input class="input" id="course-emoji" maxlength="3" value="📖"></div>
+        <div class="field"><label>Rang</label>
+          <select class="select" id="course-color">
+            <option value="1">🟠 Apelsin</option><option value="2">🟣 Binafsha</option>
+            <option value="3">🔵 Moviy</option><option value="4">🟢 Yashil</option>
+            <option value="5">🩷 Pushti</option><option value="6">🟡 Sariq</option>
+          </select></div>
+      </div>
+      <h3 class="section-divider">📺 Darslar</h3>
+      <div id="lessons-container"></div>
+      <button class="add-btn" onclick="addLessonBlock()">+ Dars qo'shish</button>
+      <h3 class="section-divider">📝 Yakuniy test savollari</h3>
+      <p class="sub">O'quvchi kursni tugatgach, bu testdan o'tib sertifikat oladi (70%+ kerak)</p>
+      <div id="test-questions-container"></div>
+      <button class="add-btn" onclick="addQuestionBlock('test-questions-container')">+ Savol qo'shish</button>
+      <div class="actions-bar">
+        <button class="btn btn-secondary" onclick="showView('courses')">Bekor qilish</button>
+        <button class="btn btn-primary" onclick="saveCourse()">💾 Saqlash</button>
+      </div>
+    </div>
+
+    <div class="view" id="view-quizzes">
+      <div class="view-header">
+        <h1>🎯 Kvizlar</h1>
+        <button class="btn btn-primary" onclick="openQuizEditor()">+ Yangi kviz</button>
+      </div>
+      <p class="sub">Jonli o'yin yoki yakka tartibda o'ynaladigan kvizlar</p>
+      <div id="quizzes-list" class="item-list"></div>
+    </div>
+
+    <div class="view" id="view-quiz-editor">
+      <div class="view-header">
+        <h1 id="quiz-editor-title">Yangi kviz</h1>
+        <button class="btn btn-secondary btn-sm" onclick="showView('quizzes')">← Ortga</button>
+      </div>
+      <div class="field"><label>Kviz nomi *</label>
+        <input class="input" id="quiz-title" placeholder="Masalan: Tarix bo'yicha bilim"></div>
+      <h3 class="section-divider">❓ Savollar</h3>
+      <div id="quiz-questions-container"></div>
+      <button class="add-btn" onclick="addQuestionBlock('quiz-questions-container')">+ Savol qo'shish</button>
+      <div class="actions-bar">
+        <button class="btn btn-secondary" onclick="showView('quizzes')">Bekor qilish</button>
+        <button class="btn btn-primary" onclick="saveQuiz()">💾 Saqlash</button>
+      </div>
+    </div>
+
+    <div class="view" id="view-slides">
+      <div class="view-header">
+        <h1>📊 Slayd taqdimotlar</h1>
+        <button class="btn btn-primary" onclick="openSlideEditor()">+ Yangi taqdimot</button>
+      </div>
+      <p class="sub">PDF formatdagi taqdimotlarni yuklang. Foydalanuvchilar marifat-cup saytida ko'rib, so'ng kvizga o'tib ketadi.</p>
+      <div id="slides-list" class="item-list"></div>
+    </div>
+
+    <div class="view" id="view-slide-editor">
+      <div class="view-header">
+        <h1 id="slide-editor-title">Yangi taqdimot</h1>
+        <button class="btn btn-secondary btn-sm" onclick="showView('slides')">← Ortga</button>
+      </div>
+      <div class="field"><label>Taqdimot nomi *</label>
+        <input class="input" id="slide-title-input" placeholder="Masalan: Ma'naviyat sektori bo'yicha taqdimot"></div>
+      <div class="field"><label>Ma'ruzachi / Mualif</label>
+        <input class="input" id="slide-presenter-input" placeholder="Masalan: Olimjon Davlatov"></div>
+
+      <h3 class="section-divider">📄 PDF fayl</h3>
+      <p class="sub" style="margin-top: -4px;">PDF faylni yuklang (50 MB gacha — IndexedDB orqali). Yoki tashqi URL kiriting.</p>
+      <div class="field">
+        <label>PDF fayl yuklash</label>
+        <input type="file" id="slide-pdf-file" accept="application/pdf" onchange="handleSlidePdfUpload(event)" style="padding: 8px; width: 100%;">
+        <p id="slide-pdf-status" style="margin-top: 6px; font-size: 13px; color: var(--ink-2);"></p>
+      </div>
+      <p style="text-align:center; color: var(--ink-2); font-size: 13px; margin: 10px 0;">— yoki —</p>
+      <div class="field">
+        <label>PDF URL (xosting yoki Google Drive havolasi)</label>
+        <input class="input" id="slide-pdf-url" placeholder="https://... .pdf yoki ./taqdimot.pdf">
+      </div>
+
+      <div class="actions-bar">
+        <button class="btn btn-secondary" onclick="showView('slides')">Bekor qilish</button>
+        <button class="btn btn-primary" onclick="saveSlide()">💾 Saqlash</button>
+      </div>
+    </div>
+
+    <div class="view" id="view-announcements">
+      <div class="view-header">
+        <h1>📢 E'lonlar</h1>
+        <button class="btn btn-primary" onclick="openAnnEditor()">+ Yangi e'lon</button>
+      </div>
+      <p class="sub">Foydalanuvchilarga ko'rinadigan xabarlarni boshqaring</p>
+      <div id="ann-list" class="item-list"></div>
+    </div>
+
+    <div class="view" id="view-ann-editor">
+      <div class="view-header">
+        <h1 id="ann-editor-title">Yangi e'lon</h1>
+        <button class="btn btn-secondary btn-sm" onclick="showView('announcements')">← Ortga</button>
+      </div>
+      <div class="field"><label>Sarlavha *</label>
+        <input class="input" id="ann-title" placeholder="Masalan: Yangi kurs joylandi"></div>
+      <div class="field"><label>Matn (e'lon tafsiloti)</label>
+        <textarea class="textarea" id="ann-body" style="min-height: 120px;" placeholder="E'lon matni..."></textarea></div>
+      <div class="field"><label>Muhimlik darajasi</label>
+        <select class="select" id="ann-priority">
+          <option value="normal">📢 Oddiy e'lon</option>
+          <option value="urgent">🚨 Muhim (qizil rangda chiqadi)</option>
+        </select>
+      </div>
+      <div class="actions-bar">
+        <button class="btn btn-secondary" onclick="showView('announcements')">Bekor qilish</button>
+        <button class="btn btn-primary" onclick="saveAnn()">💾 Saqlash</button>
+      </div>
+    </div>
+
+    <div class="view" id="view-ebooks">
+      <div class="view-header">
+        <h1>📖 E-kitoblar</h1>
+        <button class="btn btn-primary" onclick="openEbookEditor()">+ Yangi e-kitob</button>
+      </div>
+      <p class="sub">Kitoblarni PDF formatda yuklang (50 MB gacha)</p>
+      <div id="ebooks-list" class="item-list"></div>
+    </div>
+
+    <div class="view" id="view-ebook-editor">
+      <div class="view-header">
+        <h1 id="ebook-editor-title">Yangi e-kitob</h1>
+        <button class="btn btn-secondary btn-sm" onclick="showView('ebooks')">← Ortga</button>
+      </div>
+      <div class="field"><label>Kitob nomi *</label>
+        <input class="input" id="ebook-title-input" placeholder="Masalan: Ma'naviyat asoslari"></div>
+      <div class="field"><label>Muallif</label>
+        <input class="input" id="ebook-author-input" placeholder="Masalan: Olimjon Davlatov"></div>
+      <div class="field"><label>Qisqa tavsif</label>
+        <textarea class="textarea" id="ebook-desc-input" placeholder="Kitob haqida..."></textarea></div>
+      <div class="field-row">
+        <div class="field"><label>Emoji</label>
+          <input class="input" id="ebook-emoji-input" maxlength="3" value="📖"></div>
+        <div class="field"><label>Rang</label>
+          <select class="select" id="ebook-color-input">
+            <option value="1">🟠 Apelsin</option><option value="2">🟣 Binafsha</option>
+            <option value="3">🔵 Moviy</option><option value="4">🟢 Yashil</option>
+            <option value="5">🩷 Pushti</option><option value="6">🟡 Sariq</option>
+          </select></div>
+      </div>
+      <h3 class="section-divider">📄 PDF fayl</h3>
+      <div class="field">
+        <label>PDF fayl yuklash (50 MB gacha)</label>
+        <input type="file" id="ebook-pdf-file" accept="application/pdf" onchange="handleEbookPdfUpload(event)" style="padding: 8px; width: 100%;">
+        <p id="ebook-pdf-status" style="margin-top: 6px; font-size: 13px; color: var(--ink-2);"></p>
+      </div>
+      <p style="text-align:center; color: var(--ink-2); font-size: 13px; margin: 10px 0;">— yoki —</p>
+      <div class="field">
+        <label>PDF URL</label>
+        <input class="input" id="ebook-pdf-url" placeholder="https://... .pdf">
+      </div>
+      <div class="actions-bar">
+        <button class="btn btn-secondary" onclick="showView('ebooks')">Bekor qilish</button>
+        <button class="btn btn-primary" onclick="saveEbook()">💾 Saqlash</button>
+      </div>
+    </div>
+
+    <div class="view" id="view-meetings">
+      <div class="view-header">
+        <h1>📹 Online yig'ilishlar</h1>
+        <button class="btn btn-primary" onclick="openMeetingEditor()">+ Yangi yig'ilish</button>
+      </div>
+      <p class="sub">Jitsi Meet asosida — vaqt cheklovsiz, bepul, ro'yxatdan o'tmasdan</p>
+      <div id="meetings-list" class="item-list"></div>
+    </div>
+
+    <div class="view" id="view-meeting-editor">
+      <div class="view-header">
+        <h1 id="meeting-editor-title">Yangi yig'ilish</h1>
+        <button class="btn btn-secondary btn-sm" onclick="showView('meetings')">← Ortga</button>
+      </div>
+      <div class="field"><label>Yig'ilish nomi *</label>
+        <input class="input" id="meeting-title-input" placeholder="Masalan: Ma'naviyat dars"></div>
+      <div class="field"><label>Tavsif</label>
+        <textarea class="textarea" id="meeting-desc-input" placeholder="Yig'ilish haqida..."></textarea></div>
+      <div class="field-row">
+        <div class="field"><label>Sana</label>
+          <input class="input" type="date" id="meeting-date-input"></div>
+        <div class="field"><label>Vaqt</label>
+          <input class="input" type="time" id="meeting-time-input"></div>
+      </div>
+      <div class="field">
+        <label>Xona kodi (avtomatik yaratiladi)</label>
+        <input class="input" id="meeting-room-input" readonly>
+        <p style="font-size:12px;color:var(--ink-2);margin-top:6px;">Yig'ilish havolasi: <span id="meeting-link-preview"></span></p>
+      </div>
+      <div class="actions-bar">
+        <button class="btn btn-secondary" onclick="showView('meetings')">Bekor qilish</button>
+        <button class="btn btn-primary" onclick="saveMeeting()">💾 Saqlash</button>
+      </div>
+    </div>
+
+    <div class="view" id="view-settings">
+      <h1>⚙️ Sozlamalar</h1>
+      <p class="sub">Parol, eksport va boshqa konfiguratsiyalar</p>
+      <div class="settings-block">
+        <h3>🔑 Parolni o'zgartirish</h3>
+        <p>Yangi parol o'rnating. Eski parolni bilishingiz kerak.</p>
+        <div class="field"><label>Joriy parol</label><input class="input" type="password" id="old-pwd"></div>
+        <div class="field"><label>Yangi parol (kamida 4 ta belgi)</label><input class="input" type="password" id="new-pwd-1"></div>
+        <div class="field"><label>Yangi parolni tasdiqlang</label><input class="input" type="password" id="new-pwd-2"></div>
+        <button class="btn btn-primary" onclick="changePassword()">O'zgartirish</button>
+      </div>
+      <div class="settings-block">
+        <h3>📥 Ma'lumotlarni eksport qilish</h3>
+        <p>Barcha kurslar va kvizlarni JSON fayl sifatida yuklab oling. Boshqa qurilmaga uzatish uchun.</p>
+        <button class="btn btn-accent" onclick="exportData()">📥 JSON yuklash</button>
+      </div>
+      <div class="settings-block">
+        <h3>📤 Ma'lumotlarni import qilish</h3>
+        <p>Avval eksport qilingan JSON faylni yuklang. <b>Diqqat:</b> mavjud ma'lumotlar ustiga yoziladi!</p>
+        <input type="file" id="import-file" accept="application/json,.json" style="display:none;" onchange="handleImportFile(event)">
+        <button class="btn btn-secondary" onclick="document.getElementById('import-file').click()">📤 Faylni tanlash</button>
+      </div>
+      <div class="settings-block danger">
+        <h3>⚠️ Hammasini o'chirish</h3>
+        <p>Barcha kurslar va kvizlarni o'chiradi. Qaytarib bo'lmaydi!</p>
+        <button class="btn btn-danger" onclick="resetAll()">🗑️ Hammasini o'chirish</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal-bg" id="modal-bg">
+  <div class="modal">
+    <h3 id="modal-title">Tasdiqlash</h3>
+    <p id="modal-text">Davom etishni xohlaysizmi?</p>
+    <div class="modal-actions">
+      <button class="btn btn-secondary" onclick="closeModal()">Bekor qilish</button>
+      <button class="btn btn-danger" id="modal-confirm">Tasdiqlash</button>
+    </div>
+  </div>
+</div>
+
+<script>
+
+// IndexedDB wrapper for large files (PDFs)
+const IDB = {
+  _db: null,
+  async _open() {
+    if (this._db) return this._db;
+    return new Promise((resolve, reject) => {
+      const req = indexedDB.open('marifat_files', 1);
+      req.onupgradeneeded = (e) => { e.target.result.createObjectStore('files'); };
+      req.onsuccess = (e) => { this._db = e.target.result; resolve(this._db); };
+      req.onerror = (e) => reject(e.target.error);
+    });
+  },
+  async put(id, blob) {
+    const db = await this._open();
+    return new Promise((resolve, reject) => {
+      const tx = db.transaction('files', 'readwrite');
+      tx.objectStore('files').put(blob, id);
+      tx.oncomplete = () => resolve();
+      tx.onerror = () => reject(tx.error);
+    });
+  },
+  async get(id) {
+    const db = await this._open();
+    return new Promise((resolve, reject) => {
+      const tx = db.transaction('files', 'readonly');
+      const req = tx.objectStore('files').get(id);
+      req.onsuccess = () => resolve(req.result);
+      req.onerror = () => reject(req.error);
+    });
+  },
+  async del(id) {
+    const db = await this._open();
+    return new Promise((resolve, reject) => {
+      const tx = db.transaction('files', 'readwrite');
+      tx.objectStore('files').delete(id);
+      tx.oncomplete = () => resolve();
+      tx.onerror = () => reject(tx.error);
+    });
+  }
+};
+
+const SHAPES = ['▲', '◆', '●', '■'];
+const COLORS = ['red', 'blue', 'yellow', 'green'];
+const COLOR_GRADS = {
+  1: 'linear-gradient(135deg, #f97316, #ea580c)',
+  2: 'linear-gradient(135deg, #8b5cf6, #6d28d9)',
+  3: 'linear-gradient(135deg, #06b6d4, #0e7490)',
+  4: 'linear-gradient(135deg, #10b981, #047857)',
+  5: 'linear-gradient(135deg, #ec4899, #be185d)',
+  6: 'linear-gradient(135deg, #f59e0b, #b45309)'
+};
+const STORAGE = { COURSES: 'mc_courses', QUIZZES: 'mc_quizzes', SLIDES: 'mc_slides', EBOOKS: 'mc_ebooks', MEETINGS: 'mc_meetings', ANN: 'mc_announcements', PWD: 'mc_admin_pwd', SESSION: 'mc_admin_session' };
+
+let courses = [];
+let quizzes = [];
+let slides = [];
+let anns = [];
+let ebooks = [];
+let meetings = [];
+let editingCourseId = null;
+let editingQuizId = null;
+let editingSlideId = null;
+let editingAnnId = null;
+let editingEbookId = null;
+let editingMeetingId = null;
+let currentPdfFile = null;
+let currentEbookFile = null;
+let currentPdfData = null;
+
+function esc(s) {
+  if (s == null) return '';
+  return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+function toast(msg, type='') {
+  const t = document.createElement('div');
+  t.className = 'toast ' + type;
+  t.textContent = msg;
+  document.body.appendChild(t);
+  setTimeout(() => t.remove(), 3000);
+}
+function showModal(title, text, onConfirm) {
+  document.getElementById('modal-title').textContent = title;
+  document.getElementById('modal-text').textContent = text;
+  document.getElementById('modal-confirm').onclick = () => { closeModal(); onConfirm(); };
+  document.getElementById('modal-bg').classList.add('active');
+}
+function closeModal() { document.getElementById('modal-bg').classList.remove('active'); }
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+  window.scrollTo(0, 0);
+}
+// Simple synchronous hash — works in ALL browsers (file://, http://, https://, WebView).
+// Not cryptographically strong, but client-side admin panel security is mostly cosmetic anyway.
+function hashPwd(text) {
+  const SALT = 'MarifatCupAdmin_v2_2026';
+  const combined = SALT + ':' + text + ':' + SALT;
+  // FNV-1a 32-bit hash, run 5000 rounds for slight strengthening
+  let result = combined;
+  for (let round = 0; round < 5000; round++) {
+    let hash = 0x811c9dc5;
+    const str = result + round;
+    for (let i = 0; i < str.length; i++) {
+      hash ^= str.charCodeAt(i);
+      hash = Math.imul(hash, 0x01000193);
+    }
+    result = (hash >>> 0).toString(16).padStart(8, '0');
+  }
+  return 'v2:' + result;
+}
+
+function init() {
+  const pwd = localStorage.getItem(STORAGE.PWD);
+  if (!pwd) { showScreen('setup-screen'); return; }
+  const session = sessionStorage.getItem(STORAGE.SESSION);
+  if (session === pwd) enterAdmin();
+  else {
+    showScreen('login-screen');
+    setTimeout(() => document.getElementById('login-pwd').focus(), 100);
+  }
+}
+function setupPassword() {
+  const p1 = document.getElementById('setup-pwd-1').value;
+  const p2 = document.getElementById('setup-pwd-2').value;
+  if (p1.length < 4) { toast("Parol kamida 4 belgi bo'lsin", 'error'); return; }
+  if (p1 !== p2) { toast('Parollar mos kelmaydi', 'error'); return; }
+  try {
+    const h = hashPwd(p1);
+    localStorage.setItem(STORAGE.PWD, h);
+    sessionStorage.setItem(STORAGE.SESSION, h);
+    toast("Parol o'rnatildi ✓", 'success');
+    enterAdmin();
+  } catch (e) {
+    toast('Xatolik: ' + e.message, 'error');
+  }
+}
+function login() {
+  const p = document.getElementById('login-pwd').value;
+  if (!p) {
+    const errEl = document.getElementById('login-err');
+    errEl.textContent = "❌ Parolni kiriting";
+    errEl.style.display = 'block';
+    return;
+  }
+  try {
+    const h = hashPwd(p);
+    const stored = localStorage.getItem(STORAGE.PWD);
+    if (h === stored) {
+      sessionStorage.setItem(STORAGE.SESSION, h);
+      document.getElementById('login-err').style.display = 'none';
+      document.getElementById('login-pwd').value = '';
+      enterAdmin();
+    } else {
+      const errEl = document.getElementById('login-err');
+      errEl.textContent = "❌ Parol noto'g'ri";
+      errEl.style.display = 'block';
+      document.getElementById('login-pwd').value = '';
+    }
+  } catch (e) {
+    const errEl = document.getElementById('login-err');
+    errEl.textContent = "Xatolik: " + e.message;
+    errEl.style.display = 'block';
+  }
+}
+
+function forgotPassword() {
+  if (confirm("Parolingizni unutdingizmi?\n\nTasdiqlasangiz, joriy parol va barcha admin kontentingiz O'CHIRILADI. Bekor qilib bo'lmaydi!\n\nDavom etamizmi?")) {
+    if (confirm("Haqiqatan ham hammasini o'chirib, yangidan boshlashni xohlaysizmi?")) {
+      localStorage.removeItem(STORAGE.PWD);
+      localStorage.removeItem(STORAGE.COURSES);
+      localStorage.removeItem(STORAGE.QUIZZES);
+      sessionStorage.removeItem(STORAGE.SESSION);
+      location.reload();
+    }
+  }
+}
+function logout() {
+  sessionStorage.removeItem(STORAGE.SESSION);
+  document.getElementById('login-pwd').value = '';
+  showScreen('login-screen');
+}
+function changePassword() {
+  const oldP = document.getElementById('old-pwd').value;
+  const new1 = document.getElementById('new-pwd-1').value;
+  const new2 = document.getElementById('new-pwd-2').value;
+  if (!oldP || !new1 || !new2) { toast("Barcha maydonlarni to'ldiring", 'error'); return; }
+  const oldH = hashPwd(oldP);
+  if (oldH !== localStorage.getItem(STORAGE.PWD)) { toast("Joriy parol noto'g'ri", 'error'); return; }
+  if (new1.length < 4) { toast("Yangi parol kamida 4 belgi bo'lsin", 'error'); return; }
+  if (new1 !== new2) { toast('Yangi parollar mos kelmaydi', 'error'); return; }
+  const newH = hashPwd(new1);
+  localStorage.setItem(STORAGE.PWD, newH);
+  sessionStorage.setItem(STORAGE.SESSION, newH);
+  document.getElementById('old-pwd').value = '';
+  document.getElementById('new-pwd-1').value = '';
+  document.getElementById('new-pwd-2').value = '';
+  toast("Parol o'zgartirildi ✓", 'success');
+}
+function enterAdmin() {
+  loadData();
+  showScreen('admin-app');
+  showView('dashboard');
+}
+function loadData() {
+  try {
+    courses = JSON.parse(localStorage.getItem(STORAGE.COURSES) || '[]');
+    quizzes = JSON.parse(localStorage.getItem(STORAGE.QUIZZES) || '[]');
+    slides = JSON.parse(localStorage.getItem(STORAGE.SLIDES) || '[]');
+    anns = JSON.parse(localStorage.getItem(STORAGE.ANN) || '[]');
+    ebooks = JSON.parse(localStorage.getItem(STORAGE.EBOOKS) || '[]');
+    meetings = JSON.parse(localStorage.getItem(STORAGE.MEETINGS) || '[]');
+  } catch (e) { courses = []; quizzes = []; slides = []; anns = []; ebooks = []; meetings = []; }
+}
+function saveData() {
+  localStorage.setItem(STORAGE.COURSES, JSON.stringify(courses));
+  localStorage.setItem(STORAGE.QUIZZES, JSON.stringify(quizzes));
+  localStorage.setItem(STORAGE.ANN, JSON.stringify(anns));
+  localStorage.setItem(STORAGE.MEETINGS, JSON.stringify(meetings));
+  try {
+    localStorage.setItem(STORAGE.SLIDES, JSON.stringify(slides));
+    localStorage.setItem(STORAGE.EBOOKS, JSON.stringify(ebooks));
+  } catch (e) {
+    toast("Xatolik: localStorage to'ldi", 'error');
+  }
+}
+function showView(name) {
+  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('view-' + name)?.classList.add('active');
+  document.querySelector(`[data-tab="${name}"]`)?.classList.add('active');
+  window.scrollTo(0, 0);
+  if (name === 'dashboard') renderDashboard();
+  else if (name === 'courses') renderCoursesList();
+  else if (name === 'quizzes') renderQuizzesList();
+  else if (name === 'slides') renderSlidesList();
+  else if (name === 'announcements') renderAnnList();
+  else if (name === 'ebooks') renderEbooksList();
+  else if (name === 'meetings') renderMeetingsList();
+}
+function renderDashboard() {
+  document.getElementById('stat-courses').textContent = courses.length;
+  document.getElementById('stat-quizzes').textContent = quizzes.length;
+  document.getElementById('stat-slides').textContent = slides.length;
+  document.getElementById('stat-ebooks').textContent = ebooks.length;
+  document.getElementById('stat-meetings').textContent = meetings.length;
+  const totalLessons = courses.reduce((s, c) => s + (c.lessons?.length || 0), 0);
+  const totalQs = quizzes.reduce((s, q) => s + (q.questions?.length || 0), 0)
+    + courses.reduce((s, c) => s + (c.test?.questions?.length || 0), 0);
+  document.getElementById('stat-lessons').textContent = totalLessons;
+  document.getElementById('stat-questions').textContent = totalQs;
+}
+function renderCoursesList() {
+  const list = document.getElementById('courses-list');
+  if (courses.length === 0) {
+    list.innerHTML = `<div class="empty-msg"><div class="ico">📭</div>Hali kurs yaratilmagan.<br><br>
+      <button class="btn btn-primary" onclick="openCourseEditor()">+ Birinchi kursni yaratish</button></div>`;
+    return;
+  }
+  list.innerHTML = courses.map(c => `
+    <div class="item-row">
+      <div class="ico" style="background: ${COLOR_GRADS[c.color] || COLOR_GRADS[1]}">${esc(c.emoji || '📖')}</div>
+      <div class="info">
+        <h3>${esc(c.title)}</h3>
+        <p>📺 ${c.lessons?.length || 0} ta dars · 📝 ${c.test?.questions?.length || 0} ta test savoli</p>
+      </div>
+      <div class="actions">
+        <button class="icon-btn edit" onclick="openCourseEditor('${c.id}')" title="Tahrirlash">✏️</button>
+        <button class="icon-btn del" onclick="deleteCourse('${c.id}')" title="O'chirish">🗑️</button>
+      </div>
+    </div>
+  `).join('');
+}
+function renderQuizzesList() {
+  const list = document.getElementById('quizzes-list');
+  if (quizzes.length === 0) {
+    list.innerHTML = `<div class="empty-msg"><div class="ico">📭</div>Hali kviz yaratilmagan.<br><br>
+      <button class="btn btn-primary" onclick="openQuizEditor()">+ Birinchi kvizni yaratish</button></div>`;
+    return;
+  }
+  list.innerHTML = quizzes.map(q => `
+    <div class="item-row">
+      <div class="ico" style="background: linear-gradient(135deg, #14b8a6, #0d9488);">🎯</div>
+      <div class="info">
+        <h3>${esc(q.title)}</h3>
+        <p>❓ ${q.questions?.length || 0} ta savol · ${new Date(q.createdAt || Date.now()).toLocaleDateString('uz-UZ')}</p>
+      </div>
+      <div class="actions">
+        <button class="icon-btn edit" onclick="openQuizEditor('${q.id}')" title="Tahrirlash">✏️</button>
+        <button class="icon-btn del" onclick="deleteQuiz('${q.id}')" title="O'chirish">🗑️</button>
+      </div>
+    </div>
+  `).join('');
+}
+function openCourseEditor(id = null) {
+  editingCourseId = id;
+  const c = id ? courses.find(x => x.id === id) : null;
+  document.getElementById('course-editor-title').textContent = c ? 'Kursni tahrirlash' : 'Yangi kurs';
+  document.getElementById('course-title').value = c?.title || '';
+  document.getElementById('course-desc').value = c?.description || '';
+  document.getElementById('course-emoji').value = c?.emoji || '📖';
+  document.getElementById('course-color').value = c?.color || 1;
+  const lc = document.getElementById('lessons-container');
+  lc.innerHTML = '';
+  const lessons = c?.lessons || [{ title: '', context: '', videoUrl: '', text: '' }];
+  lessons.forEach(l => addLessonBlock(l));
+  const qc = document.getElementById('test-questions-container');
+  qc.innerHTML = '';
+  const qs = c?.test?.questions || [emptyQuestion()];
+  qs.forEach(q => addQuestionBlock('test-questions-container', q));
+  showView('course-editor');
+}
+function addLessonBlock(initial = null) {
+  const container = document.getElementById('lessons-container');
+  const block = document.createElement('div');
+  block.className = 'block lesson-block';
+  block.innerHTML = `
+    <div class="block-num">Dars ${container.children.length + 1}</div>
+    <button class="block-del" onclick="this.parentElement.remove(); renumberBlocks('lessons-container', 'Dars');">×</button>
+    <div class="field"><label>Dars sarlavhasi *</label>
+      <input class="input lesson-title" value="${esc(initial?.title || '')}" placeholder="Masalan: 1-dars: Kirish"></div>
+    <div class="field-row">
+      <div class="field"><label>Qisqa izoh</label>
+        <input class="input lesson-context" value="${esc(initial?.context || '')}" placeholder="10 daq. video"></div>
+      <div class="field"><label>YouTube URL yoki ID</label>
+        <input class="input lesson-video" value="${esc(initial?.videoUrl || '')}" placeholder="youtube.com/watch?v=..."></div>
+    </div>
+    <div class="field" style="margin-bottom: 0;"><label>Dars matni</label>
+      <textarea class="textarea lesson-text" placeholder="Dars haqida batafsil...">${esc(initial?.text || '')}</textarea></div>
+  `;
+  container.appendChild(block);
+}
+function renumberBlocks(containerId, prefix) {
+  document.querySelectorAll(`#${containerId} .block .block-num`).forEach((el, i) => {
+    el.textContent = `${prefix} ${i + 1}`;
+  });
+}
+function emptyQuestion() { return { text: '', answers: ['','','',''], correct: 0, time: 20 }; }
+function addQuestionBlock(containerId, initial = null) {
+  const container = document.getElementById(containerId);
+  const q = initial || emptyQuestion();
+  const block = document.createElement('div');
+  block.className = 'block question-block';
+  block.innerHTML = `
+    <div class="block-num">Savol ${container.children.length + 1}</div>
+    <button class="block-del" onclick="this.parentElement.remove(); renumberBlocks('${containerId}', 'Savol');">×</button>
+    <div class="field"><label>Savol matni *</label>
+      <input class="input q-text" value="${esc(q.text)}" placeholder="Savolingizni yozing..."></div>
+    <label style="font-weight:700; font-size:12px; text-transform:uppercase; letter-spacing:0.05em; color:var(--ink-2); margin-bottom:6px; display:block;">
+      Javob variantlari (to'g'risini ✓ bilan belgilang)
+    </label>
+    <div class="ans-grid">
+      ${[0,1,2,3].map(i => `
+        <div class="ans-row ${i === q.correct ? 'correct' : ''}">
+          <div class="ans-shape ${COLORS[i]}">${SHAPES[i]}</div>
+          <input class="input q-answer" value="${esc(q.answers[i] || '')}" placeholder="Variant ${i + 1}">
+          <button class="check-btn ${i === q.correct ? 'on' : ''}" onclick="toggleCorrect(this)">${i === q.correct ? '✓' : ''}</button>
+        </div>
+      `).join('')}
+    </div>
+    <div class="time-row">
+      <div class="chip">⏱️ Vaqt:
+        <select class="q-time">
+          <option value="10" ${q.time===10?'selected':''}>10 soniya</option>
+          <option value="20" ${q.time===20?'selected':''}>20 soniya</option>
+          <option value="30" ${q.time===30?'selected':''}>30 soniya</option>
+          <option value="60" ${q.time===60?'selected':''}>60 soniya</option>
+        </select>
+      </div>
+    </div>
+  `;
+  container.appendChild(block);
+}
+function toggleCorrect(btn) {
+  const block = btn.closest('.block');
+  block.querySelectorAll('.check-btn').forEach(b => { b.classList.remove('on'); b.textContent = ''; });
+  block.querySelectorAll('.ans-row').forEach(r => r.classList.remove('correct'));
+  btn.classList.add('on');
+  btn.textContent = '✓';
+  btn.closest('.ans-row').classList.add('correct');
+}
+function readQuestionBlock(block, idx) {
+  const text = block.querySelector('.q-text').value.trim();
+  const answers = [...block.querySelectorAll('.q-answer')].map(a => a.value.trim());
+  const correct = [...block.querySelectorAll('.check-btn')].findIndex(b => b.classList.contains('on'));
+  const time = parseInt(block.querySelector('.q-time').value);
+  if (!text) { toast(`Savol ${idx+1}: matn yo'q`, 'error'); return null; }
+  if (answers.some(a => !a)) { toast(`Savol ${idx+1}: barcha javoblarni to'ldiring`, 'error'); return null; }
+  if (correct < 0) { toast(`Savol ${idx+1}: to'g'ri javobni belgilang`, 'error'); return null; }
+  return { text, answers, correct, time };
+}
+function saveCourse() {
+  const title = document.getElementById('course-title').value.trim();
+  if (!title) { toast('Kurs nomini kiriting', 'error'); return; }
+  const lessons = [];
+  const lessonBlocks = document.querySelectorAll('#lessons-container .lesson-block');
+  for (let i = 0; i < lessonBlocks.length; i++) {
+    const b = lessonBlocks[i];
+    const t = b.querySelector('.lesson-title').value.trim();
+    if (!t) { toast(`Dars ${i+1}: sarlavhani kiriting`, 'error'); return; }
+    lessons.push({
+      title: t,
+      context: b.querySelector('.lesson-context').value.trim(),
+      videoUrl: b.querySelector('.lesson-video').value.trim(),
+      text: b.querySelector('.lesson-text').value.trim()
+    });
+  }
+  if (lessons.length === 0) { toast("Kamida 1 ta dars qo'shing", 'error'); return; }
+  const questions = [];
+  const qBlocks = document.querySelectorAll('#test-questions-container .question-block');
+  for (let i = 0; i < qBlocks.length; i++) {
+    const q = readQuestionBlock(qBlocks[i], i);
+    if (!q) return;
+    questions.push(q);
+  }
+  if (questions.length === 0) { toast('Yakuniy test uchun kamida 1 ta savol kerak', 'error'); return; }
+  const course = {
+    id: editingCourseId || ('c_' + Date.now()),
+    title,
+    description: document.getElementById('course-desc').value.trim(),
+    emoji: document.getElementById('course-emoji').value.trim() || '📖',
+    color: parseInt(document.getElementById('course-color').value),
+    lessons, test: { questions },
+    createdAt: editingCourseId ? (courses.find(c => c.id === editingCourseId)?.createdAt || Date.now()) : Date.now(),
+    updatedAt: Date.now()
+  };
+  if (editingCourseId) {
+    const idx = courses.findIndex(c => c.id === editingCourseId);
+    if (idx >= 0) courses[idx] = course;
+  } else courses.push(course);
+  saveData();
+  toast('Kurs saqlandi ✓', 'success');
+  editingCourseId = null;
+  showView('courses');
+}
+function deleteCourse(id) {
+  const c = courses.find(x => x.id === id);
+  if (!c) return;
+  showModal("O'chirishni tasdiqlang", `"${c.title}" kursini o'chirmoqchimisiz?`, () => {
+    courses = courses.filter(x => x.id !== id);
+    saveData();
+    renderCoursesList();
+    toast("O'chirildi", 'success');
+  });
+}
+function openQuizEditor(id = null) {
+  editingQuizId = id;
+  const q = id ? quizzes.find(x => x.id === id) : null;
+  document.getElementById('quiz-editor-title').textContent = q ? 'Kvizni tahrirlash' : 'Yangi kviz';
+  document.getElementById('quiz-title').value = q?.title || '';
+  const qc = document.getElementById('quiz-questions-container');
+  qc.innerHTML = '';
+  const qs = q?.questions || [emptyQuestion()];
+  qs.forEach(qq => addQuestionBlock('quiz-questions-container', qq));
+  showView('quiz-editor');
+}
+function saveQuiz() {
+  const title = document.getElementById('quiz-title').value.trim();
+  if (!title) { toast('Kviz nomini kiriting', 'error'); return; }
+  const questions = [];
+  const qBlocks = document.querySelectorAll('#quiz-questions-container .question-block');
+  for (let i = 0; i < qBlocks.length; i++) {
+    const q = readQuestionBlock(qBlocks[i], i);
+    if (!q) return;
+    questions.push(q);
+  }
+  if (questions.length === 0) { toast("Kamida 1 ta savol qo'shing", 'error'); return; }
+  const quiz = {
+    id: editingQuizId || ('q_' + Date.now()),
+    title, questions,
+    createdAt: editingQuizId ? (quizzes.find(q => q.id === editingQuizId)?.createdAt || Date.now()) : Date.now(),
+    updatedAt: Date.now()
+  };
+  if (editingQuizId) {
+    const idx = quizzes.findIndex(q => q.id === editingQuizId);
+    if (idx >= 0) quizzes[idx] = quiz;
+  } else quizzes.push(quiz);
+  saveData();
+  toast('Kviz saqlandi ✓', 'success');
+  editingQuizId = null;
+  showView('quizzes');
+}
+function deleteQuiz(id) {
+  const q = quizzes.find(x => x.id === id);
+  if (!q) return;
+  showModal("O'chirishni tasdiqlang", `"${q.title}" kvizini o'chirmoqchimisiz?`, () => {
+    quizzes = quizzes.filter(x => x.id !== id);
+    saveData();
+    renderQuizzesList();
+    toast("O'chirildi", 'success');
+  });
+}
+function renderSlidesList() {
+  const list = document.getElementById('slides-list');
+  if (slides.length === 0) {
+    list.innerHTML = `<div class="empty-msg"><div class="ico">📊</div>Hali taqdimot yuklanmagan.<br><br>
+      <button class="btn btn-primary" onclick="openSlideEditor()">+ Birinchi taqdimotni yuklash</button></div>`;
+    return;
+  }
+  list.innerHTML = slides.map(s => `
+    <div class="item-row">
+      <div class="ico" style="background: linear-gradient(135deg, #06b6d4, #0e7490);">📊</div>
+      <div class="info">
+        <h3>${esc(s.title)}</h3>
+        <p>👤 ${esc(s.presenter || 'Mualif yo\'q')} · ${s.pdfData ? '📎 Yuklangan PDF' : '🔗 URL'}</p>
+      </div>
+      <div class="actions">
+        <button class="icon-btn edit" onclick="openSlideEditor('${s.id}')" title="Tahrirlash">✏️</button>
+        <button class="icon-btn del" onclick="deleteSlide('${s.id}')" title="O'chirish">🗑️</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+function openSlideEditor(id = null) {
+  editingSlideId = id;
+  currentPdfFile = null;
+  const s = id ? slides.find(x => x.id === id) : null;
+  document.getElementById('slide-editor-title').textContent = s ? 'Taqdimotni tahrirlash' : 'Yangi taqdimot';
+  document.getElementById('slide-title-input').value = s?.title || '';
+  document.getElementById('slide-presenter-input').value = s?.presenter || '';
+  document.getElementById('slide-pdf-url').value = s?.pdfUrl || '';
+  document.getElementById('slide-pdf-file').value = '';
+  if (s?.pdfStored) {
+    document.getElementById('slide-pdf-status').textContent = '✓ Mavjud PDF saqlangan (yangi yuklasangiz o\'rniga yoziladi)';
+  } else {
+    document.getElementById('slide-pdf-status').textContent = '';
+  }
+  showView('slide-editor');
+}
+
+function handleSlidePdfUpload(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  if (file.size > 50 * 1024 * 1024) {
+    toast("Fayl 50 MB dan katta. URL ishlatishni tavsiya qilamiz.", 'error');
+    e.target.value = '';
+    return;
+  }
+  currentPdfFile = file;
+  document.getElementById('slide-pdf-status').textContent = `✓ ${file.name} (${(file.size/1024/1024).toFixed(2)} MB) tanlandi`;
+}
+
+async function saveSlide() {
+  const title = document.getElementById('slide-title-input').value.trim();
+  const presenter = document.getElementById('slide-presenter-input').value.trim();
+  const pdfUrl = document.getElementById('slide-pdf-url').value.trim();
+  if (!title) { toast('Taqdimot nomini kiriting', 'error'); return; }
+
+  const existing = editingSlideId ? slides.find(s => s.id === editingSlideId) : null;
+  const hasExistingFile = existing && existing.pdfStored;
+
+  if (!currentPdfFile && !pdfUrl && !hasExistingFile) {
+    toast("PDF fayl yuklang yoki URL kiriting", 'error'); return;
+  }
+
+  const slide = {
+    id: editingSlideId || ('s_' + Date.now()),
+    title, presenter,
+    pdfStored: !!(currentPdfFile || hasExistingFile),
+    pdfUrl: pdfUrl || null,
+    date: existing?.date || Date.now()
+  };
+
+  // Save PDF to IndexedDB if new file
+  if (currentPdfFile) {
+    try {
+      await IDB.put('slide_' + slide.id, currentPdfFile);
+      slide.pdfStored = true;
+    } catch (err) {
+      toast('IndexedDB xatosi: ' + err.message, 'error');
+      return;
+    }
+  }
+
+  if (editingSlideId) {
+    const idx = slides.findIndex(s => s.id === editingSlideId);
+    if (idx >= 0) slides[idx] = slide;
+  } else slides.push(slide);
+  saveData();
+  toast('Taqdimot saqlandi ✓', 'success');
+  editingSlideId = null;
+  currentPdfFile = null;
+  showView('slides');
+}
+
+function deleteSlide(id) {
+  const s = slides.find(x => x.id === id);
+  if (!s) return;
+  showModal("O'chirishni tasdiqlang", `"${s.title}" taqdimotini o'chirmoqchimisiz?`, async () => {
+    try { await IDB.del('slide_' + id); } catch (e) {}
+    slides = slides.filter(x => x.id !== id);
+    saveData();
+    renderSlidesList();
+    toast("O'chirildi", 'success');
+  });
+}
+
+
+// E-BOOKS
+function renderEbooksList() {
+  const list = document.getElementById('ebooks-list');
+  if (ebooks.length === 0) {
+    list.innerHTML = `<div class="empty-msg"><div class="ico">📖</div>Hali e-kitob yo'q.<br><br>
+      <button class="btn btn-primary" onclick="openEbookEditor()">+ Birinchi kitobni yuklash</button></div>`;
+    return;
+  }
+  list.innerHTML = ebooks.map(b => `
+    <div class="item-row">
+      <div class="ico" style="background: ${COLOR_GRADS[b.color] || COLOR_GRADS[1]};">${esc(b.emoji || '📖')}</div>
+      <div class="info">
+        <h3>${esc(b.title)}</h3>
+        <p>👤 ${esc(b.author || "Muallif yo'q")} · ${b.pdfStored ? '📎 Yuklangan' : '🔗 URL'}</p>
+      </div>
+      <div class="actions">
+        <button class="icon-btn edit" onclick="openEbookEditor('${b.id}')">✏️</button>
+        <button class="icon-btn del" onclick="deleteEbook('${b.id}')">🗑️</button>
+      </div>
+    </div>`).join('');
+}
+
+function openEbookEditor(id = null) {
+  editingEbookId = id;
+  currentEbookFile = null;
+  const b = id ? ebooks.find(x => x.id === id) : null;
+  document.getElementById('ebook-editor-title').textContent = b ? 'Kitobni tahrirlash' : 'Yangi e-kitob';
+  document.getElementById('ebook-title-input').value = b?.title || '';
+  document.getElementById('ebook-author-input').value = b?.author || '';
+  document.getElementById('ebook-desc-input').value = b?.description || '';
+  document.getElementById('ebook-emoji-input').value = b?.emoji || '📖';
+  document.getElementById('ebook-color-input').value = b?.color || 1;
+  document.getElementById('ebook-pdf-url').value = b?.pdfUrl || '';
+  document.getElementById('ebook-pdf-file').value = '';
+  if (b?.pdfStored) {
+    document.getElementById('ebook-pdf-status').textContent = "✓ Mavjud PDF saqlangan";
+  } else {
+    document.getElementById('ebook-pdf-status').textContent = '';
+  }
+  showView('ebook-editor');
+}
+
+function handleEbookPdfUpload(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  if (file.size > 50 * 1024 * 1024) {
+    toast("Fayl 50 MB dan katta. URL ishlatishni tavsiya qilamiz.", 'error');
+    e.target.value = '';
+    return;
+  }
+  currentEbookFile = file;
+  document.getElementById('ebook-pdf-status').textContent = `✓ ${file.name} (${(file.size/1024/1024).toFixed(2)} MB) tanlandi`;
+}
+
+async function saveEbook() {
+  const title = document.getElementById('ebook-title-input').value.trim();
+  if (!title) { toast('Kitob nomini kiriting', 'error'); return; }
+  const pdfUrl = document.getElementById('ebook-pdf-url').value.trim();
+  const existing = editingEbookId ? ebooks.find(b => b.id === editingEbookId) : null;
+  const hasExistingFile = existing && existing.pdfStored;
+  if (!currentEbookFile && !pdfUrl && !hasExistingFile) {
+    toast("PDF fayl yuklang yoki URL kiriting", 'error'); return;
+  }
+  const book = {
+    id: editingEbookId || ('b_' + Date.now()),
+    title,
+    author: document.getElementById('ebook-author-input').value.trim(),
+    description: document.getElementById('ebook-desc-input').value.trim(),
+    emoji: document.getElementById('ebook-emoji-input').value.trim() || '📖',
+    color: parseInt(document.getElementById('ebook-color-input').value),
+    pdfStored: !!(currentEbookFile || hasExistingFile),
+    pdfUrl: pdfUrl || null,
+    date: existing?.date || Date.now()
+  };
+  if (currentEbookFile) {
+    try {
+      await IDB.put('ebook_' + book.id, currentEbookFile);
+      book.pdfStored = true;
+    } catch (err) {
+      toast('IndexedDB xatosi: ' + err.message, 'error');
+      return;
+    }
+  }
+  if (editingEbookId) {
+    const idx = ebooks.findIndex(b => b.id === editingEbookId);
+    if (idx >= 0) ebooks[idx] = book;
+  } else ebooks.push(book);
+  saveData();
+  toast('Kitob saqlandi ✓', 'success');
+  editingEbookId = null;
+  currentEbookFile = null;
+  showView('ebooks');
+}
+
+function deleteEbook(id) {
+  const b = ebooks.find(x => x.id === id);
+  if (!b) return;
+  showModal("O'chirishni tasdiqlang", `"${b.title}" kitobini o'chirmoqchimisiz?`, async () => {
+    try { await IDB.del('ebook_' + id); } catch (e) {}
+    ebooks = ebooks.filter(x => x.id !== id);
+    saveData();
+    renderEbooksList();
+    toast("O'chirildi", 'success');
+  });
+}
+
+// MEETINGS
+function generateRoomId() {
+  return 'mcup-' + Math.random().toString(36).substr(2, 9);
+}
+
+function renderMeetingsList() {
+  const list = document.getElementById('meetings-list');
+  if (meetings.length === 0) {
+    list.innerHTML = `<div class="empty-msg"><div class="ico">📹</div>Hali yig'ilish rejalashtirilmagan.<br><br>
+      <button class="btn btn-primary" onclick="openMeetingEditor()">+ Birinchi yig'ilishni yaratish</button></div>`;
+    return;
+  }
+  const sorted = [...meetings].sort((a, b) => (a.scheduledFor || 0) - (b.scheduledFor || 0));
+  list.innerHTML = sorted.map(m => {
+    const date = m.scheduledFor ? new Date(m.scheduledFor) : null;
+    return `
+    <div class="item-row">
+      <div class="ico" style="background: linear-gradient(135deg, #ef4444, #b91c1c);">📹</div>
+      <div class="info">
+        <h3>${esc(m.title)}</h3>
+        <p>${date ? '📅 ' + date.toLocaleString('uz-UZ') : 'Vaqt belgilanmagan'} · 🔗 ${esc(m.roomId)}</p>
+      </div>
+      <div class="actions">
+        <button class="icon-btn edit" onclick="openMeetingEditor('${m.id}')">✏️</button>
+        <button class="icon-btn del" onclick="deleteMeeting('${m.id}')">🗑️</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function openMeetingEditor(id = null) {
+  editingMeetingId = id;
+  const m = id ? meetings.find(x => x.id === id) : null;
+  document.getElementById('meeting-editor-title').textContent = m ? "Yig'ilishni tahrirlash" : "Yangi yig'ilish";
+  document.getElementById('meeting-title-input').value = m?.title || '';
+  document.getElementById('meeting-desc-input').value = m?.description || '';
+  if (m?.scheduledFor) {
+    const d = new Date(m.scheduledFor);
+    const yyyy = d.getFullYear(), mm = String(d.getMonth()+1).padStart(2,'0'), dd = String(d.getDate()).padStart(2,'0');
+    const hh = String(d.getHours()).padStart(2,'0'), min = String(d.getMinutes()).padStart(2,'0');
+    document.getElementById('meeting-date-input').value = `${yyyy}-${mm}-${dd}`;
+    document.getElementById('meeting-time-input').value = `${hh}:${min}`;
+  } else {
+    document.getElementById('meeting-date-input').value = '';
+    document.getElementById('meeting-time-input').value = '';
+  }
+  const roomId = m?.roomId || generateRoomId();
+  document.getElementById('meeting-room-input').value = roomId;
+  document.getElementById('meeting-link-preview').textContent = `https://meet.jit.si/${roomId}`;
+  showView('meeting-editor');
+}
+
+function saveMeeting() {
+  const title = document.getElementById('meeting-title-input').value.trim();
+  if (!title) { toast("Yig'ilish nomini kiriting", 'error'); return; }
+  const date = document.getElementById('meeting-date-input').value;
+  const time = document.getElementById('meeting-time-input').value;
+  let scheduledFor = null;
+  if (date) {
+    scheduledFor = new Date(`${date}T${time || '00:00'}`).getTime();
+  }
+  const m = {
+    id: editingMeetingId || ('m_' + Date.now()),
+    title,
+    description: document.getElementById('meeting-desc-input').value.trim(),
+    roomId: document.getElementById('meeting-room-input').value,
+    scheduledFor,
+    createdAt: editingMeetingId ? (meetings.find(x => x.id === editingMeetingId)?.createdAt || Date.now()) : Date.now()
+  };
+  if (editingMeetingId) {
+    const idx = meetings.findIndex(x => x.id === editingMeetingId);
+    if (idx >= 0) meetings[idx] = m;
+  } else meetings.push(m);
+  saveData();
+  toast("Yig'ilish saqlandi ✓", 'success');
+  editingMeetingId = null;
+  showView('meetings');
+}
+
+function deleteMeeting(id) {
+  const m = meetings.find(x => x.id === id);
+  if (!m) return;
+  showModal("O'chirishni tasdiqlang", `"${m.title}" yig'ilishini o'chirmoqchimisiz?`, () => {
+    meetings = meetings.filter(x => x.id !== id);
+    saveData();
+    renderMeetingsList();
+    toast("O'chirildi", 'success');
+  });
+}
+
+function renderAnnList() {
+  const list = document.getElementById('ann-list');
+  if (anns.length === 0) {
+    list.innerHTML = `<div class="empty-msg"><div class="ico">📢</div>Hali e'lon yo'q.<br><br>
+      <button class="btn btn-primary" onclick="openAnnEditor()">+ Birinchi e'lonni yozish</button></div>`;
+    return;
+  }
+  const sorted = [...anns].sort((a, b) => (b.date || 0) - (a.date || 0));
+  list.innerHTML = sorted.map(a => `
+    <div class="item-row">
+      <div class="ico" style="background: ${a.priority === 'urgent' ? 'linear-gradient(135deg, #ef4444, #b91c1c)' : 'linear-gradient(135deg, #f59e0b, #d97706)'};">${a.priority === 'urgent' ? '🚨' : '📢'}</div>
+      <div class="info">
+        <h3>${esc(a.title)}</h3>
+        <p>${esc((a.body || '').slice(0, 80))}${a.body && a.body.length > 80 ? '...' : ''}</p>
+        <p style="font-size:11px;margin-top:4px;">📅 ${new Date(a.date || Date.now()).toLocaleDateString('uz-UZ')}</p>
+      </div>
+      <div class="actions">
+        <button class="icon-btn edit" onclick="openAnnEditor('${a.id}')">✏️</button>
+        <button class="icon-btn del" onclick="deleteAnn('${a.id}')">🗑️</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+function openAnnEditor(id = null) {
+  editingAnnId = id;
+  const a = id ? anns.find(x => x.id === id) : null;
+  document.getElementById('ann-editor-title').textContent = a ? 'E\'lonni tahrirlash' : 'Yangi e\'lon';
+  document.getElementById('ann-title').value = a?.title || '';
+  document.getElementById('ann-body').value = a?.body || '';
+  document.getElementById('ann-priority').value = a?.priority || 'normal';
+  showView('ann-editor');
+}
+
+function saveAnn() {
+  const title = document.getElementById('ann-title').value.trim();
+  if (!title) { toast('Sarlavhani kiriting', 'error'); return; }
+  const ann = {
+    id: editingAnnId || ('a_' + Date.now()),
+    title,
+    body: document.getElementById('ann-body').value.trim(),
+    priority: document.getElementById('ann-priority').value,
+    date: editingAnnId ? (anns.find(a => a.id === editingAnnId)?.date || Date.now()) : Date.now()
+  };
+  if (editingAnnId) {
+    const idx = anns.findIndex(a => a.id === editingAnnId);
+    if (idx >= 0) anns[idx] = ann;
+  } else anns.push(ann);
+  saveData();
+  toast("E'lon saqlandi ✓", 'success');
+  editingAnnId = null;
+  showView('announcements');
+}
+
+function deleteAnn(id) {
+  const a = anns.find(x => x.id === id);
+  if (!a) return;
+  showModal("O'chirishni tasdiqlang", `"${a.title}" e'lonini o'chirmoqchimisiz?`, () => {
+    anns = anns.filter(x => x.id !== id);
+    saveData();
+    renderAnnList();
+    toast("O'chirildi", 'success');
+  });
+}
+
+function exportData() {
+  const data = {
+    version: 1, exportedAt: new Date().toISOString(),
+    source: 'marifat-cup-admin', courses, quizzes, slides,
+    announcements: anns, ebooks, meetings
+  };
+  const json = JSON.stringify(data, null, 2);
+  const blob = new Blob([json], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `marifat-content-${new Date().toISOString().slice(0,10)}.json`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+  toast('JSON fayl yuklandi ✓', 'success');
+}
+function handleImportFile(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    try {
+      const data = JSON.parse(ev.target.result);
+      if (!data || (!Array.isArray(data.courses) && !Array.isArray(data.quizzes))) {
+        toast("Fayl noto'g'ri formatda", 'error'); return;
+      }
+      showModal('Import qilishni tasdiqlang',
+        `Faylda ${data.courses?.length || 0} ta kurs, ${data.quizzes?.length || 0} ta kviz, ${data.slides?.length || 0} ta taqdimot va ${data.announcements?.length || 0} ta e'lon bor. Mavjudlari o'rniga yoziladi!`,
+        () => {
+          if (Array.isArray(data.courses)) courses = data.courses;
+          if (Array.isArray(data.quizzes)) quizzes = data.quizzes;
+          if (Array.isArray(data.slides)) slides = data.slides;
+          if (Array.isArray(data.announcements)) anns = data.announcements;
+          if (Array.isArray(data.ebooks)) ebooks = data.ebooks;
+          if (Array.isArray(data.meetings)) meetings = data.meetings;
+          saveData();
+          toast('Import qilindi ✓', 'success');
+          renderDashboard();
+          showView('dashboard');
+        });
+    } catch (err) {
+      toast('JSON xato: ' + err.message, 'error');
+    }
+  };
+  reader.readAsText(file);
+  e.target.value = '';
+}
+function resetAll() {
+  showModal("Hammasini o'chirish",
+    "Barcha kurslar, kvizlar, taqdimotlar va e'lonlar abadiy o'chiriladi! Davom etasizmi?",
+    () => {
+      courses = []; quizzes = []; slides = []; anns = []; ebooks = []; meetings = [];
+      saveData();
+      renderDashboard();
+      showView('dashboard');
+      toast("Hammasi o'chirildi", 'success');
+    });
+}
+
+init();
+document.getElementById('login-pwd').addEventListener('keypress', e => { if (e.key === 'Enter') login(); });
+document.getElementById('setup-pwd-2').addEventListener('keypress', e => { if (e.key === 'Enter') setupPassword(); });
+</script>
+</body>
+</html>

@@ -1,0 +1,162 @@
+═══════════════════════════════════════════════════════════════════
+  MA'RIFAT CUP — SAYTNI INTERNETGA CHIQARISH (DEPLOY) YO'RIQNOMASI
+═══════════════════════════════════════════════════════════════════
+
+Sizning saytingiz tayyor! Endi uni internetga chiqarish va Google'da
+topiladigan qilish uchun quyidagi qadamlarni bajaring.
+
+───────────────────────────────────────────────────────────────────
+  PAPKADAGI FAYLLAR
+───────────────────────────────────────────────────────────────────
+
+  index.html       — Asosiy sayt (foydalanuvchilar uchun)
+  admin.html       — Admin panel (Google'da chiqmaydi)
+  robots.txt       — Qidiruv tizimlariga ko'rsatma
+  sitemap.xml      — Sayt xaritasi (Google uchun)
+  404.html         — Xatolik sahifasi
+  .nojekyll        — GitHub Pages uchun
+  YONALMA-OQING.txt — Bu fayl
+
+───────────────────────────────────────────────────────────────────
+  1-QADAM: GITHUB AKKAUNT YARATING (5 daqiqa)
+───────────────────────────────────────────────────────────────────
+
+  1. Brauzerda oching:  https://github.com/signup
+  2. Email, parol va username (foydalanuvchi nomi) kiriting
+     Eslatma: username sayt manzilida ko'rinadi, masalan:
+     "olimjon123" tanlasangiz → olimjon123.github.io
+  3. Emailni tasdiqlang.
+
+───────────────────────────────────────────────────────────────────
+  2-QADAM: YANGI REPOSITORY (anbar) YARATING
+───────────────────────────────────────────────────────────────────
+
+  1. Kirib bo'lgach, yuqori o'ngdagi "+" tugmasini bosing.
+  2. "New repository" ni tanlang.
+  3. Quyidagicha to'ldiring:
+       - Repository name: marifat-cup
+       - Description: Ma'rifat Cup - Ma'naviyat va ma'rifat markazi
+       - Public (Ommaviy) — TANLANG
+       - "Add a README file" — TANLAMANG (galochkani olib tashlang)
+  4. Pastdagi yashil "Create repository" tugmasini bosing.
+
+───────────────────────────────────────────────────────────────────
+  3-QADAM: FAYLLARNI YUKLANG
+───────────────────────────────────────────────────────────────────
+
+  1. Yangi yaratgan repository sahifasida "uploading an existing
+     file" havolasini bosing
+     (yoki "Add file" → "Upload files" tugmasi orqali).
+
+  2. Ushbu papkadagi BARCHA fayllarni (index.html, admin.html,
+     robots.txt, sitemap.xml, 404.html, .nojekyll) tanlab,
+     brauzerga sudrab tashlang yoki "choose your files" bilan
+     tanlang.
+
+     MUHIM: .nojekyll fayl ham yuklanishi kerak! Agar ko'rinmasa,
+     Windows Explorer'da "View" → "Hidden items" yoqing.
+
+  3. Pastdagi "Commit changes" tugmasini bosing.
+
+───────────────────────────────────────────────────────────────────
+  4-QADAM: GITHUB PAGES'NI YOQING
+───────────────────────────────────────────────────────────────────
+
+  1. Repository sahifasida yuqoridagi "Settings" (Sozlamalar)
+     tugmasini bosing.
+  2. Chap menyudan "Pages" ni tanlang.
+  3. "Source" bo'limida:
+       - Branch: main (yoki master) tanlang
+       - Folder: / (root) tanlang
+  4. "Save" tugmasini bosing.
+  5. 1-2 daqiqa kuting. Yuqorida yashil quticha chiqadi:
+     "Your site is live at https://USERNAME.github.io/marifat-cup/"
+
+  Tabriklaymiz! Saytingiz internetga chiqdi!
+
+───────────────────────────────────────────────────────────────────
+  5-QADAM: SITEMAP VA ROBOTS.TXT NI YANGILANG
+───────────────────────────────────────────────────────────────────
+
+  Endi sitemap.xml va robots.txt fayllarida real URL ni qo'yish
+  kerak.
+
+  1. GitHub'da repository ichida robots.txt ni oching.
+  2. Yuqori o'ngdagi qalam (✏️) belgisini bosing.
+  3. Matnda "SIZNING-USERNAME" so'zini topib, o'z username'ingizga
+     almashtiring. Masalan, "olimjon123".
+  4. Pastda "Commit changes" bosing.
+  5. Xuddi shu narsani sitemap.xml uchun ham bajaring.
+
+───────────────────────────────────────────────────────────────────
+  6-QADAM: GOOGLE SEARCH CONSOLE'GA QO'SHING
+  (Bu qadam — saytingizning Google'da topilishini ta'minlaydi!)
+───────────────────────────────────────────────────────────────────
+
+  1. Brauzerda oching:  https://search.google.com/search-console
+  2. Google akkaunti bilan kiring.
+  3. "Add property" (Mulk qo'shish) tugmasini bosing.
+  4. "URL prefix" turini tanlang va saytingiz URL'ini kiriting:
+     https://USERNAME.github.io/marifat-cup/
+  5. Google sizdan saytni tasdiqlashni so'raydi:
+       - "HTML tag" usulini tanlang
+       - <meta name="google-site-verification" ... /> kodini
+         nusxalang
+       - GitHub'da index.html ni oching, <head> ichiga yopishtiring
+         (mavjud meta-teglar yonida)
+       - "Commit changes" bosing
+       - Google Search Console'da "Verify" bosing
+  6. Tasdiqlangach, chap menyudan "Sitemaps" ni tanlang.
+  7. "sitemap.xml" deb yozing va "Submit" bosing.
+
+  Bir necha kun ichida (odatda 3-7 kun) saytingiz Google'da
+  topiladigan bo'ladi!
+
+───────────────────────────────────────────────────────────────────
+  7-QADAM (IXTIYORIY): TEZROQ INDEKSLASH
+───────────────────────────────────────────────────────────────────
+
+  Google Search Console'da:
+  1. Yuqoridagi qidiruv qatoriga saytingiz URL'ini kiriting.
+  2. "Request indexing" tugmasini bosing.
+  3. Google bot bir necha soat ichida sahifani ko'radi.
+
+───────────────────────────────────────────────────────────────────
+  GOOGLE'DA QANDAY QIDIRSA TOPILADI?
+───────────────────────────────────────────────────────────────────
+
+  Indekslangach, quyidagi so'zlar bilan qidirish mumkin:
+    • Ma'rifat Cup
+    • marifat cup
+    • Ma'naviyat va ma'rifat markazi
+    • Olimjon Davlatov onlayn kurs
+    • Ma'naviyat sektori
+    • Onlayn kviz o'zbek tilida
+    • Bepul sertifikat o'zbek
+    + va boshqa kalit so'zlar (index.html ichida keywords meta'da)
+
+───────────────────────────────────────────────────────────────────
+  MUHIM ESLATMALAR
+───────────────────────────────────────────────────────────────────
+
+  • Ushbu sayt foydalanuvchi qurilmasida ma'lumotlarni saqlaydi
+    (localStorage). Server kerak emas.
+  • Admin paneliga kirish:  USERNAME.github.io/marifat-cup/admin.html
+  • Admin paneli Google'da CHIQMAYDI (noindex qo'yilgan).
+  • Saytni yangilash uchun: GitHub'da fayllarni qayta yuklash
+    yoki tahrirlash kifoya. 1-2 daqiqada yangilanadi.
+
+───────────────────────────────────────────────────────────────────
+  MUAMMOLAR BO'LSA
+───────────────────────────────────────────────────────────────────
+
+  • Sayt ochilmayotgan bo'lsa: 5 daqiqa kuting, GitHub Pages
+    biroz vaqt oladi.
+  • Google'da chiqmayotgan bo'lsa: 3-7 kun kutish kerak. Search
+    Console'da "Coverage" bo'limini tekshiring.
+  • Saytda emoji belgilar buzilgan bo'lsa: index.html ichida
+    <meta charset="UTF-8"> bor-yo'qligini tekshiring.
+
+═══════════════════════════════════════════════════════════════════
+  OMAD! Savol bo'lsa, AI yordamchidan so'rashingiz mumkin.
+═══════════════════════════════════════════════════════════════════

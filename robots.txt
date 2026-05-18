@@ -1,0 +1,25 @@
+# Ma'rifat Cup - robots.txt
+# Google va boshqa qidiruv tizimlari uchun ko'rsatma
+
+User-agent: *
+Allow: /
+Allow: /index.html
+Disallow: /admin.html
+Disallow: /admin/
+
+# Sitemap
+Sitemap: https://ismailov-utkir.github.io/marifat-cup/sitemap.xml
+
+# Maxsus botlar
+User-agent: Googlebot
+Allow: /
+Disallow: /admin.html
+Crawl-delay: 1
+
+User-agent: Yandex
+Allow: /
+Disallow: /admin.html
+
+User-agent: Bingbot
+Allow: /
+Disallow: /admin.html
