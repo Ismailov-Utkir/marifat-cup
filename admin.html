@@ -1391,53 +1391,126 @@ async function parseWordQuestions(file) {
   const html = result.value;
   const div = document.createElement('div');
   div.innerHTML = html;
-  // Har bir paragraf — alohida qator
-  const lines = [];
-  div.querySelectorAll('p, li').forEach(el => {
-    const text = el.textContent.replace(/\s+/g, ' ').trim();
-    if (!text) return;
-    // Bold (jirniy) qismlarni topish
+
+  // Helper: element matnini va bold qismini ajratish (ichki ro'yxatlarni e'tibordan tashqarida qoldirish)
+  function extractInfo(el) {
+    const clone = el.cloneNode(true);
+    clone.querySelectorAll('ol, ul').forEach(n => n.remove());
+    const text = clone.textContent.replace(/\s+/g, ' ').trim();
     let boldText = '';
-    el.querySelectorAll('strong, b').forEach(b => {
-      boldText += ' ' + b.textContent.trim();
+    clone.querySelectorAll('strong, b').forEach(b => boldText += ' ' + b.textContent);
+    boldText = boldText.replace(/\s+/g, ' ').trim();
+    return { text, boldText, hasBold: boldText.length > 0 };
+  }
+
+  // STRATEGIYA A: Ichma-ich ro'yxatlar (Word'ning avtomatik raqamlash)
+  // <ol><li>Savol<ol><li>Variant1</li>...<li>Variant4</li></ol></li></ol>
+  function tryNestedListsStrategy() {
+    const found = [];
+    div.querySelectorAll('ol, ul').forEach(outerList => {
+      // Faqat eng tashqi ro'yxatlar
+      if (outerList.parentElement && outerList.parentElement.closest('ol, ul')) return;
+      const outerItems = Array.from(outerList.children).filter(c => c.tagName === 'LI');
+      for (const li of outerItems) {
+        const nested = li.querySelector('ol, ul');
+        if (!nested) continue;
+        const nestedItems = Array.from(nested.children).filter(c => c.tagName === 'LI');
+        if (nestedItems.length !== 4) continue;
+        const qInfo = extractInfo(li);
+        if (!qInfo.text) continue;
+        const optInfos = nestedItems.map(extractInfo).filter(o => o.text);
+        if (optInfos.length !== 4) continue;
+        found.push({ qInfo, optInfos });
+      }
     });
-    boldText = boldText.trim();
-    lines.push({ text, boldText, hasBold: boldText.length > 0 });
-  });
-  // Savol boshini aniqlash (1. 2. ... yoki Savol N:)
-  const QUESTION_RE = /^(?:\d+[\.\)]\s+|Savol\s*\d+[:\.\s]+|#\d+[\.\)]\s+|Q\d+[\.\)]\s+)(.+)/i;
-  // Variantlar prefiksini olib tashlash (A) B) 1) a. va h.k.)
+    return found;
+  }
+
+  // STRATEGIYA B: Tekis ro'yxat — paragraflar va list itemlar tartibida
+  function tryFlatStrategy() {
+    const lines = [];
+    function walk(node) {
+      if (!node || node.nodeType !== 1) return;
+      const tag = node.tagName ? node.tagName.toLowerCase() : '';
+      if (tag === 'p' || tag === 'li') {
+        const info = extractInfo(node);
+        if (info.text) lines.push(info);
+        // Ichki ro'yxatlarni ham hisobga olish
+        for (const child of node.children) {
+          if (child.tagName === 'OL' || child.tagName === 'UL') walk(child);
+        }
+      } else {
+        for (const child of node.children) walk(child);
+      }
+    }
+    walk(div);
+
+    const QUESTION_RE = /^(?:\d+[\.\)]\s+|Savol\s*\d+[:\.\s]+|#\d+[\.\)]\s+|Q\d+[\.\)]\s+)(.+)/i;
+    const OPTION_LETTER_RE = /^[A-DA-Da-dА-Га-г][\.\)]\s+/;
+
+    const found = [];
+    let i = 0;
+    while (i < lines.length) {
+      const line = lines[i];
+      const text = line.text;
+      let qText = null;
+
+      // 1) Aniq "1." prefix bilan
+      const qMatch = text.match(QUESTION_RE);
+      if (qMatch) {
+        qText = qMatch[1].trim();
+      } else {
+        // 2) Keyingi 4 ta qator variantga o'xshasa — bu savol
+        const next4 = lines.slice(i + 1, i + 5);
+        if (next4.length === 4) {
+          const lettersCount = next4.filter(l => OPTION_LETTER_RE.test(l.text)).length;
+          const allShort = next4.every(l => l.text.length < 300);
+          const noneAreQ = !next4.some(l => QUESTION_RE.test(l.text));
+          // Agar kamida 3 ta variant "A." bilan boshlansa, yoki barchasi qisqa va savol bo'lmasa
+          if (noneAreQ && (lettersCount >= 3 || (allShort && text.length > 8))) {
+            qText = text;
+          }
+        }
+      }
+
+      if (qText === null) { i++; continue; }
+
+      const optInfos = [];
+      let j = i + 1;
+      while (j < lines.length && optInfos.length < 4) {
+        const optLine = lines[j];
+        if (QUESTION_RE.test(optLine.text)) break;
+        if (optLine.text) optInfos.push(optLine);
+        j++;
+      }
+      if (optInfos.length === 4) {
+        found.push({ qInfo: { text: qText, boldText: line.boldText, hasBold: line.hasBold }, optInfos });
+        i = j;
+      } else {
+        i++;
+      }
+    }
+    return found;
+  }
+
+  // Strategiyalarni navbat bilan urinib ko'ramiz
+  let raw = tryNestedListsStrategy();
+  if (raw.length === 0) raw = tryFlatStrategy();
+
   const OPTION_PREFIX_RE = /^(?:[A-Da-dА-Га-г]|\d)[\.\)]\s*/;
   const questions = [];
-  let i = 0;
-  while (i < lines.length) {
-    const line = lines[i];
-    const qMatch = line.text.match(QUESTION_RE);
-    if (!qMatch) { i++; continue; }
-    const qText = qMatch[1].trim();
-    const options = [];
-    let j = i + 1;
-    while (j < lines.length && options.length < 4) {
-      const optLine = lines[j];
-      // Yangi savol boshlandi — to'xtaymiz
-      if (QUESTION_RE.test(optLine.text)) break;
-      // Variantlar prefiksini olib tashlash
-      const cleanText = optLine.text.replace(OPTION_PREFIX_RE, '').trim();
-      if (!cleanText) { j++; continue; }
-      // Bold qismdan ham prefiksni olib tashlaymiz
-      const cleanBold = optLine.boldText.replace(OPTION_PREFIX_RE, '').trim();
-      // To'g'ri javob: bold matn variantning kamida 40% ini qoplasa
-      const isCorrect = optLine.hasBold && cleanBold.length >= cleanText.length * 0.4;
-      options.push({ text: cleanText, isCorrect });
-      j++;
-    }
-    if (options.length === 4) {
-      let correctIndex = options.findIndex(o => o.isCorrect);
-      if (correctIndex < 0) correctIndex = 0; // Bold topilmasa, default A
-      questions.push({ text: qText, options, correctIndex });
-    }
-    i = j > i ? j : i + 1;
+  for (const { qInfo, optInfos } of raw) {
+    const opts = optInfos.map(opt => {
+      const text = opt.text.replace(OPTION_PREFIX_RE, '').trim();
+      const cleanBold = opt.boldText.replace(OPTION_PREFIX_RE, '').trim();
+      const isCorrect = cleanBold.length > 0 && cleanBold.length >= text.length * 0.4;
+      return { text, isCorrect };
+    });
+    let correctIndex = opts.findIndex(o => o.isCorrect);
+    if (correctIndex < 0) correctIndex = 0;
+    questions.push({ text: qInfo.text, options: opts, correctIndex });
   }
+
   // Har bir savol uchun javoblar tartibini tasodifiy aralashtirish
   return questions.map(q => {
     const correctText = q.options[q.correctIndex].text;
