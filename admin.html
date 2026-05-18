@@ -107,6 +107,15 @@
     background: #f0fdfa; color: var(--primary-dark);
     padding: 6px 12px; border-radius: 100px; font-size: 12px; font-weight: 700;
   }
+  .admin-widget {
+    background: #f3f4f6; color: var(--ink);
+    padding: 6px 12px; border-radius: 100px;
+    font-weight: 700; font-size: 13px;
+    display: inline-flex; align-items: center; gap: 5px;
+  }
+  @media (max-width: 640px) {
+    .admin-widget { padding: 4px 8px; font-size: 11px; }
+  }
   .nav-tabs {
     background: white; border-radius: var(--radius-lg); padding: 6px;
     width: 100%; max-width: 1100px; margin-bottom: 14px;
@@ -342,6 +351,8 @@
   <div class="admin-header">
     <div class="admin-logo">🛠️ Ma'rifat <span class="badge">Admin Panel</span></div>
     <div class="admin-header-right">
+      <div id="admin-clock" class="admin-widget" title="Hozirgi vaqt">🕐 <span id="admin-clock-time">--:--:--</span></div>
+      <div id="admin-weather" class="admin-widget" title="Ob-havo" style="display:none;">☀️ <span id="admin-weather-text">--°</span></div>
       <span class="session-badge">✓ Tizimga kirildi</span>
       <button class="btn btn-secondary btn-sm" onclick="logout()">Chiqish</button>
     </div>
@@ -747,6 +758,25 @@ D) Noto'g'ri</pre>
         <h3>📥 Ma'lumotlarni eksport qilish</h3>
         <p>Barcha kurslar va kvizlarni JSON fayl sifatida yuklab oling. Boshqa qurilmaga uzatish uchun.</p>
         <button class="btn btn-accent" onclick="exportData()">📥 JSON yuklash</button>
+      </div>
+
+      <div class="settings-block" style="background: linear-gradient(135deg, #f0fdfa, #ccfbf1); border-color: var(--primary);">
+        <h3>📈 Batafsil statistika</h3>
+        <p>Lokal qurilmangizdagi ma'lumotlar — qaysi kurs ko'p ko'rilgan, kim sertifikat olgan va h.k.</p>
+        <button class="btn btn-primary" onclick="showDetailedStats()">📊 Statistikani ko'rsatish</button>
+        <div id="detailed-stats-container" style="margin-top: 16px;"></div>
+      </div>
+
+      <div class="settings-block">
+        <h3>📊 Foydalanuvchilar CSV eksport</h3>
+        <p>Foydalanuvchilarni Excel uchun CSV ga eksport qiling.
+          <br><b>Eslatma:</b> Faqat shu admin qurilmasidan kirgan foydalanuvchilar ko'rinadi.
+          Boshqa qurilmalardagi foydalanuvchilar uchun Google Analytics'ni ishlating.
+        </p>
+        <div style="display:flex; gap:8px; flex-wrap:wrap;">
+          <button class="btn btn-secondary" onclick="exportUsersCSV()">👥 Barcha foydalanuvchilar (CSV)</button>
+          <button class="btn btn-accent" onclick="exportCertificatesCSV()">📜 Faqat sertifikat olganlar (CSV)</button>
+        </div>
       </div>
       <div class="settings-block">
         <h3>📤 Ma'lumotlarni import qilish</h3>
@@ -1173,6 +1203,63 @@ function enterAdmin() {
   loadData();
   showScreen('admin-app');
   showView('dashboard');
+  startAdminClock();
+  loadAdminWeather();
+  setInterval(loadAdminWeather, 30 * 60 * 1000);
+}
+
+function startAdminClock() {
+  const update = () => {
+    const now = new Date();
+    const hh = String(now.getHours()).padStart(2, '0');
+    const mm = String(now.getMinutes()).padStart(2, '0');
+    const ss = String(now.getSeconds()).padStart(2, '0');
+    const el = document.getElementById('admin-clock-time');
+    if (el) el.textContent = `${hh}:${mm}:${ss}`;
+  };
+  update();
+  setInterval(update, 1000);
+}
+
+const ADMIN_WEATHER_ICONS = {
+  0: '☀️', 1: '🌤️', 2: '⛅', 3: '☁️',
+  45: '🌫️', 48: '🌫️',
+  51: '🌦️', 53: '🌦️', 55: '🌦️',
+  61: '🌧️', 63: '🌧️', 65: '🌧️',
+  71: '🌨️', 73: '🌨️', 75: '🌨️',
+  77: '🌨️', 80: '🌦️', 81: '🌧️', 82: '⛈️',
+  85: '🌨️', 86: '🌨️',
+  95: '⛈️', 96: '⛈️', 99: '⛈️'
+};
+
+async function loadAdminWeather() {
+  try {
+    const cached = localStorage.getItem('mc_weather_cache');
+    if (cached) {
+      const { data, time } = JSON.parse(cached);
+      if (Date.now() - time < 20 * 60 * 1000) {
+        showAdminWeather(data);
+        return;
+      }
+    }
+    const resp = await fetch('https://api.open-meteo.com/v1/forecast?latitude=41.3111&longitude=69.2797&current=temperature_2m,weather_code&timezone=Asia/Tashkent');
+    if (!resp.ok) return;
+    const data = await resp.json();
+    localStorage.setItem('mc_weather_cache', JSON.stringify({ data, time: Date.now() }));
+    showAdminWeather(data);
+  } catch (e) {}
+}
+
+function showAdminWeather(data) {
+  const temp = Math.round(data.current?.temperature_2m);
+  const code = data.current?.weather_code || 0;
+  const icon = ADMIN_WEATHER_ICONS[code] || '🌡️';
+  const widget = document.getElementById('admin-weather');
+  if (widget) {
+    widget.innerHTML = `${icon} <span id="admin-weather-text">${temp}°C</span>`;
+    widget.style.display = '';
+    widget.title = `Toshkent · ${temp}°C`;
+  }
 }
 function loadData() {
   try {
@@ -2224,6 +2311,164 @@ function deleteAnn(id) {
     renderAnnList();
     toast("O'chirildi", 'success');
   });
+}
+
+function showDetailedStats() {
+  const container = document.getElementById('detailed-stats-container');
+  let usersLog = [];
+  try { usersLog = JSON.parse(localStorage.getItem('mc_users_log') || '[]'); } catch (e) {}
+  let courseScores = {};
+  try { courseScores = JSON.parse(localStorage.getItem('mc_course_scores') || '{}'); } catch (e) {}
+  // 1) Eng faol foydalanuvchilar (tanga bo'yicha)
+  const topUsers = [...usersLog].sort((a, b) => b.coins - a.coins).slice(0, 10);
+  // 2) Eng ko'p sertifikat olgan
+  const topCertHolders = [...usersLog].filter(u => u.certificates > 0).sort((a, b) => b.certificates - a.certificates).slice(0, 5);
+  // 3) Kurs bo'yicha o'tganlar soni
+  const courseStats = {};
+  courses.forEach(c => {
+    const scores = courseScores[c.id] || [];
+    const uniqueUsers = new Set(scores.map(s => s.name));
+    const passed = scores.filter(s => s.percent >= 70).length;
+    const avgPercent = scores.length > 0 ? Math.round(scores.reduce((a, s) => a + s.percent, 0) / scores.length) : 0;
+    courseStats[c.id] = { title: c.title, attempts: scores.length, uniqueUsers: uniqueUsers.size, passed, avgPercent };
+  });
+  const sortedCourses = Object.values(courseStats).sort((a, b) => b.attempts - a.attempts);
+  // HTML chiqarish
+  container.innerHTML = `
+    <div style="background: white; border-radius: 12px; padding: 16px; margin-top: 12px;">
+      <h4 style="margin-bottom: 12px; color: var(--ink);">📊 Umumiy raqamlar</h4>
+      <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 10px; margin-bottom: 20px;">
+        <div style="background: #f0fdfa; padding: 12px; border-radius: 10px; text-align: center;">
+          <div style="font-size: 24px; font-weight: 900; color: var(--primary);">${usersLog.length}</div>
+          <div style="font-size: 12px; color: var(--ink-2);">Foydalanuvchilar</div>
+        </div>
+        <div style="background: #fef3c7; padding: 12px; border-radius: 10px; text-align: center;">
+          <div style="font-size: 24px; font-weight: 900; color: #92400e;">${usersLog.reduce((s, u) => s + u.certificates, 0)}</div>
+          <div style="font-size: 12px; color: var(--ink-2);">Sertifikatlar</div>
+        </div>
+        <div style="background: #f3e8ff; padding: 12px; border-radius: 10px; text-align: center;">
+          <div style="font-size: 24px; font-weight: 900; color: var(--secondary);">${usersLog.reduce((s, u) => s + u.lessonsCompleted, 0)}</div>
+          <div style="font-size: 12px; color: var(--ink-2);">Tugatilgan mavzular</div>
+        </div>
+        <div style="background: #fee2e2; padding: 12px; border-radius: 10px; text-align: center;">
+          <div style="font-size: 24px; font-weight: 900; color: #b91c1c;">${usersLog.reduce((s, u) => s + u.coins, 0)}</div>
+          <div style="font-size: 12px; color: var(--ink-2);">Jami tangalar</div>
+        </div>
+      </div>
+
+      <h4 style="margin-bottom: 12px; color: var(--ink);">🏆 TOP 10 faol</h4>
+      <div style="margin-bottom: 20px;">
+        ${topUsers.length === 0 ? '<p style="color: var(--ink-2);">Hozircha foydalanuvchi yo\'q</p>' :
+          topUsers.map((u, i) => `
+            <div style="display: flex; justify-content: space-between; padding: 8px; border-bottom: 1px solid #f3f4f6;">
+              <span><b>${i + 1}.</b> ${esc(u.name)}</span>
+              <span style="color: var(--primary-dark); font-weight: 700;">🪙 ${u.coins} · 📜 ${u.certificates}</span>
+            </div>
+          `).join('')}
+      </div>
+
+      <h4 style="margin-bottom: 12px; color: var(--ink);">📚 Kurslar bo'yicha</h4>
+      <div>
+        ${sortedCourses.length === 0 ? '<p style="color: var(--ink-2);">Kurs ma\'lumotlari yo\'q</p>' :
+          sortedCourses.map(s => `
+            <div style="padding: 10px; background: #f9fafb; border-radius: 8px; margin-bottom: 6px;">
+              <div style="font-weight: 700; margin-bottom: 4px;">${esc(s.title)}</div>
+              <div style="font-size: 13px; color: var(--ink-2);">
+                👥 ${s.uniqueUsers} ta foydalanuvchi · 🎯 ${s.attempts} ta urinish · ✅ ${s.passed} ta o'tgan · O'rta: ${s.avgPercent}%
+              </div>
+            </div>
+          `).join('')}
+      </div>
+
+      <p style="font-size: 12px; color: var(--ink-2); margin-top: 16px; font-style: italic;">
+        ℹ️ Bu ma'lumotlar faqat shu admin qurilmasidan kirgan foydalanuvchilar uchun.
+        Global statistika uchun <a href="https://analytics.google.com/analytics/web/" target="_blank" style="color: var(--primary);">Google Analytics</a> ni ishlating.
+      </p>
+    </div>
+  `;
+}
+
+function exportUsersCSV() {
+  // localStorage'dan barcha foydalanuvchilar ma'lumotini olamiz
+  // (mc_users_log va mc_course_scores'dan)
+  let usersLog = [];
+  try { usersLog = JSON.parse(localStorage.getItem('mc_users_log') || '[]'); } catch (e) {}
+  let courseScores = {};
+  try { courseScores = JSON.parse(localStorage.getItem('mc_course_scores') || '{}'); } catch (e) {}
+  if (usersLog.length === 0) {
+    toast("Hozircha foydalanuvchilar ma'lumoti yo'q", 'error');
+    return;
+  }
+  // CSV ustunlari
+  const header = ['Ism', 'Tangalar', 'Sertifikatlar', 'Tugatilgan mavzular', 'Birinchi kirish', 'Oxirgi kirish', 'Kurslarda natija'];
+  const rows = usersLog.map(u => {
+    const userScores = [];
+    Object.entries(courseScores).forEach(([cid, scores]) => {
+      const myScores = (scores || []).filter(s => s.name === u.name);
+      if (myScores.length > 0) {
+        const best = myScores.reduce((b, s) => s.percent > b.percent ? s : b);
+        userScores.push(`${cid}:${best.percent}%`);
+      }
+    });
+    return [
+      u.name,
+      u.coins,
+      u.certificates,
+      u.lessonsCompleted,
+      new Date(u.firstSeen).toLocaleDateString('uz-UZ'),
+      new Date(u.lastSeen).toLocaleDateString('uz-UZ'),
+      userScores.join('; ')
+    ];
+  });
+  // CSV ga aylantirish
+  const escape = (s) => {
+    const str = String(s == null ? '' : s);
+    if (/[",\n;]/.test(str)) return '"' + str.replace(/"/g, '""') + '"';
+    return str;
+  };
+  let csv = '﻿'; // BOM (Excel UTF-8 uchun)
+  csv += header.map(escape).join(';') + '\r\n';
+  csv += rows.map(r => r.map(escape).join(';')).join('\r\n');
+  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `marifat-cup-users-${new Date().toISOString().slice(0,10)}.csv`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+  toast(`✅ ${usersLog.length} ta foydalanuvchi CSV ga eksport qilindi`, 'success');
+}
+
+function exportCertificatesCSV() {
+  // Faqat sertifikat olganlar
+  let usersLog = [];
+  try { usersLog = JSON.parse(localStorage.getItem('mc_users_log') || '[]'); } catch (e) {}
+  const certHolders = usersLog.filter(u => u.certificates > 0);
+  if (certHolders.length === 0) {
+    toast("Hozircha sertifikat olganlar yo'q", 'error');
+    return;
+  }
+  const header = ['Ism', 'Sertifikatlar soni', 'Tangalar', 'Birinchi kirish'];
+  const rows = certHolders.map(u => [u.name, u.certificates, u.coins, new Date(u.firstSeen).toLocaleDateString('uz-UZ')]);
+  const escape = (s) => {
+    const str = String(s == null ? '' : s);
+    if (/[",\n;]/.test(str)) return '"' + str.replace(/"/g, '""') + '"';
+    return str;
+  };
+  let csv = '﻿' + header.map(escape).join(';') + '\r\n';
+  csv += rows.map(r => r.map(escape).join(';')).join('\r\n');
+  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `marifat-cup-certificates-${new Date().toISOString().slice(0,10)}.csv`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+  toast(`✅ ${certHolders.length} ta sertifikat olgan eksport qilindi`, 'success');
 }
 
 function exportData() {
