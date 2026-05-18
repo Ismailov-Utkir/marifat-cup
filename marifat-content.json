@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "exportedAt": "2026-05-18T11:27:08.141Z",
+  "exportedAt": "2026-05-18T11:29:55.496Z",
   "source": "marifat-cup-admin-auto",
   "courses": [
     {
@@ -134,7 +134,7 @@
         ]
       },
       "createdAt": 1779102858314,
-      "updatedAt": 1779102858314
+      "updatedAt": 1779103795495
     }
   ],
   "quizzes": [],
