@@ -467,7 +467,7 @@
         <input class="input" id="slide-presenter-input" placeholder="Masalan: Olimjon Davlatov"></div>
 
       <h3 class="section-divider">📄 PDF fayl</h3>
-      <p class="sub" style="margin-top: -4px;">PDF faylni yuklang (50 MB gacha — IndexedDB orqali). Yoki tashqi URL kiriting.</p>
+      <p class="sub" style="margin-top: -4px;">PDF faylni yuklang (1 MB dan 500 MB gacha — IndexedDB orqali). Yoki tashqi URL kiriting.</p>
       <div class="field">
         <label>PDF fayl yuklash</label>
         <input type="file" id="slide-pdf-file" accept="application/pdf" onchange="handleSlidePdfUpload(event)" style="padding: 8px; width: 100%;">
@@ -520,7 +520,7 @@
         <h1>📖 E-kitoblar</h1>
         <button class="btn btn-primary" onclick="openEbookEditor()">+ Yangi e-kitob</button>
       </div>
-      <p class="sub">Kitoblarni PDF formatda yuklang (50 MB gacha)</p>
+      <p class="sub">Kitoblarni PDF formatda yuklang (500 MB gacha)</p>
       <div id="ebooks-list" class="item-list"></div>
     </div>
 
@@ -547,7 +547,7 @@
       </div>
       <h3 class="section-divider">📄 PDF fayl</h3>
       <div class="field">
-        <label>PDF fayl yuklash (50 MB gacha)</label>
+        <label>PDF fayl yuklash (500 MB gacha)</label>
         <input type="file" id="ebook-pdf-file" accept="application/pdf" onchange="handleEbookPdfUpload(event)" style="padding: 8px; width: 100%;">
         <p id="ebook-pdf-status" style="margin-top: 6px; font-size: 13px; color: var(--ink-2);"></p>
       </div>
@@ -599,7 +599,45 @@
 
     <div class="view" id="view-settings">
       <h1>⚙️ Sozlamalar</h1>
-      <p class="sub">Parol, eksport va boshqa konfiguratsiyalar</p>
+      <p class="sub">Parol, GitHub sinxron va boshqa konfiguratsiyalar</p>
+
+      <div class="settings-block" style="border-color: #5eead4; background: #f0fdfa;">
+        <h3>🔄 GitHub avtomatik sinxron</h3>
+        <p>
+          Token kiritsangiz, har bir saqlash <b>GitHub'ga avtomatik yuklanadi</b>.
+          Boshqa qurilmalardan saytni ochgan foydalanuvchilar 1-2 daqiqada yangi kontentingizni ko'radi.
+        </p>
+        <p id="gh-token-status" style="font-weight: 700; margin-bottom: 12px;">⚠️ Token sozlanmagan.</p>
+
+        <details style="margin-bottom: 14px;">
+          <summary style="cursor: pointer; font-weight: 700; color: var(--primary-dark);">📖 Tokenni qanday yaratish? (qadamma-qadam)</summary>
+          <ol style="margin-top: 10px; padding-left: 22px; font-size: 14px; line-height: 1.7;">
+            <li>Oching: <a href="https://github.com/settings/personal-access-tokens/new" target="_blank" style="color: var(--primary-dark);">github.com/settings/personal-access-tokens/new</a></li>
+            <li><b>Token name:</b> <code>Marifat Cup Admin</code></li>
+            <li><b>Expiration:</b> "No expiration" yoki 1 yil</li>
+            <li><b>Repository access:</b> "Only select repositories" → <code>Ismailov-Utkir/marifat-cup</code> ni tanlang</li>
+            <li><b>Permissions → Repository permissions → Contents:</b> "Read and write" tanlang</li>
+            <li>Pastda yashil <b>"Generate token"</b> bosing</li>
+            <li>Token chiqadi (<code>github_pat_...</code> bilan boshlanadi). Nusxalang!</li>
+            <li>Pastdagi katakka yopishtiring va "Saqlash" bosing</li>
+          </ol>
+          <p style="font-size: 12px; color: var(--ink-2); margin-top: 8px;">
+            ⚠️ <b>Eslatma:</b> Token faqat shu qurilmangizdagi brauzeringizda saqlanadi (localStorage).
+            Hech qachon hech kim bilan baham ko'rmang!
+          </p>
+        </details>
+
+        <div class="field">
+          <label>GitHub Personal Access Token</label>
+          <input class="input" type="password" id="gh-token-input" placeholder="github_pat_... yoki ghp_...">
+        </div>
+        <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+          <button class="btn btn-primary" onclick="saveGhToken()">💾 Tokenni saqlash</button>
+          <button class="btn btn-accent" onclick="syncToGitHub(false)">🔄 Hozir sinxronlash</button>
+          <button class="btn btn-secondary btn-sm" onclick="removeGhToken()">🗑️ Tokenni o'chirish</button>
+        </div>
+      </div>
+
       <div class="settings-block">
         <h3>🔑 Parolni o'zgartirish</h3>
         <p>Yangi parol o'rnating. Eski parolni bilishingiz kerak.</p>
@@ -692,11 +730,124 @@ const COLOR_GRADS = {
   5: 'linear-gradient(135deg, #ec4899, #be185d)',
   6: 'linear-gradient(135deg, #f59e0b, #b45309)'
 };
-const STORAGE = { COURSES: 'mc_courses', QUIZZES: 'mc_quizzes', SLIDES: 'mc_slides', EBOOKS: 'mc_ebooks', MEETINGS: 'mc_meetings', ANN: 'mc_announcements', PWD: 'mc_admin_pwd', SESSION: 'mc_admin_session' };
+const STORAGE = { COURSES: 'mc_courses', QUIZZES: 'mc_quizzes', SLIDES: 'mc_slides', EBOOKS: 'mc_ebooks', MEETINGS: 'mc_meetings', ANN: 'mc_announcements', PWD: 'mc_admin_pwd', SESSION: 'mc_admin_session', GH_TOKEN: 'mc_admin_gh_token' };
 
 // Qattiq belgilangan admin parol hash'i (faqat egasi biladi).
 // Boshqalar har qancha urinsa ham, faqat to'g'ri parol bilan kira oladi.
 const HARDCODED_PWD_HASH = 'v2:8d34a2a5';
+
+// GitHub avtomatik sinxron sozlamalari
+const GITHUB_REPO = 'Ismailov-Utkir/marifat-cup';
+const GITHUB_FILE = 'marifat-content.json';
+const GITHUB_BRANCH = 'main';
+let _syncLock = false;
+let _syncPending = false;
+
+async function ghGetFileSha() {
+  const token = localStorage.getItem(STORAGE.GH_TOKEN);
+  if (!token) return null;
+  try {
+    const resp = await fetch(`https://api.github.com/repos/${GITHUB_REPO}/contents/${GITHUB_FILE}?ref=${GITHUB_BRANCH}`, {
+      headers: { 'Authorization': 'token ' + token, 'Accept': 'application/vnd.github.v3+json' }
+    });
+    if (!resp.ok) return null;
+    const data = await resp.json();
+    return data.sha || null;
+  } catch (e) { return null; }
+}
+
+async function syncToGitHub(silent) {
+  const token = localStorage.getItem(STORAGE.GH_TOKEN);
+  if (!token) {
+    if (!silent) toast("⚠️ GitHub token sozlanmagan. Sozlamalarga kiring.", 'error');
+    return false;
+  }
+  if (_syncLock) { _syncPending = true; return false; }
+  _syncLock = true;
+  if (!silent) toast("🔄 GitHub'ga sinxronlanmoqda...", '');
+  try {
+    const payload = {
+      version: 1,
+      exportedAt: new Date().toISOString(),
+      source: 'marifat-cup-admin-auto',
+      courses, quizzes, slides,
+      announcements: anns, ebooks, meetings
+    };
+    const json = JSON.stringify(payload, null, 2);
+    // UTF-8 -> base64 (emoji va kirill harflarni to'g'ri o'tkazish)
+    const contentBase64 = btoa(unescape(encodeURIComponent(json)));
+    const sha = await ghGetFileSha();
+    const body = {
+      message: 'Auto-sync: admin content updated ' + new Date().toISOString(),
+      content: contentBase64,
+      branch: GITHUB_BRANCH
+    };
+    if (sha) body.sha = sha;
+    const resp = await fetch(`https://api.github.com/repos/${GITHUB_REPO}/contents/${GITHUB_FILE}`, {
+      method: 'PUT',
+      headers: {
+        'Authorization': 'token ' + token,
+        'Accept': 'application/vnd.github.v3+json',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(body)
+    });
+    if (resp.ok) {
+      // Muvaffaqiyat: silent rejimda ham qisqa eslatma beramiz
+      toast(silent ? "☁️ Sinxronlandi" : "✅ GitHub'ga sinxronlandi! 1-2 daqiqada barcha qurilmalarda ko'rinadi.", 'success');
+      return true;
+    } else {
+      // Xato har doim ko'rsatiladi
+      const err = await resp.json().catch(() => ({}));
+      const msg = err.message || ('HTTP ' + resp.status);
+      toast("❌ Sinxron xato: " + msg, 'error');
+      return false;
+    }
+  } catch (e) {
+    toast("❌ Internet xatosi: " + e.message, 'error');
+    return false;
+  } finally {
+    _syncLock = false;
+    if (_syncPending) {
+      _syncPending = false;
+      setTimeout(() => syncToGitHub(true), 800);
+    }
+  }
+}
+
+function saveGhToken() {
+  const token = document.getElementById('gh-token-input').value.trim();
+  if (!token) { toast("Tokenni kiriting", 'error'); return; }
+  if (!token.startsWith('ghp_') && !token.startsWith('github_pat_')) {
+    toast("⚠️ Token noto'g'ri. GitHub token 'ghp_' yoki 'github_pat_' bilan boshlanishi kerak.", 'error');
+    return;
+  }
+  localStorage.setItem(STORAGE.GH_TOKEN, token);
+  document.getElementById('gh-token-input').value = '';
+  document.getElementById('gh-token-status').textContent = "✅ Token saqlangan. Avtomatik sinxron faol.";
+  document.getElementById('gh-token-status').style.color = 'var(--success)';
+  toast("✓ Token saqlandi. Endi har bir saqlash avtomatik sinxronlanadi.", 'success');
+}
+
+function removeGhToken() {
+  if (!confirm("GitHub tokenni o'chirib tashlaysizmi? Endi qo'l bilan sinxronlash kerak bo'ladi.")) return;
+  localStorage.removeItem(STORAGE.GH_TOKEN);
+  document.getElementById('gh-token-status').textContent = "⚠️ Token sozlanmagan. Avtomatik sinxron ishlamaydi.";
+  document.getElementById('gh-token-status').style.color = 'var(--danger)';
+  toast("Token o'chirildi", '');
+}
+
+function updateGhTokenStatus() {
+  const el = document.getElementById('gh-token-status');
+  if (!el) return;
+  if (localStorage.getItem(STORAGE.GH_TOKEN)) {
+    el.textContent = "✅ Token saqlangan. Avtomatik sinxron faol.";
+    el.style.color = 'var(--success)';
+  } else {
+    el.textContent = "⚠️ Token sozlanmagan. Avtomatik sinxron ishlamaydi.";
+    el.style.color = 'var(--danger)';
+  }
+}
 
 let courses = [];
 let quizzes = [];
@@ -866,6 +1017,10 @@ function saveData() {
   } catch (e) {
     toast("Xatolik: localStorage to'ldi", 'error');
   }
+  // Avtomatik GitHub sinxron (faqat token sozlangan bo'lsa)
+  if (localStorage.getItem(STORAGE.GH_TOKEN)) {
+    syncToGitHub(true);
+  }
 }
 function showView(name) {
   document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
@@ -880,6 +1035,7 @@ function showView(name) {
   else if (name === 'announcements') renderAnnList();
   else if (name === 'ebooks') renderEbooksList();
   else if (name === 'meetings') renderMeetingsList();
+  else if (name === 'settings') updateGhTokenStatus();
 }
 function renderDashboard() {
   document.getElementById('stat-courses').textContent = courses.length;
@@ -957,21 +1113,81 @@ function addLessonBlock(initial = null) {
   const container = document.getElementById('lessons-container');
   const block = document.createElement('div');
   block.className = 'block lesson-block';
+  // Har bir dars uchun noyob ID — IndexedDB'da video saqlash uchun kerak
+  const lessonId = initial?.id || ('l_' + Date.now() + '_' + Math.random().toString(36).slice(2, 7));
+  block.dataset.lessonId = lessonId;
+  block.dataset.videoBlobKey = initial?.videoBlobKey || '';
+  const existingStatus = initial?.videoBlobKey ? '✓ Mavjud video saqlangan (yangi yuklasangiz almashtiriladi)' : '';
   block.innerHTML = `
     <div class="block-num">Dars ${container.children.length + 1}</div>
-    <button class="block-del" onclick="this.parentElement.remove(); renumberBlocks('lessons-container', 'Dars');">×</button>
+    <button class="block-del" onclick="deleteLessonBlock(this);">×</button>
     <div class="field"><label>Dars sarlavhasi *</label>
       <input class="input lesson-title" value="${esc(initial?.title || '')}" placeholder="Masalan: 1-dars: Kirish"></div>
-    <div class="field-row">
-      <div class="field"><label>Qisqa izoh</label>
-        <input class="input lesson-context" value="${esc(initial?.context || '')}" placeholder="10 daq. video"></div>
-      <div class="field"><label>YouTube URL yoki ID</label>
-        <input class="input lesson-video" value="${esc(initial?.videoUrl || '')}" placeholder="youtube.com/watch?v=..."></div>
+    <div class="field"><label>Qisqa izoh</label>
+      <input class="input lesson-context" value="${esc(initial?.context || '')}" placeholder="10 daqiqali video"></div>
+
+    <div class="field">
+      <label>📺 Video manzili (URL)</label>
+      <input class="input lesson-video" value="${esc(initial?.videoUrl || '')}" placeholder="YouTube / Telegram / Google Drive havolasi yoki .mp4">
+      <p style="font-size:11px; color:var(--ink-2); margin-top:6px; line-height:1.5;">
+        ✓ <b>YouTube:</b> https://youtube.com/watch?v=XXX yoki https://youtu.be/XXX<br>
+        ✓ <b>Telegram</b> (ommaviy kanal): https://t.me/kanal_nomi/123<br>
+        ✓ <b>Google Drive:</b> https://drive.google.com/file/d/FILE_ID/view<br>
+        ✓ <b>To'g'ridan-to'g'ri:</b> https://...mp4
+      </p>
     </div>
+
+    <div class="field" style="background:#fef3c7; padding:12px; border-radius:10px; border:2px solid #fbbf24;">
+      <label>📁 Yoki video faylni yuklash (cheklov yo'q, 500MB+ ham mumkin)</label>
+      <input type="file" class="lesson-video-file" accept="video/*" onchange="handleLessonVideoUpload(event, this)" style="padding:8px; width:100%;">
+      <p class="lesson-video-status" style="font-size:12px; color:var(--ink-2); margin-top:6px;">${existingStatus}</p>
+      <p style="font-size:11px; color:#92400e; margin-top:6px;">
+        ⚠️ Yuklangan fayllar <b>faqat shu qurilmada</b> ko'rinadi (IndexedDB). Boshqa qurilmalardan ko'rish uchun YouTube yoki Telegram URL ishlating.
+      </p>
+    </div>
+
     <div class="field" style="margin-bottom: 0;"><label>Dars matni</label>
       <textarea class="textarea lesson-text" placeholder="Dars haqida batafsil...">${esc(initial?.text || '')}</textarea></div>
   `;
   container.appendChild(block);
+}
+
+function deleteLessonBlock(btn) {
+  const block = btn.parentElement;
+  const key = block.dataset.videoBlobKey;
+  if (key) {
+    // IndexedDB'dan ham o'chiramiz
+    IDB.del(key).catch(() => {});
+  }
+  block.remove();
+  renumberBlocks('lessons-container', 'Dars');
+}
+
+async function handleLessonVideoUpload(e, fileInput) {
+  const file = e.target.files[0];
+  if (!file) return;
+  const sizeMB = file.size / 1024 / 1024;
+  if (sizeMB > 1000) {
+    if (!confirm(`Fayl juda katta (${sizeMB.toFixed(0)} MB). Brauzer sekinlashishi mumkin. Davom etamizmi?`)) {
+      e.target.value = '';
+      return;
+    }
+  }
+  const block = fileInput.closest('.lesson-block');
+  const lessonId = block.dataset.lessonId;
+  const key = 'lvid_' + lessonId;
+  const statusEl = block.querySelector('.lesson-video-status');
+  statusEl.textContent = '🔄 Saqlanmoqda...';
+  statusEl.style.color = 'var(--ink-2)';
+  try {
+    await IDB.put(key, file);
+    block.dataset.videoBlobKey = key;
+    statusEl.textContent = `✓ Saqlandi: ${file.name} (${sizeMB.toFixed(1)} MB)`;
+    statusEl.style.color = 'var(--success)';
+  } catch (err) {
+    statusEl.textContent = '❌ Xato: ' + err.message;
+    statusEl.style.color = 'var(--danger)';
+  }
 }
 function renumberBlocks(containerId, prefix) {
   document.querySelectorAll(`#${containerId} .block .block-num`).forEach((el, i) => {
@@ -1042,9 +1258,11 @@ function saveCourse() {
     const t = b.querySelector('.lesson-title').value.trim();
     if (!t) { toast(`Dars ${i+1}: sarlavhani kiriting`, 'error'); return; }
     lessons.push({
+      id: b.dataset.lessonId,
       title: t,
       context: b.querySelector('.lesson-context').value.trim(),
       videoUrl: b.querySelector('.lesson-video').value.trim(),
+      videoBlobKey: b.dataset.videoBlobKey || '',
       text: b.querySelector('.lesson-text').value.trim()
     });
   }
@@ -1175,13 +1393,15 @@ function openSlideEditor(id = null) {
 function handleSlidePdfUpload(e) {
   const file = e.target.files[0];
   if (!file) return;
-  if (file.size > 50 * 1024 * 1024) {
-    toast("Fayl 50 MB dan katta. URL ishlatishni tavsiya qilamiz.", 'error');
-    e.target.value = '';
-    return;
+  const sizeMB = file.size / 1024 / 1024;
+  if (sizeMB > 500) {
+    if (!confirm(`Fayl juda katta (${sizeMB.toFixed(0)} MB). Brauzer sekinlashishi yoki saqlash uzoq cho'zilishi mumkin. Davom etamizmi?`)) {
+      e.target.value = '';
+      return;
+    }
   }
   currentPdfFile = file;
-  document.getElementById('slide-pdf-status').textContent = `✓ ${file.name} (${(file.size/1024/1024).toFixed(2)} MB) tanlandi`;
+  document.getElementById('slide-pdf-status').textContent = `✓ ${file.name} (${sizeMB.toFixed(2)} MB) tanlandi`;
 }
 
 async function saveSlide() {
@@ -1285,13 +1505,15 @@ function openEbookEditor(id = null) {
 function handleEbookPdfUpload(e) {
   const file = e.target.files[0];
   if (!file) return;
-  if (file.size > 50 * 1024 * 1024) {
-    toast("Fayl 50 MB dan katta. URL ishlatishni tavsiya qilamiz.", 'error');
-    e.target.value = '';
-    return;
+  const sizeMB = file.size / 1024 / 1024;
+  if (sizeMB > 500) {
+    if (!confirm(`Fayl juda katta (${sizeMB.toFixed(0)} MB). Brauzer sekinlashishi yoki saqlash uzoq cho'zilishi mumkin. Davom etamizmi?`)) {
+      e.target.value = '';
+      return;
+    }
   }
   currentEbookFile = file;
-  document.getElementById('ebook-pdf-status').textContent = `✓ ${file.name} (${(file.size/1024/1024).toFixed(2)} MB) tanlandi`;
+  document.getElementById('ebook-pdf-status').textContent = `✓ ${file.name} (${sizeMB.toFixed(2)} MB) tanlandi`;
 }
 
 async function saveEbook() {

@@ -2494,7 +2494,7 @@ function backToCourseDetail() {
 // ====================================================================
 // LESSON VIEW
 // ====================================================================
-function openLesson(idx) {
+async function openLesson(idx) {
   state.currentLessonIdx = idx;
   const c = state.currentCourse;
   const lesson = c.lessons[idx];
@@ -2506,20 +2506,8 @@ function openLesson(idx) {
   // Video frame
   const frame = document.getElementById('video-frame');
   const videoUrl = lesson.videoUrl || '';
-  const ytId = extractYouTubeId(videoUrl);
-  if (ytId) {
-    frame.innerHTML = `<iframe src="https://www.youtube.com/embed/${ytId}" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`;
-  } else if (videoUrl) {
-    frame.innerHTML = `<video controls style="width:100%;height:100%;background:black;"><source src="${escapeHtml(videoUrl)}"></video>`;
-  } else {
-    frame.innerHTML = `
-      <div class="video-placeholder">
-        <div class="v-icon">🎬</div>
-        <h3 style="color: white; margin-bottom: 8px;">Video qo'shilmagan</h3>
-        <p>Bu dars uchun video yuklash hozircha kutilmoqda. Quyidagi matn bo'limini o'qing.</p>
-      </div>
-    `;
-  }
+
+  await renderLessonVideo(frame, lesson, videoUrl);
 
   const isDone = user.completedLessons.has(`${c.id}::${lesson.title}`);
   const completeBtn = document.getElementById('complete-lesson-btn');
@@ -2543,6 +2531,86 @@ function extractYouTubeId(url) {
   // Plain ID
   if (/^[a-zA-Z0-9_-]{11}$/.test(url)) return url;
   return null;
+}
+
+function extractTelegramPost(url) {
+  if (!url) return null;
+  // https://t.me/channel_name/123 yoki t.me/channel_name/123
+  const m = url.match(/(?:https?:\/\/)?t\.me\/([a-zA-Z0-9_]+)\/(\d+)/);
+  if (m) return { channel: m[1], messageId: m[2] };
+  return null;
+}
+
+function extractGoogleDriveId(url) {
+  if (!url) return null;
+  // https://drive.google.com/file/d/FILE_ID/view yoki ?id=
+  let m = url.match(/drive\.google\.com\/file\/d\/([a-zA-Z0-9_-]+)/);
+  if (m) return m[1];
+  m = url.match(/drive\.google\.com\/.*[?&]id=([a-zA-Z0-9_-]+)/);
+  if (m) return m[1];
+  return null;
+}
+
+async function renderLessonVideo(frame, lesson, videoUrl) {
+  // 1-navbat: IndexedDB'dagi yuklangan video fayl (faqat admin qurilmasida bo'ladi)
+  if (lesson.videoBlobKey) {
+    try {
+      const blob = await IDB.get(lesson.videoBlobKey);
+      if (blob) {
+        const url = URL.createObjectURL(blob);
+        frame.innerHTML = `<video controls style="width:100%;height:100%;background:black;"><source src="${url}"></video>`;
+        return;
+      }
+    } catch (e) {}
+    // Agar blob topilmasa, URL'ga o'tamiz
+  }
+
+  // 2-navbat: YouTube
+  const ytId = extractYouTubeId(videoUrl);
+  if (ytId) {
+    frame.innerHTML = `<iframe src="https://www.youtube.com/embed/${ytId}" allow="accelerometer; autoplay; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`;
+    return;
+  }
+
+  // 3-navbat: Telegram (ommaviy kanal posti)
+  const tgPost = extractTelegramPost(videoUrl);
+  if (tgPost) {
+    frame.innerHTML = `
+      <div style="width:100%;height:100%;background:linear-gradient(135deg,#0088cc,#005580);display:flex;align-items:center;justify-content:center;padding:20px;overflow:auto;">
+        <div id="tg-embed-${Date.now()}" style="width:100%;max-width:500px;background:white;border-radius:12px;padding:10px;"></div>
+      </div>
+    `;
+    const container = frame.querySelector('[id^="tg-embed-"]');
+    const script = document.createElement('script');
+    script.async = true;
+    script.src = 'https://telegram.org/js/telegram-widget.js?22';
+    script.setAttribute('data-telegram-post', `${tgPost.channel}/${tgPost.messageId}`);
+    script.setAttribute('data-width', '100%');
+    container.appendChild(script);
+    return;
+  }
+
+  // 4-navbat: Google Drive
+  const gdId = extractGoogleDriveId(videoUrl);
+  if (gdId) {
+    frame.innerHTML = `<iframe src="https://drive.google.com/file/d/${gdId}/preview" allow="autoplay" allowfullscreen style="width:100%;height:100%;border:none;"></iframe>`;
+    return;
+  }
+
+  // 5-navbat: To'g'ridan-to'g'ri video URL
+  if (videoUrl) {
+    frame.innerHTML = `<video controls style="width:100%;height:100%;background:black;"><source src="${escapeHtml(videoUrl)}"></video>`;
+    return;
+  }
+
+  // 6-navbat: Hech narsa yo'q — placeholder
+  frame.innerHTML = `
+    <div class="video-placeholder">
+      <div class="v-icon">🎬</div>
+      <h3 style="color: white; margin-bottom: 8px;">Video qo'shilmagan</h3>
+      <p>Bu dars uchun video yuklash hozircha kutilmoqda. Quyidagi matn bo'limini o'qing.</p>
+    </div>
+  `;
 }
 
 function completeLesson() {
@@ -4276,9 +4344,29 @@ async function syncFromServer() {
     if (Array.isArray(data.quizzes)) {
       localStorage.setItem('mc_quizzes', JSON.stringify(data.quizzes));
     }
-    console.log('[Ma\'rifat Cup] Server kontenti yuklandi');
+    if (Array.isArray(data.slides)) {
+      localStorage.setItem('mc_slides', JSON.stringify(data.slides));
+    }
+    if (Array.isArray(data.ebooks)) {
+      localStorage.setItem('mc_ebooks', JSON.stringify(data.ebooks));
+    }
+    if (Array.isArray(data.meetings)) {
+      localStorage.setItem('mc_meetings', JSON.stringify(data.meetings));
+    }
+    if (Array.isArray(data.announcements)) {
+      localStorage.setItem('mc_announcements', JSON.stringify(data.announcements));
+    }
+    console.log('[Ma\'rifat Cup] Server kontenti yuklandi:', {
+      courses: data.courses?.length || 0,
+      quizzes: data.quizzes?.length || 0,
+      slides: data.slides?.length || 0,
+      ebooks: data.ebooks?.length || 0,
+      meetings: data.meetings?.length || 0,
+      announcements: data.announcements?.length || 0
+    });
     return true;
   } catch (e) {
+    console.warn('[Ma\'rifat Cup] Server sinxron xatosi:', e.message);
     return false;
   }
 }
