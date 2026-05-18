@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "exportedAt": "2026-05-18T13:30:25.326Z",
+  "exportedAt": "2026-05-18T13:31:48.159Z",
   "source": "marifat-cup-admin-auto",
   "courses": [
     {
@@ -1322,6 +1322,19 @@
   "quizzes": [],
   "slides": [],
   "announcements": [],
-  "ebooks": [],
+  "ebooks": [
+    {
+      "id": "b_1779111051032",
+      "title": "Liderlar kitobi",
+      "author": "Otabek Xasanov",
+      "description": "",
+      "emoji": "📖",
+      "color": 1,
+      "pdfStored": false,
+      "pdfUrl": "./files/ebooks/b_1779111051032_O._Xasanov_-_Liderlar_kitobi.pdf",
+      "fileExt": ".pdf",
+      "date": 1779111051032
+    }
+  ],
   "meetings": []
 }
