@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "exportedAt": "2026-05-18T15:26:07.204Z",
+  "exportedAt": "2026-05-18T15:27:19.960Z",
   "source": "marifat-cup-admin-auto",
   "courses": [
     {
@@ -1401,6 +1401,15 @@
       "pdfUrl": "./files/slides/s_1779117963570_U._G_ofurov.pdf",
       "fileExt": ".pdf",
       "date": 1779117963570
+    },
+    {
+      "id": "s_1779117999425",
+      "title": "BUGUNGI DUNYONING SIYOSIYMAFKURAVIY MANZARASI",
+      "presenter": "X.Umarov",
+      "pdfStored": false,
+      "pdfUrl": "./files/slides/s_1779117999425_X._Umarov.pdf",
+      "fileExt": ".pdf",
+      "date": 1779117999425
     }
   ],
   "announcements": [],
