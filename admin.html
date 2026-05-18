@@ -537,10 +537,14 @@ D) Noto'g'ri</pre>
         <input class="input" id="slide-presenter-input" placeholder="Masalan: Olimjon Davlatov"></div>
 
       <h3 class="section-divider">📄 PDF fayl</h3>
-      <p class="sub" style="margin-top: -4px;">PDF faylni yuklang (1 MB dan 500 MB gacha — IndexedDB orqali). Yoki tashqi URL kiriting.</p>
+      <p class="sub" style="margin-top: -4px;">
+  📄 <b>PDF</b> yoki <b>PowerPoint</b> (.ppt, .pptx) faylni yuklang.<br>
+  ☁️ <b>95 MB</b> gacha — GitHub'ga avtomatik yuklanadi va barcha qurilmalarda ko'rinadi.<br>
+  💾 Undan katta bo'lsa — faqat shu qurilmada saqlanadi.
+</p>
       <div class="field">
-        <label>PDF fayl yuklash</label>
-        <input type="file" id="slide-pdf-file" accept="application/pdf" onchange="handleSlidePdfUpload(event)" style="padding: 8px; width: 100%;">
+        <label>PDF / PowerPoint fayl yuklash (.pdf, .ppt, .pptx)</label>
+        <input type="file" id="slide-pdf-file" accept=".pdf,.ppt,.pptx,application/pdf,application/vnd.ms-powerpoint,application/vnd.openxmlformats-officedocument.presentationml.presentation" onchange="handleSlidePdfUpload(event)" style="padding: 8px; width: 100%;">
         <p id="slide-pdf-status" style="margin-top: 6px; font-size: 13px; color: var(--ink-2);"></p>
       </div>
       <p style="text-align:center; color: var(--ink-2); font-size: 13px; margin: 10px 0;">— yoki —</p>
@@ -590,7 +594,10 @@ D) Noto'g'ri</pre>
         <h1>📖 E-kitoblar</h1>
         <button class="btn btn-primary" onclick="openEbookEditor()">+ Yangi e-kitob</button>
       </div>
-      <p class="sub">Kitoblarni PDF formatda yuklang (500 MB gacha)</p>
+      <p class="sub">
+  📖 Kitoblarni <b>PDF</b> yoki <b>PowerPoint</b> formatda yuklang.<br>
+  ☁️ 95 MB gacha — GitHub'ga avtomatik yuklanadi, barcha qurilmalarda ko'rinadi.
+</p>
       <div id="ebooks-list" class="item-list"></div>
     </div>
 
@@ -617,8 +624,8 @@ D) Noto'g'ri</pre>
       </div>
       <h3 class="section-divider">📄 PDF fayl</h3>
       <div class="field">
-        <label>PDF fayl yuklash (500 MB gacha)</label>
-        <input type="file" id="ebook-pdf-file" accept="application/pdf" onchange="handleEbookPdfUpload(event)" style="padding: 8px; width: 100%;">
+        <label>PDF / PowerPoint fayl yuklash (.pdf, .ppt, .pptx)</label>
+        <input type="file" id="ebook-pdf-file" accept=".pdf,.ppt,.pptx,application/pdf,application/vnd.ms-powerpoint,application/vnd.openxmlformats-officedocument.presentationml.presentation" onchange="handleEbookPdfUpload(event)" style="padding: 8px; width: 100%;">
         <p id="ebook-pdf-status" style="margin-top: 6px; font-size: 13px; color: var(--ink-2);"></p>
       </div>
       <p style="text-align:center; color: var(--ink-2); font-size: 13px; margin: 10px 0;">— yoki —</p>
@@ -813,6 +820,67 @@ const GITHUB_BRANCH = 'main';
 let _syncLock = false;
 let _syncPending = false;
 
+async function ghUploadBinaryFile(file, githubPath) {
+  const token = localStorage.getItem(STORAGE.GH_TOKEN);
+  if (!token) throw new Error("GitHub token sozlanmagan");
+  // Faylni base64 ga aylantirish (katta fayllar uchun bo'lakma-bo'lakma)
+  const arrayBuffer = await file.arrayBuffer();
+  const bytes = new Uint8Array(arrayBuffer);
+  let binary = '';
+  const chunkSize = 32768;
+  for (let i = 0; i < bytes.length; i += chunkSize) {
+    binary += String.fromCharCode.apply(null, bytes.subarray(i, i + chunkSize));
+  }
+  const base64 = btoa(binary);
+  // Mavjud bo'lsa SHA ni olamiz
+  let sha = null;
+  try {
+    const r = await fetch(`https://api.github.com/repos/${GITHUB_REPO}/contents/${githubPath}?ref=${GITHUB_BRANCH}`, {
+      headers: { 'Authorization': 'token ' + token, 'Accept': 'application/vnd.github.v3+json' }
+    });
+    if (r.ok) { const d = await r.json(); sha = d.sha; }
+  } catch (e) {}
+  // Yuklash (3 marta urinish — SHA mismatch holatlari uchun)
+  for (let attempt = 0; attempt < 3; attempt++) {
+    const body = { message: 'Upload: ' + githubPath, content: base64, branch: GITHUB_BRANCH };
+    if (sha) body.sha = sha;
+    const resp = await fetch(`https://api.github.com/repos/${GITHUB_REPO}/contents/${githubPath}`, {
+      method: 'PUT',
+      headers: { 'Authorization': 'token ' + token, 'Accept': 'application/vnd.github.v3+json', 'Content-Type': 'application/json' },
+      body: JSON.stringify(body)
+    });
+    if (resp.ok) {
+      const data = await resp.json();
+      // GitHub Pages URL (sayt bilan bir domenda)
+      return './' + githubPath;
+    }
+    const err = await resp.json().catch(() => ({}));
+    const msg = err.message || ('HTTP ' + resp.status);
+    if ((resp.status === 409 || resp.status === 422 || /sha/i.test(msg)) && attempt < 2) {
+      // SHA yangilash
+      try {
+        const r = await fetch(`https://api.github.com/repos/${GITHUB_REPO}/contents/${githubPath}?ref=${GITHUB_BRANCH}`, {
+          headers: { 'Authorization': 'token ' + token }
+        });
+        if (r.ok) { const d = await r.json(); sha = d.sha; }
+      } catch (e) {}
+      await new Promise(r => setTimeout(r, 500));
+      continue;
+    }
+    throw new Error(msg);
+  }
+  throw new Error("3 marta urinishdan keyin yuklanmadi");
+}
+
+function safeFileName(name) {
+  return name.replace(/[^a-zA-Z0-9.-]/g, '_').replace(/_+/g, '_').slice(0, 80);
+}
+
+function getFileExt(filename) {
+  const m = filename.match(/\.[a-zA-Z0-9]+$/);
+  return m ? m[0].toLowerCase() : '';
+}
+
 async function ghGetFileSha() {
   const token = localStorage.getItem(STORAGE.GH_TOKEN);
   if (!token) return null;
@@ -835,46 +903,66 @@ async function syncToGitHub(silent) {
   if (_syncLock) { _syncPending = true; return false; }
   _syncLock = true;
   if (!silent) toast("🔄 GitHub'ga sinxronlanmoqda...", '');
+  const payload = {
+    version: 1,
+    exportedAt: new Date().toISOString(),
+    source: 'marifat-cup-admin-auto',
+    courses, quizzes, slides,
+    announcements: anns, ebooks, meetings
+  };
+  const json = JSON.stringify(payload, null, 2);
+  const contentBase64 = btoa(unescape(encodeURIComponent(json)));
+
+  // SHA mos kelmasa qayta urinish (race condition uchun)
+  const MAX_RETRIES = 3;
+  let lastError = null;
   try {
-    const payload = {
-      version: 1,
-      exportedAt: new Date().toISOString(),
-      source: 'marifat-cup-admin-auto',
-      courses, quizzes, slides,
-      announcements: anns, ebooks, meetings
-    };
-    const json = JSON.stringify(payload, null, 2);
-    // UTF-8 -> base64 (emoji va kirill harflarni to'g'ri o'tkazish)
-    const contentBase64 = btoa(unescape(encodeURIComponent(json)));
-    const sha = await ghGetFileSha();
-    const body = {
-      message: 'Auto-sync: admin content updated ' + new Date().toISOString(),
-      content: contentBase64,
-      branch: GITHUB_BRANCH
-    };
-    if (sha) body.sha = sha;
-    const resp = await fetch(`https://api.github.com/repos/${GITHUB_REPO}/contents/${GITHUB_FILE}`, {
-      method: 'PUT',
-      headers: {
-        'Authorization': 'token ' + token,
-        'Accept': 'application/vnd.github.v3+json',
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(body)
-    });
-    if (resp.ok) {
-      // Muvaffaqiyat: silent rejimda ham qisqa eslatma beramiz
-      toast(silent ? "☁️ Sinxronlandi" : "✅ GitHub'ga sinxronlandi! 1-2 daqiqada barcha qurilmalarda ko'rinadi.", 'success');
-      return true;
-    } else {
-      // Xato har doim ko'rsatiladi
-      const err = await resp.json().catch(() => ({}));
-      const msg = err.message || ('HTTP ' + resp.status);
-      toast("❌ Sinxron xato: " + msg, 'error');
-      return false;
+    for (let attempt = 0; attempt < MAX_RETRIES; attempt++) {
+      try {
+        // Har gal yangi SHA olib kelamiz
+        const sha = await ghGetFileSha();
+        const body = {
+          message: 'Auto-sync: admin content updated ' + new Date().toISOString(),
+          content: contentBase64,
+          branch: GITHUB_BRANCH
+        };
+        if (sha) body.sha = sha;
+        const resp = await fetch(`https://api.github.com/repos/${GITHUB_REPO}/contents/${GITHUB_FILE}`, {
+          method: 'PUT',
+          headers: {
+            'Authorization': 'token ' + token,
+            'Accept': 'application/vnd.github.v3+json',
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(body)
+        });
+        if (resp.ok) {
+          toast(silent ? "☁️ Sinxronlandi" : "✅ GitHub'ga sinxronlandi! 1-2 daqiqada barcha qurilmalarda ko'rinadi.", 'success');
+          return true;
+        }
+        const err = await resp.json().catch(() => ({}));
+        const msg = err.message || ('HTTP ' + resp.status);
+        lastError = msg;
+        // SHA mos kelmaslik (race condition) — kichik kutib qayta urinamiz
+        const isConflict = resp.status === 409 || resp.status === 422 || /does not match|sha/i.test(msg);
+        if (isConflict && attempt < MAX_RETRIES - 1) {
+          await new Promise(r => setTimeout(r, 600 + attempt * 400));
+          continue;
+        }
+        // Boshqa xato — to'xtaymiz
+        toast("❌ Sinxron xato: " + msg, 'error');
+        return false;
+      } catch (e) {
+        lastError = e.message;
+        if (attempt < MAX_RETRIES - 1) {
+          await new Promise(r => setTimeout(r, 600));
+          continue;
+        }
+        toast("❌ Internet xatosi: " + e.message, 'error');
+        return false;
+      }
     }
-  } catch (e) {
-    toast("❌ Internet xatosi: " + e.message, 'error');
+    if (lastError) toast("❌ Sinxron xatosi (3 marta urinishdan keyin): " + lastError, 'error');
     return false;
   } finally {
     _syncLock = false;
@@ -1762,20 +1850,48 @@ async function saveSlide() {
   const slide = {
     id: editingSlideId || ('s_' + Date.now()),
     title, presenter,
-    pdfStored: !!(currentPdfFile || hasExistingFile),
-    pdfUrl: pdfUrl || null,
+    pdfStored: existing?.pdfStored || false,
+    pdfUrl: pdfUrl || existing?.pdfUrl || null,
+    fileExt: existing?.fileExt || '.pdf',
     date: existing?.date || Date.now()
   };
 
-  // Save PDF to IndexedDB if new file
+  // Yangi fayl tanlangan bo'lsa
   if (currentPdfFile) {
-    try {
-      await IDB.put('slide_' + slide.id, currentPdfFile);
-      slide.pdfStored = true;
-    } catch (err) {
-      toast('IndexedDB xatosi: ' + err.message, 'error');
-      return;
+    const ext = getFileExt(currentPdfFile.name);
+    slide.fileExt = ext;
+    const sizeMB = currentPdfFile.size / 1024 / 1024;
+    const hasToken = !!localStorage.getItem(STORAGE.GH_TOKEN);
+    // Token bo'lsa va fayl 50MB dan kichik bo'lsa — GitHub'ga yuklash (barcha qurilmalarda ko'rinadi)
+    if (hasToken && sizeMB < 95) {
+      toast(`🔄 Fayl GitHub'ga yuklanmoqda (${sizeMB.toFixed(1)} MB)...`, '');
+      try {
+        const githubPath = `files/slides/${slide.id}_${safeFileName(currentPdfFile.name)}`;
+        const url = await ghUploadBinaryFile(currentPdfFile, githubPath);
+        slide.pdfUrl = url;
+        slide.pdfStored = false; // Endi URL ishlatamiz
+        toast(`✅ Fayl GitHub'ga yuklandi — barcha qurilmalarda ko'rinadi!`, 'success');
+      } catch (err) {
+        toast(`⚠️ GitHub yuklash xato: ${err.message}. Lokal saqlanmoqda...`, 'error');
+        await IDB.put('slide_' + slide.id, currentPdfFile);
+        slide.pdfStored = true;
+      }
+    } else {
+      // Token yo'q yoki fayl katta — IndexedDB
+      if (sizeMB >= 95) {
+        toast(`⚠️ Fayl 95 MB dan katta — GitHub'ga sig'maydi. Lokal saqlanadi.`, 'error');
+      }
+      try {
+        await IDB.put('slide_' + slide.id, currentPdfFile);
+        slide.pdfStored = true;
+      } catch (err) {
+        toast('IndexedDB xatosi: ' + err.message, 'error');
+        return;
+      }
     }
+  } else if (pdfUrl) {
+    // Tashqi URL berildi — fayl ext ni URL dan aniqlaymiz
+    slide.fileExt = getFileExt(pdfUrl) || '.pdf';
   }
 
   if (editingSlideId) {
@@ -1874,18 +1990,43 @@ async function saveEbook() {
     description: document.getElementById('ebook-desc-input').value.trim(),
     emoji: document.getElementById('ebook-emoji-input').value.trim() || '📖',
     color: parseInt(document.getElementById('ebook-color-input').value),
-    pdfStored: !!(currentEbookFile || hasExistingFile),
-    pdfUrl: pdfUrl || null,
+    pdfStored: existing?.pdfStored || false,
+    pdfUrl: pdfUrl || existing?.pdfUrl || null,
+    fileExt: existing?.fileExt || '.pdf',
     date: existing?.date || Date.now()
   };
   if (currentEbookFile) {
-    try {
-      await IDB.put('ebook_' + book.id, currentEbookFile);
-      book.pdfStored = true;
-    } catch (err) {
-      toast('IndexedDB xatosi: ' + err.message, 'error');
-      return;
+    const ext = getFileExt(currentEbookFile.name);
+    book.fileExt = ext;
+    const sizeMB = currentEbookFile.size / 1024 / 1024;
+    const hasToken = !!localStorage.getItem(STORAGE.GH_TOKEN);
+    if (hasToken && sizeMB < 95) {
+      toast(`🔄 Kitob GitHub'ga yuklanmoqda (${sizeMB.toFixed(1)} MB)...`, '');
+      try {
+        const githubPath = `files/ebooks/${book.id}_${safeFileName(currentEbookFile.name)}`;
+        const url = await ghUploadBinaryFile(currentEbookFile, githubPath);
+        book.pdfUrl = url;
+        book.pdfStored = false;
+        toast(`✅ Kitob GitHub'ga yuklandi — barcha qurilmalarda ko'rinadi!`, 'success');
+      } catch (err) {
+        toast(`⚠️ GitHub yuklash xato: ${err.message}. Lokal saqlanmoqda...`, 'error');
+        await IDB.put('ebook_' + book.id, currentEbookFile);
+        book.pdfStored = true;
+      }
+    } else {
+      if (sizeMB >= 95) {
+        toast(`⚠️ Fayl 95 MB dan katta — GitHub'ga sig'maydi. Lokal saqlanadi.`, 'error');
+      }
+      try {
+        await IDB.put('ebook_' + book.id, currentEbookFile);
+        book.pdfStored = true;
+      } catch (err) {
+        toast('IndexedDB xatosi: ' + err.message, 'error');
+        return;
+      }
     }
+  } else if (pdfUrl) {
+    book.fileExt = getFileExt(pdfUrl) || '.pdf';
   }
   if (editingEbookId) {
     const idx = ebooks.findIndex(b => b.id === editingEbookId);

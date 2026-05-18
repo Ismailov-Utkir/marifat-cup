@@ -4139,6 +4139,26 @@ function renderSlidesList() {
 }
 
 let currentSlideIdx = 0;
+// Fayl turi (PDF/PPT/PPTX) ga qarab to'g'ri viewer URL ni qaytaradi
+function buildFileViewerHtml(url, fileExt) {
+  const ext = (fileExt || '').toLowerCase();
+  const isOfficeFile = ext === '.ppt' || ext === '.pptx' || ext === '.doc' || ext === '.docx' || ext === '.xls' || ext === '.xlsx';
+  if (isOfficeFile) {
+    // PPT/PPTX uchun Office Web Viewer ishlatamiz (faylni absolyut URL bilan)
+    let absoluteUrl = url;
+    if (url.startsWith('./')) {
+      // GitHub Pages absolyut URL ga aylantirish
+      absoluteUrl = location.origin + location.pathname.replace(/[^\/]*$/, '') + url.substring(2);
+    } else if (!url.startsWith('http')) {
+      absoluteUrl = location.origin + location.pathname.replace(/[^\/]*$/, '') + url;
+    }
+    const viewerUrl = `https://view.officeapps.live.com/op/embed.aspx?src=${encodeURIComponent(absoluteUrl)}`;
+    return `<iframe src="${viewerUrl}" frameborder="0" allowfullscreen></iframe>`;
+  }
+  // PDF — to'g'ridan-to'g'ri embed
+  return `<iframe src="${escapeHtml(url)}#toolbar=1" style="width:100%;height:100%;border:none;"></iframe>`;
+}
+
 async function openSlide(idx) {
   currentSlideIdx = idx;
   const slide = savedSlides[idx];
@@ -4148,21 +4168,33 @@ async function openSlide(idx) {
   frame.innerHTML = `<div style="color: rgba(255,255,255,0.6); padding: 40px; text-align: center;">⏳ Yuklanmoqda...</div>`;
   showScreen('slide-viewer-screen');
   try {
+    // 1-navbat: GitHub URL (barcha qurilmalardan ko'rinadi)
+    if (slide.pdfUrl) {
+      frame.innerHTML = buildFileViewerHtml(slide.pdfUrl, slide.fileExt);
+      return;
+    }
+    // 2-navbat: IndexedDB blob (eski / faqat bu qurilmada)
     if (slide.pdfStored) {
       const blob = await IDB.get('slide_' + slide.id);
       if (blob) {
         const url = URL.createObjectURL(blob);
-        frame.innerHTML = `<embed src="${url}" type="application/pdf">`;
+        const ext = (slide.fileExt || '').toLowerCase();
+        if (ext === '.ppt' || ext === '.pptx') {
+          frame.innerHTML = `<div style="color: rgba(255,255,255,0.85); padding: 40px; text-align: center;">📊 PPT/PPTX faylni boshqa qurilmadan ko'rish uchun admin GitHub'ga qayta yuklashi kerak.<br><br>Bu qurilmada lokal saqlangan, ko'rsatish uchun PDF formatga aylantirish kerak.</div>`;
+        } else {
+          frame.innerHTML = `<embed src="${url}" type="application/pdf">`;
+        }
       } else {
-        frame.innerHTML = `<div style="color: rgba(255,255,255,0.6); padding: 40px; text-align: center;">Fayl topilmadi (IndexedDB)</div>`;
+        frame.innerHTML = `<div style="color: rgba(255,255,255,0.6); padding: 40px; text-align: center;">📊 Fayl bu qurilmada saqlanmagan.<br>Admin uni qayta yuklashi kerak (GitHub'ga sinxron qilish uchun).</div>`;
       }
-    } else if (slide.pdfData) {
-      frame.innerHTML = `<embed src="${slide.pdfData}" type="application/pdf">`;
-    } else if (slide.pdfUrl) {
-      frame.innerHTML = `<iframe src="${escapeHtml(slide.pdfUrl)}"></iframe>`;
-    } else {
-      frame.innerHTML = `<div style="color: rgba(255,255,255,0.6); padding: 40px; text-align: center;">Taqdimot fayli topilmadi</div>`;
+      return;
     }
+    // 3-navbat: eski pdfData (base64)
+    if (slide.pdfData) {
+      frame.innerHTML = `<embed src="${slide.pdfData}" type="application/pdf">`;
+      return;
+    }
+    frame.innerHTML = `<div style="color: rgba(255,255,255,0.6); padding: 40px; text-align: center;">Taqdimot fayli topilmadi</div>`;
   } catch (e) {
     frame.innerHTML = `<div style="color: rgba(255,255,255,0.6); padding: 40px; text-align: center;">Xato: ${escapeHtml(e.message)}</div>`;
   }
@@ -4223,16 +4255,26 @@ async function openEbook(id) {
   frame.innerHTML = `<div style="color: rgba(255,255,255,0.6); padding: 40px; text-align: center;">⏳ Yuklanmoqda...</div>`;
   showScreen('ebook-viewer-screen');
   try {
+    // 1-navbat: GitHub URL (barcha qurilmalardan ko'rinadi)
+    if (book.pdfUrl) {
+      frame.innerHTML = buildFileViewerHtml(book.pdfUrl, book.fileExt);
+      return;
+    }
+    // 2-navbat: IndexedDB blob (faqat shu qurilmada)
     if (book.pdfStored) {
       const blob = await IDB.get('ebook_' + book.id);
       if (blob) {
         const url = URL.createObjectURL(blob);
-        frame.innerHTML = `<embed src="${url}" type="application/pdf">`;
+        const ext = (book.fileExt || '').toLowerCase();
+        if (ext === '.ppt' || ext === '.pptx') {
+          frame.innerHTML = `<div style="color: rgba(255,255,255,0.85); padding: 40px; text-align: center;">📊 PPT/PPTX faylni boshqa qurilmadan ko'rish uchun admin GitHub'ga qayta yuklashi kerak.</div>`;
+        } else {
+          frame.innerHTML = `<embed src="${url}" type="application/pdf">`;
+        }
       } else {
-        frame.innerHTML = `<div style="color: rgba(255,255,255,0.6); padding: 40px; text-align: center;">Fayl topilmadi</div>`;
+        frame.innerHTML = `<div style="color: rgba(255,255,255,0.6); padding: 40px; text-align: center;">📖 Kitob bu qurilmada saqlanmagan.<br>Admin uni qayta yuklashi kerak (GitHub'ga sinxron qilish uchun).</div>`;
       }
-    } else if (book.pdfUrl) {
-      frame.innerHTML = `<iframe src="${escapeHtml(book.pdfUrl)}"></iframe>`;
+      return;
     }
   } catch (e) {
     frame.innerHTML = `<div style="color: rgba(255,255,255,0.6); padding: 40px; text-align: center;">Xato: ${escapeHtml(e.message)}</div>`;
