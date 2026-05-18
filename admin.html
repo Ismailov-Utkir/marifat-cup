@@ -694,6 +694,10 @@ const COLOR_GRADS = {
 };
 const STORAGE = { COURSES: 'mc_courses', QUIZZES: 'mc_quizzes', SLIDES: 'mc_slides', EBOOKS: 'mc_ebooks', MEETINGS: 'mc_meetings', ANN: 'mc_announcements', PWD: 'mc_admin_pwd', SESSION: 'mc_admin_session' };
 
+// Qattiq belgilangan admin parol hash'i (faqat egasi biladi).
+// Boshqalar har qancha urinsa ham, faqat to'g'ri parol bilan kira oladi.
+const HARDCODED_PWD_HASH = 'v2:8d34a2a5';
+
 let courses = [];
 let quizzes = [];
 let slides = [];
@@ -753,69 +757,67 @@ function hashPwd(text) {
 }
 
 function init() {
-  const pwd = localStorage.getItem(STORAGE.PWD);
-  if (!pwd) { showScreen('setup-screen'); return; }
+  // Setup-screen butunlay olib tashlandi. Parol qattiq belgilangan.
   const session = sessionStorage.getItem(STORAGE.SESSION);
-  if (session === pwd) enterAdmin();
-  else {
+  if (session === HARDCODED_PWD_HASH) {
+    enterAdmin();
+  } else {
     showScreen('login-screen');
     setTimeout(() => document.getElementById('login-pwd').focus(), 100);
   }
 }
 function setupPassword() {
-  const p1 = document.getElementById('setup-pwd-1').value;
-  const p2 = document.getElementById('setup-pwd-2').value;
-  if (p1.length < 4) { toast("Parol kamida 4 belgi bo'lsin", 'error'); return; }
-  if (p1 !== p2) { toast('Parollar mos kelmaydi', 'error'); return; }
-  try {
-    const h = hashPwd(p1);
-    localStorage.setItem(STORAGE.PWD, h);
-    sessionStorage.setItem(STORAGE.SESSION, h);
-    toast("Parol o'rnatildi ✓", 'success');
-    enterAdmin();
-  } catch (e) {
-    toast('Xatolik: ' + e.message, 'error');
-  }
+  // Setup-screen olib tashlandi - bu funksiya chaqirilmaydi.
+  toast("❌ Parol o'rnatish o'chirib qo'yilgan. Parol qattiq belgilangan.", 'error');
 }
 function login() {
   const p = document.getElementById('login-pwd').value;
+  const errEl = document.getElementById('login-err');
   if (!p) {
-    const errEl = document.getElementById('login-err');
     errEl.textContent = "❌ Parolni kiriting";
+    errEl.style.display = 'block';
+    return;
+  }
+  // Brute-force himoyasi: 5 ta xato urinishdan keyin 5 daqiqa blok
+  const now = Date.now();
+  let attempts = parseInt(sessionStorage.getItem('mc_admin_attempts') || '0');
+  const blockUntil = parseInt(sessionStorage.getItem('mc_admin_blocked_until') || '0');
+  if (blockUntil > now) {
+    const secs = Math.ceil((blockUntil - now) / 1000);
+    errEl.textContent = `🔒 Juda ko'p xato urinish. ${secs} soniyadan keyin qayta urinib ko'ring.`;
     errEl.style.display = 'block';
     return;
   }
   try {
     const h = hashPwd(p);
-    const stored = localStorage.getItem(STORAGE.PWD);
-    if (h === stored) {
+    if (h === HARDCODED_PWD_HASH) {
       sessionStorage.setItem(STORAGE.SESSION, h);
-      document.getElementById('login-err').style.display = 'none';
+      sessionStorage.removeItem('mc_admin_attempts');
+      sessionStorage.removeItem('mc_admin_blocked_until');
+      errEl.style.display = 'none';
       document.getElementById('login-pwd').value = '';
       enterAdmin();
     } else {
-      const errEl = document.getElementById('login-err');
-      errEl.textContent = "❌ Parol noto'g'ri";
+      attempts++;
+      sessionStorage.setItem('mc_admin_attempts', String(attempts));
+      if (attempts >= 5) {
+        sessionStorage.setItem('mc_admin_blocked_until', String(now + 5 * 60 * 1000));
+        errEl.textContent = "🔒 5 ta xato urinish. 5 daqiqa kutib turing.";
+      } else {
+        const left = 5 - attempts;
+        errEl.textContent = `❌ Parol noto'g'ri (${left} ta urinish qoldi)`;
+      }
       errEl.style.display = 'block';
       document.getElementById('login-pwd').value = '';
     }
   } catch (e) {
-    const errEl = document.getElementById('login-err');
     errEl.textContent = "Xatolik: " + e.message;
     errEl.style.display = 'block';
   }
 }
 
 function forgotPassword() {
-  if (confirm("Parolingizni unutdingizmi?\n\nTasdiqlasangiz, joriy parol va barcha admin kontentingiz O'CHIRILADI. Bekor qilib bo'lmaydi!\n\nDavom etamizmi?")) {
-    if (confirm("Haqiqatan ham hammasini o'chirib, yangidan boshlashni xohlaysizmi?")) {
-      localStorage.removeItem(STORAGE.PWD);
-      localStorage.removeItem(STORAGE.COURSES);
-      localStorage.removeItem(STORAGE.QUIZZES);
-      sessionStorage.removeItem(STORAGE.SESSION);
-      location.reload();
-    }
-  }
+  alert("Parol qattiq belgilangan va faqat admin.html faylini tahrirlash orqali o'zgartirilishi mumkin.\n\nAgar parolni unutgan bo'lsangiz, GitHub'dagi admin.html faylida HARDCODED_PWD_HASH qiymatini yangilashingiz kerak.");
 }
 function logout() {
   sessionStorage.removeItem(STORAGE.SESSION);
@@ -828,16 +830,15 @@ function changePassword() {
   const new2 = document.getElementById('new-pwd-2').value;
   if (!oldP || !new1 || !new2) { toast("Barcha maydonlarni to'ldiring", 'error'); return; }
   const oldH = hashPwd(oldP);
-  if (oldH !== localStorage.getItem(STORAGE.PWD)) { toast("Joriy parol noto'g'ri", 'error'); return; }
+  if (oldH !== HARDCODED_PWD_HASH) { toast("Joriy parol noto'g'ri", 'error'); return; }
   if (new1.length < 4) { toast("Yangi parol kamida 4 belgi bo'lsin", 'error'); return; }
   if (new1 !== new2) { toast('Yangi parollar mos kelmaydi', 'error'); return; }
   const newH = hashPwd(new1);
-  localStorage.setItem(STORAGE.PWD, newH);
-  sessionStorage.setItem(STORAGE.SESSION, newH);
+  // Yangi hash konsulda chiqariladi - admin uni admin.html'ga qo'yishi kerak
   document.getElementById('old-pwd').value = '';
   document.getElementById('new-pwd-1').value = '';
   document.getElementById('new-pwd-2').value = '';
-  toast("Parol o'zgartirildi ✓", 'success');
+  prompt("✅ Yangi parol hash'i tayyor!\n\n1. Quyidagi qiymatni nusxalang\n2. admin.html ichida HARDCODED_PWD_HASH = '...' qatorini topib, qiymatni almashtiring\n3. GitHub'ga yangilangan admin.html ni yuklang\n\nFaqat shundan keyin yangi parol ishlaydi:", newH);
 }
 function enterAdmin() {
   loadData();
