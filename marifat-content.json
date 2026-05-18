@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "exportedAt": "2026-05-18T15:22:05.898Z",
+  "exportedAt": "2026-05-18T15:23:21.822Z",
   "source": "marifat-cup-admin-auto",
   "courses": [
     {
@@ -1329,6 +1329,24 @@
       "pdfUrl": "./files/slides/s_1779117721078_A._Mavrulov.pdf",
       "fileExt": ".pdf",
       "date": 1779117721078
+    },
+    {
+      "id": "s_1779117758269",
+      "title": "JADIDLIK HARAKATI NAMOYANDALARINING MILLAT VA MA’NAVIYAT RAVNAQIGA QO‘SHGAN HISSASI",
+      "presenter": "I.Mirzo",
+      "pdfStored": false,
+      "pdfUrl": "./files/slides/s_1779117758269_I._Mirzo.pdf",
+      "fileExt": ".pdf",
+      "date": 1779117758269
+    },
+    {
+      "id": "s_1779117798525",
+      "title": "MA’NAVIY-MA’RIFIY ISHLARNI TASHKIL ETISH",
+      "presenter": "M.Qurbonov",
+      "pdfStored": false,
+      "pdfUrl": "./files/slides/s_1779117798525_M._Quronov.pdf",
+      "fileExt": ".pdf",
+      "date": 1779117798525
     }
   ],
   "announcements": [],
