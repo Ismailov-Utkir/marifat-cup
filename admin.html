@@ -362,7 +362,7 @@
       <p class="sub">Ma'rifat Cup platformasi boshqaruv markazi</p>
       <div class="stats-grid">
         <div class="stat-card"><div class="num" id="stat-courses">0</div><div class="label">Kurslar</div></div>
-        <div class="stat-card"><div class="num" id="stat-lessons">0</div><div class="label">Darslar</div></div>
+        <div class="stat-card"><div class="num" id="stat-lessons">0</div><div class="label">Mavzular</div></div>
         <div class="stat-card"><div class="num" id="stat-quizzes">0</div><div class="label">Kvizlar</div></div>
         <div class="stat-card"><div class="num" id="stat-slides">0</div><div class="label">Slaydlar</div></div>
         <div class="stat-card"><div class="num" id="stat-ebooks">0</div><div class="label">E-kitoblar</div></div>
@@ -409,13 +409,46 @@
             <option value="5">🩷 Pushti</option><option value="6">🟡 Sariq</option>
           </select></div>
       </div>
-      <h3 class="section-divider">📺 Darslar</h3>
+      <h3 class="section-divider">📚 Mavzular (darslar)</h3>
+      <p class="sub" style="margin-top: -4px; margin-bottom: 12px;">
+        💡 <b>Cheklov yo'q!</b> Bitta kursga istalgancha mavzu qo'shing — 10, 20, 50 ham mumkin.
+        Quyidagi tugma orqali yangi mavzu qo'shing.
+      </p>
       <div id="lessons-container"></div>
-      <button class="add-btn" onclick="addLessonBlock()">+ Dars qo'shish</button>
-      <h3 class="section-divider">📝 Yakuniy test savollari</h3>
-      <p class="sub">O'quvchi kursni tugatgach, bu testdan o'tib sertifikat oladi (70%+ kerak)</p>
-      <div id="test-questions-container"></div>
-      <button class="add-btn" onclick="addQuestionBlock('test-questions-container')">+ Savol qo'shish</button>
+      <button class="add-btn" onclick="addLessonBlock()" style="font-size: 17px; padding: 18px; background: linear-gradient(135deg, #f0fdfa, #ccfbf1); border: 3px dashed var(--primary); color: var(--primary-dark); font-weight: 800;">
+        ➕ Yangi mavzu qo'shish (istalgancha qo'shing)
+      </button>
+      <h3 class="section-divider">🎯 Yakuniy test sozlamalari</h3>
+      <div style="background: linear-gradient(135deg, #f0fdfa, #ccfbf1); border: 2px solid var(--primary); border-radius: var(--radius); padding: 16px; margin-bottom: 14px;">
+        <p style="font-size: 14px; line-height: 1.6; margin-bottom: 12px;">
+          <b>🎲 Yakuniy test avtomatik tasodifiy savollardan iborat!</b><br>
+          Har bir mavzuga qo'shgan savollaringizdan saytni o'zi tasodifiy tanlaydi.
+          Har bir o'quvchi <b>boshqacha savollar</b> oladi — bu chinakam test!
+        </p>
+        <div class="field" style="margin-bottom: 8px;">
+          <label>O'quvchiga nechta savol tushsin?</label>
+          <input class="input" type="number" id="course-random-count" min="1" value="30" style="max-width: 150px;">
+        </div>
+        <p style="font-size: 13px; color: var(--primary-dark); font-weight: 700;">
+          📊 Jami mavjud savollar: <span id="total-questions-display">0</span> ta
+          (barcha mavzulardan)
+        </p>
+        <p style="font-size: 12px; color: var(--ink-2); margin-top: 6px;">
+          💡 Misol: Agar 120 ta savol bo'lsa va 30 ta deb sozlasangiz, o'quvchi 120 dan 30 ta tasodifiy savolga javob beradi.
+        </p>
+      </div>
+
+      <details style="margin-bottom: 16px;">
+        <summary style="cursor: pointer; font-weight: 700; color: var(--ink-2); padding: 8px;">
+          🔧 Qo'shimcha — to'g'ridan-to'g'ri yakuniy test savollari (ixtiyoriy)
+        </summary>
+        <p class="sub" style="margin-top: 8px;">
+          Agar mavzularga savol qo'shmagan bo'lsangiz yoki qo'shimcha aniq savollar bo'lishini xohlasangiz, bu yerga qo'shing.
+        </p>
+        <div id="test-questions-container"></div>
+        <button class="add-btn" onclick="addQuestionBlock('test-questions-container')">+ Qo'shimcha savol</button>
+      </details>
+
       <div class="actions-bar">
         <button class="btn btn-secondary" onclick="showView('courses')">Bekor qilish</button>
         <button class="btn btn-primary" onclick="saveCourse()">💾 Saqlash</button>
@@ -1045,7 +1078,11 @@ function renderDashboard() {
   document.getElementById('stat-meetings').textContent = meetings.length;
   const totalLessons = courses.reduce((s, c) => s + (c.lessons?.length || 0), 0);
   const totalQs = quizzes.reduce((s, q) => s + (q.questions?.length || 0), 0)
-    + courses.reduce((s, c) => s + (c.test?.questions?.length || 0), 0);
+    + courses.reduce((s, c) => {
+      const mavzuQs = (c.lessons || []).reduce((ss, l) => ss + (l.questions?.length || 0), 0);
+      const extraQs = c.test?.questions?.length || 0;
+      return s + mavzuQs + extraQs;
+    }, 0);
   document.getElementById('stat-lessons').textContent = totalLessons;
   document.getElementById('stat-questions').textContent = totalQs;
 }
@@ -1061,7 +1098,7 @@ function renderCoursesList() {
       <div class="ico" style="background: ${COLOR_GRADS[c.color] || COLOR_GRADS[1]}">${esc(c.emoji || '📖')}</div>
       <div class="info">
         <h3>${esc(c.title)}</h3>
-        <p>📺 ${c.lessons?.length || 0} ta dars · 📝 ${c.test?.questions?.length || 0} ta test savoli</p>
+        <p>📚 ${c.lessons?.length || 0} ta mavzu · 📝 ${((c.lessons || []).reduce((s,l)=>s+(l.questions?.length||0),0) + (c.test?.questions?.length || 0))} ta savol (yakuniy: ${c.test?.randomCount || 30} ta tasodifiy)</p>
       </div>
       <div class="actions">
         <button class="icon-btn edit" onclick="openCourseEditor('${c.id}')" title="Tahrirlash">✏️</button>
@@ -1099,30 +1136,38 @@ function openCourseEditor(id = null) {
   document.getElementById('course-desc').value = c?.description || '';
   document.getElementById('course-emoji').value = c?.emoji || '📖';
   document.getElementById('course-color').value = c?.color || 1;
+  // Tasodifiy savollar soni
+  document.getElementById('course-random-count').value = c?.test?.randomCount || 30;
+  // Mavzularni yuklash
   const lc = document.getElementById('lessons-container');
   lc.innerHTML = '';
-  const lessons = c?.lessons || [{ title: '', context: '', videoUrl: '', text: '' }];
+  const lessons = c?.lessons || [{ title: '', context: '', videoUrl: '', text: '', questions: [] }];
   lessons.forEach(l => addLessonBlock(l));
+  // Qo'shimcha yakuniy test savollari (bo'sh bo'lsa, bo'sh qoladi)
   const qc = document.getElementById('test-questions-container');
   qc.innerHTML = '';
-  const qs = c?.test?.questions || [emptyQuestion()];
+  const qs = c?.test?.questions || [];
   qs.forEach(q => addQuestionBlock('test-questions-container', q));
+  // Umumiy savollar sonini hisoblash
+  updateTotalQuestionsDisplay();
   showView('course-editor');
 }
 function addLessonBlock(initial = null) {
   const container = document.getElementById('lessons-container');
   const block = document.createElement('div');
   block.className = 'block lesson-block';
-  // Har bir dars uchun noyob ID — IndexedDB'da video saqlash uchun kerak
+  // Har bir mavzu uchun noyob ID — IndexedDB va savollar konteyneri uchun kerak
   const lessonId = initial?.id || ('l_' + Date.now() + '_' + Math.random().toString(36).slice(2, 7));
   block.dataset.lessonId = lessonId;
   block.dataset.videoBlobKey = initial?.videoBlobKey || '';
   const existingStatus = initial?.videoBlobKey ? '✓ Mavjud video saqlangan (yangi yuklasangiz almashtiriladi)' : '';
+  const qContainerId = 'mavzu-q-' + lessonId;
+  const initialQCount = initial?.questions?.length || 0;
   block.innerHTML = `
-    <div class="block-num">Dars ${container.children.length + 1}</div>
+    <div class="block-num">Mavzu ${container.children.length + 1}</div>
     <button class="block-del" onclick="deleteLessonBlock(this);">×</button>
-    <div class="field"><label>Dars sarlavhasi *</label>
-      <input class="input lesson-title" value="${esc(initial?.title || '')}" placeholder="Masalan: 1-dars: Kirish"></div>
+    <div class="field"><label>Mavzu sarlavhasi *</label>
+      <input class="input lesson-title" value="${esc(initial?.title || '')}" placeholder="Masalan: 1-mavzu: Kirish"></div>
     <div class="field"><label>Qisqa izoh</label>
       <input class="input lesson-context" value="${esc(initial?.context || '')}" placeholder="10 daqiqali video"></div>
 
@@ -1130,26 +1175,67 @@ function addLessonBlock(initial = null) {
       <label>📺 Video manzili (URL)</label>
       <input class="input lesson-video" value="${esc(initial?.videoUrl || '')}" placeholder="YouTube / Telegram / Google Drive havolasi yoki .mp4">
       <p style="font-size:11px; color:var(--ink-2); margin-top:6px; line-height:1.5;">
-        ✓ <b>YouTube:</b> https://youtube.com/watch?v=XXX yoki https://youtu.be/XXX<br>
+        ✓ <b>YouTube:</b> https://youtube.com/watch?v=XXX<br>
         ✓ <b>Telegram</b> (ommaviy kanal): https://t.me/kanal_nomi/123<br>
-        ✓ <b>Google Drive:</b> https://drive.google.com/file/d/FILE_ID/view<br>
-        ✓ <b>To'g'ridan-to'g'ri:</b> https://...mp4
+        ✓ <b>Google Drive:</b> https://drive.google.com/file/d/FILE_ID/view
       </p>
     </div>
 
     <div class="field" style="background:#fef3c7; padding:12px; border-radius:10px; border:2px solid #fbbf24;">
-      <label>📁 Yoki video faylni yuklash (cheklov yo'q, 500MB+ ham mumkin)</label>
+      <label>📁 Yoki video faylni yuklash (cheklov yo'q)</label>
       <input type="file" class="lesson-video-file" accept="video/*" onchange="handleLessonVideoUpload(event, this)" style="padding:8px; width:100%;">
       <p class="lesson-video-status" style="font-size:12px; color:var(--ink-2); margin-top:6px;">${existingStatus}</p>
       <p style="font-size:11px; color:#92400e; margin-top:6px;">
-        ⚠️ Yuklangan fayllar <b>faqat shu qurilmada</b> ko'rinadi (IndexedDB). Boshqa qurilmalardan ko'rish uchun YouTube yoki Telegram URL ishlating.
+        ⚠️ Yuklangan fayllar faqat shu qurilmada ko'rinadi. Hammaga ko'rinishi uchun YouTube/Telegram URL ishlating.
       </p>
     </div>
 
-    <div class="field" style="margin-bottom: 0;"><label>Dars matni</label>
-      <textarea class="textarea lesson-text" placeholder="Dars haqida batafsil...">${esc(initial?.text || '')}</textarea></div>
+    <div class="field"><label>Mavzu matni</label>
+      <textarea class="textarea lesson-text" placeholder="Mavzu haqida batafsil...">${esc(initial?.text || '')}</textarea></div>
+
+    <details ${initialQCount > 0 ? 'open' : ''} style="margin-top: 10px; background: #f0fdfa; padding: 12px 14px; border-radius: 10px; border: 2px solid #5eead4;">
+      <summary style="cursor: pointer; font-weight: 700; color: var(--primary-dark); font-size: 14px;">
+        📝 Bu mavzu uchun test savollari (<span class="mavzu-q-count">${initialQCount}</span> ta)
+      </summary>
+      <p style="font-size: 12px; color: var(--ink-2); margin-top: 8px; line-height: 1.5;">
+        Bu mavzu bo'yicha savollar qo'shing. Yakuniy testda barcha mavzulardagi savollardan tasodifiy tanlanadi.
+      </p>
+      <div id="${qContainerId}" class="mavzu-questions-container" style="margin-top: 10px;"></div>
+      <button type="button" class="add-btn" onclick="addMavzuQuestion('${qContainerId}', this)" style="margin: 8px 0 0 0; font-size: 13px; padding: 10px;">
+        + Mavzuga savol qo'shish
+      </button>
+    </details>
   `;
   container.appendChild(block);
+  // Mavjud savollarni yuklash (tahrirlash rejimi uchun)
+  if (initial?.questions && initial.questions.length > 0) {
+    initial.questions.forEach(q => addQuestionBlock(qContainerId, q));
+  }
+}
+
+function addMavzuQuestion(containerId, btn) {
+  addQuestionBlock(containerId);
+  // Savol sonini yangilash
+  const block = btn.closest('.lesson-block');
+  updateMavzuQCount(block);
+  updateTotalQuestionsDisplay();
+}
+
+function updateMavzuQCount(lessonBlock) {
+  if (!lessonBlock) return;
+  const count = lessonBlock.querySelectorAll('.mavzu-questions-container .question-block').length;
+  const countEl = lessonBlock.querySelector('.mavzu-q-count');
+  if (countEl) countEl.textContent = count;
+}
+
+function updateTotalQuestionsDisplay() {
+  const el = document.getElementById('total-questions-display');
+  if (!el) return;
+  let total = 0;
+  document.querySelectorAll('#lessons-container .mavzu-questions-container').forEach(c => {
+    total += c.querySelectorAll('.question-block').length;
+  });
+  el.textContent = total;
 }
 
 function deleteLessonBlock(btn) {
@@ -1160,7 +1246,7 @@ function deleteLessonBlock(btn) {
     IDB.del(key).catch(() => {});
   }
   block.remove();
-  renumberBlocks('lessons-container', 'Dars');
+  renumberBlocks('lessons-container', 'Mavzu');
 }
 
 async function handleLessonVideoUpload(e, fileInput) {
@@ -1202,7 +1288,7 @@ function addQuestionBlock(containerId, initial = null) {
   block.className = 'block question-block';
   block.innerHTML = `
     <div class="block-num">Savol ${container.children.length + 1}</div>
-    <button class="block-del" onclick="this.parentElement.remove(); renumberBlocks('${containerId}', 'Savol');">×</button>
+    <button class="block-del" onclick="deleteQuestionBlock(this, '${containerId}');">×</button>
     <div class="field"><label>Savol matni *</label>
       <input class="input q-text" value="${esc(q.text)}" placeholder="Savolingizni yozing..."></div>
     <label style="font-weight:700; font-size:12px; text-transform:uppercase; letter-spacing:0.05em; color:var(--ink-2); margin-bottom:6px; display:block;">
@@ -1230,6 +1316,17 @@ function addQuestionBlock(containerId, initial = null) {
   `;
   container.appendChild(block);
 }
+
+function deleteQuestionBlock(btn, containerId) {
+  const block = btn.parentElement;
+  const lessonBlock = block.closest('.lesson-block');
+  block.remove();
+  renumberBlocks(containerId, 'Savol');
+  // Mavzu savol sonini va umumiy savol sonini yangilash
+  if (lessonBlock) updateMavzuQCount(lessonBlock);
+  updateTotalQuestionsDisplay();
+}
+
 function toggleCorrect(btn) {
   const block = btn.closest('.block');
   block.querySelectorAll('.check-btn').forEach(b => { b.classList.remove('on'); b.textContent = ''; });
@@ -1252,36 +1349,55 @@ function saveCourse() {
   const title = document.getElementById('course-title').value.trim();
   if (!title) { toast('Kurs nomini kiriting', 'error'); return; }
   const lessons = [];
+  let totalMavzuQs = 0;
   const lessonBlocks = document.querySelectorAll('#lessons-container .lesson-block');
   for (let i = 0; i < lessonBlocks.length; i++) {
     const b = lessonBlocks[i];
     const t = b.querySelector('.lesson-title').value.trim();
-    if (!t) { toast(`Dars ${i+1}: sarlavhani kiriting`, 'error'); return; }
+    if (!t) { toast(`Mavzu ${i+1}: sarlavhani kiriting`, 'error'); return; }
+    // Mavzuga tegishli savollarni yig'amiz
+    const mavzuQBlocks = b.querySelectorAll('.mavzu-questions-container .question-block');
+    const mavzuQuestions = [];
+    for (let j = 0; j < mavzuQBlocks.length; j++) {
+      const q = readQuestionBlock(mavzuQBlocks[j], j);
+      if (!q) { toast(`Mavzu ${i+1}, Savol ${j+1}: ma'lumotlar to'liq emas`, 'error'); return; }
+      mavzuQuestions.push(q);
+    }
+    totalMavzuQs += mavzuQuestions.length;
     lessons.push({
       id: b.dataset.lessonId,
       title: t,
       context: b.querySelector('.lesson-context').value.trim(),
       videoUrl: b.querySelector('.lesson-video').value.trim(),
       videoBlobKey: b.dataset.videoBlobKey || '',
-      text: b.querySelector('.lesson-text').value.trim()
+      text: b.querySelector('.lesson-text').value.trim(),
+      questions: mavzuQuestions
     });
   }
-  if (lessons.length === 0) { toast("Kamida 1 ta dars qo'shing", 'error'); return; }
-  const questions = [];
+  if (lessons.length === 0) { toast("Kamida 1 ta mavzu qo'shing", 'error'); return; }
+  // Qo'shimcha yakuniy test savollari (ixtiyoriy)
+  const extraQuestions = [];
   const qBlocks = document.querySelectorAll('#test-questions-container .question-block');
   for (let i = 0; i < qBlocks.length; i++) {
     const q = readQuestionBlock(qBlocks[i], i);
     if (!q) return;
-    questions.push(q);
+    extraQuestions.push(q);
   }
-  if (questions.length === 0) { toast('Yakuniy test uchun kamida 1 ta savol kerak', 'error'); return; }
+  // Tasodifiy savollar soni
+  const randomCount = parseInt(document.getElementById('course-random-count').value) || 30;
+  // Validatsiya: kamida bitta savol bo'lishi kerak
+  if (totalMavzuQs === 0 && extraQuestions.length === 0) {
+    toast("❌ Kamida bitta mavzuga test savoli qo'shing yoki qo'shimcha savol kiriting!", 'error');
+    return;
+  }
   const course = {
     id: editingCourseId || ('c_' + Date.now()),
     title,
     description: document.getElementById('course-desc').value.trim(),
     emoji: document.getElementById('course-emoji').value.trim() || '📖',
     color: parseInt(document.getElementById('course-color').value),
-    lessons, test: { questions },
+    lessons,
+    test: { questions: extraQuestions, randomCount },
     createdAt: editingCourseId ? (courses.find(c => c.id === editingCourseId)?.createdAt || Date.now()) : Date.now(),
     updatedAt: Date.now()
   };

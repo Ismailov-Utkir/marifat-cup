@@ -1415,7 +1415,7 @@
           <button class="btn btn-secondary" onclick="prevLesson()" id="prev-lesson-btn">← Oldingi</button>
         </div>
         <div class="right">
-          <button class="btn btn-primary" id="complete-lesson-btn" onclick="completeLesson()">✓ Darsni tamomlash</button>
+          <button class="btn btn-primary" id="complete-lesson-btn" onclick="completeLesson()">✓ Mavzuni tamomlash</button>
           <button class="btn btn-accent" id="next-lesson-btn" onclick="nextLesson()" style="display:none;">Keyingi →</button>
         </div>
       </div>
@@ -1459,7 +1459,7 @@
       </div>
     </div>
 
-    <h3 style="margin-top: 24px; margin-bottom: 12px; font-family: 'Bricolage Grotesque'; font-size: 20px;">Darslar</h3>
+    <h3 style="margin-top: 24px; margin-bottom: 12px; font-family: 'Bricolage Grotesque'; font-size: 20px;">Mavzular</h3>
     <div id="lessons-container"></div>
     <button class="add-question-btn" onclick="addLesson()">+ Dars qo'shish</button>
 
@@ -1487,6 +1487,7 @@
     <p id="test-intro-sub">Kursni muvaffaqiyatli tamomlash uchun testdan o'ting</p>
     <div class="test-rules">
       <ul>
+        <li>Savollar <b>tasodifiy</b> tartibda barcha mavzulardan tanlanadi</li>
         <li><b>70%</b> dan ortiq to'g'ri javob — kursni tamomlaganingizdan dalolat</li>
         <li>Har bir to'g'ri javob uchun <b>+5 🪙</b> tanga</li>
         <li>Testdan o'tsangiz, <b>+100 🪙</b> tanga va <b>sertifikat</b> beriladi</li>
@@ -1924,7 +1925,7 @@
           </div>
           <div class="profile-stat">
             <div class="num">📚 <span id="profile-lessons">0</span></div>
-            <div class="label">Darslar tamomlangan</div>
+            <div class="label">Mavzular tamomlangan</div>
           </div>
         </div>
       </div>
@@ -2398,11 +2399,11 @@ function renderCoursesList() {
           <h3>${escapeHtml(c.title)}</h3>
           <p>${escapeHtml(c.description)}</p>
           <div class="course-meta">
-            <span>📚 ${c.lessons.length} dars</span>
-            <span>📝 ${c.test.questions.length} ta savol</span>
+            <span>📚 ${c.lessons.length} mavzu</span>
+            <span>📝 ${getCourseTestCount(c)} ta savol testda</span>
           </div>
           <div class="course-progress"><div class="course-progress-bar" style="width: ${progress}%"></div></div>
-          <div class="course-progress-text">${completed}/${c.lessons.length} dars tamomlangan · ${progress}%</div>
+          <div class="course-progress-text">${completed}/${c.lessons.length} mavzu tamomlangan · ${progress}%</div>
         </div>
       </div>
     `;
@@ -2429,8 +2430,8 @@ function renderCourseDetail() {
       <h1>${escapeHtml(c.title)}</h1>
       <p>${escapeHtml(c.description)}</p>
       <div class="course-stats">
-        <div class="stat-pill">📚 ${c.lessons.length} dars</div>
-        <div class="stat-pill">📝 ${c.test.questions.length} ta savol testda</div>
+        <div class="stat-pill">📚 ${c.lessons.length} mavzu</div>
+        <div class="stat-pill">📝 ${getCourseTestCount(c)} ta savol testda</div>
         <div class="stat-pill">🪙 ${c.lessons.length * COIN_PER_LESSON + COIN_PASS_TEST}+ tanga</div>
         ${hasCert ? '<div class="stat-pill" style="background: var(--success); color: white;">✓ Sertifikat olingan</div>' : ''}
       </div>
@@ -2468,7 +2469,7 @@ function renderCourseDetail() {
       <div class="test-num">${allDone ? '🎓' : '🔒'}</div>
       <div class="test-info">
         <h4>Yakuniy test ${hasCert ? '(qayta o\'tish)' : ''}</h4>
-        <p>${allDone ? `${c.test.questions.length} ta savol — sertifikat olish uchun` : "Barcha darslarni tugatib bo'ling"}</p>
+        <p>${allDone ? `${getCourseTestCount(c)} ta tasodifiy savol — sertifikat olish uchun` : "Barcha mavzularni tugatib bo'ling"}</p>
       </div>
     </div>
   `;
@@ -2650,17 +2651,48 @@ function prevLesson() {
 // ====================================================================
 // COURSE TEST
 // ====================================================================
+// Kursdagi barcha test savollarini yig'ish (mavzulardan + qo'shimcha)
+function collectCourseQuestionPool(c) {
+  const mavzuQs = (c.lessons || []).flatMap(l => l.questions || []);
+  const extraQs = c.test?.questions || [];
+  // Mavzu savollari ustun — agar mavjud bo'lsa
+  if (mavzuQs.length > 0) return mavzuQs.concat(extraQs);
+  return extraQs;
+}
+
+// Yakuniy testda nechta savol bo'lishini hisoblash
+function getCourseTestCount(c) {
+  const pool = collectCourseQuestionPool(c);
+  if (pool.length === 0) return 0;
+  const requested = c.test?.randomCount || pool.length;
+  return Math.min(requested, pool.length);
+}
+
 function openTestIntro() {
   const c = state.currentCourse;
+  const pool = collectCourseQuestionPool(c);
+  const testCount = getCourseTestCount(c);
   document.getElementById('test-intro-title').textContent = `Yakuniy test: ${c.title}`;
-  document.getElementById('test-intro-sub').textContent =
-    `${c.test.questions.length} ta savol · 70% dan ortiq to'g'ri javob bersangiz sertifikat olasiz`;
+  const isRandom = pool.length > testCount;
+  document.getElementById('test-intro-sub').textContent = isRandom
+    ? `${testCount} ta tasodifiy savol (jami ${pool.length} ta dan) · 70% dan ortiq to'g'ri javob bersangiz sertifikat olasiz`
+    : `${testCount} ta savol · 70% dan ortiq to'g'ri javob bersangiz sertifikat olasiz`;
   showScreen('test-intro-screen');
 }
 
 function startCourseTest() {
+  const c = state.currentCourse;
+  const pool = collectCourseQuestionPool(c);
+  const count = getCourseTestCount(c);
+  if (pool.length === 0) {
+    toast("Bu kursda test savollari yo'q", 'error');
+    return;
+  }
+  // Tasodifiy aralashtirish va N tasini tanlash
+  const shuffled = [...pool].sort(() => Math.random() - 0.5);
+  const selected = shuffled.slice(0, count);
   state.mode = 'test';
-  state.currentQuiz = { title: state.currentCourse.title, questions: state.currentCourse.test.questions };
+  state.currentQuiz = { title: c.title, questions: selected };
   state.currentQ = 0;
   state.myScore = 0;
   state.myAnswers = [];
@@ -2670,7 +2702,7 @@ function startCourseTest() {
 }
 
 function finishCourseTest() {
-  const total = state.currentCourse.test.questions.length;
+  const total = state.currentQuiz.questions.length;
   const correct = state.testCorrect;
   const percent = Math.round((correct / total) * 100);
   const passed = percent >= PASS_PERCENT;
@@ -2804,7 +2836,7 @@ function saveCourse() {
 
   const lessons = [];
   const lessonBlocks = document.querySelectorAll('#lessons-container > .question-block');
-  if (lessonBlocks.length === 0) { toast('Kamida 1 ta dars qo\'shing', 'error'); return; }
+  if (lessonBlocks.length === 0) { toast('Kamida 1 ta mavzu qo\'shing', 'error'); return; }
   for (let i = 0; i < lessonBlocks.length; i++) {
     const b = lessonBlocks[i];
     const lTitle = b.querySelector('.lesson-title').value.trim();
