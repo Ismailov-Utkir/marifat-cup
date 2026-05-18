@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "exportedAt": "2026-05-18T15:24:42.082Z",
+  "exportedAt": "2026-05-18T15:26:07.204Z",
   "source": "marifat-cup-admin-auto",
   "courses": [
     {
@@ -1374,6 +1374,33 @@
       "pdfUrl": "./files/slides/s_1779117878427_R._Jumaniyozov.pdf",
       "fileExt": ".pdf",
       "date": 1779117878427
+    },
+    {
+      "id": "s_1779117904946",
+      "title": "MA’NAVIY TARG‘IBOT TA’SIRCHANLIGINI OSHIRISH YO‘LLARI",
+      "presenter": "S.Olimov",
+      "pdfStored": false,
+      "pdfUrl": "./files/slides/s_1779117904946_S._Olimov.pdf",
+      "fileExt": ".pdf",
+      "date": 1779117904946
+    },
+    {
+      "id": "s_1779117929122",
+      "title": "JAMIYAT BARQARORLIGIGA SALBIY TA’SIR ETUVCHI TAHDIDLAR VA ULARNI BARTARAF ETISH OMILLARI",
+      "presenter": "Sh.To'rayev",
+      "pdfStored": false,
+      "pdfUrl": "./files/slides/s_1779117929122_Sh._To_rayev.pdf",
+      "fileExt": ".pdf",
+      "date": 1779117929122
+    },
+    {
+      "id": "s_1779117963570",
+      "title": "DINIY EKSTREMISTIK OQIMLARGA QARSHI KURASHISHNING MAʼNAVIY ASOSLAR",
+      "presenter": "U.G'afurov",
+      "pdfStored": false,
+      "pdfUrl": "./files/slides/s_1779117963570_U._G_ofurov.pdf",
+      "fileExt": ".pdf",
+      "date": 1779117963570
     }
   ],
   "announcements": [],
