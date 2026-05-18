@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "exportedAt": "2026-05-18T13:31:48.159Z",
+  "exportedAt": "2026-05-18T15:22:05.898Z",
   "source": "marifat-cup-admin-auto",
   "courses": [
     {
@@ -1320,7 +1320,17 @@
     }
   ],
   "quizzes": [],
-  "slides": [],
+  "slides": [
+    {
+      "id": "s_1779117721078",
+      "title": "IJTIMOIY AXLOQ VA YANGILANAYOTGAN JAMIYAT",
+      "presenter": "A.Mavrulov",
+      "pdfStored": false,
+      "pdfUrl": "./files/slides/s_1779117721078_A._Mavrulov.pdf",
+      "fileExt": ".pdf",
+      "date": 1779117721078
+    }
+  ],
   "announcements": [],
   "ebooks": [
     {
