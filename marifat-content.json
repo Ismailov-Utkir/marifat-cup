@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "exportedAt": "2026-05-18T15:23:21.822Z",
+  "exportedAt": "2026-05-18T15:24:42.082Z",
   "source": "marifat-cup-admin-auto",
   "courses": [
     {
@@ -1347,6 +1347,33 @@
       "pdfUrl": "./files/slides/s_1779117798525_M._Quronov.pdf",
       "fileExt": ".pdf",
       "date": 1779117798525
+    },
+    {
+      "id": "s_1779117823915",
+      "title": "YANGI O‘ZBEKISTONNING UCHINCHI RENESSANS G‘OYASI VA UNING IJTIMOIY-SIYOSIY MOHIYATI",
+      "presenter": "N.Jo'rayev",
+      "pdfStored": false,
+      "pdfUrl": "./files/slides/s_1779117823915_N._Jo_rayev.pdf",
+      "fileExt": ".pdf",
+      "date": 1779117823915
+    },
+    {
+      "id": "s_1779117847268",
+      "title": "MAHALLALARDA TASHKIL ETILADIGAN “MA’NAVIYAT SEKTORI” (BOSHLANG‘ICH-TAYANCH TUZILMASI)NING ASOSIY VAZIFALARI",
+      "presenter": "O.Davlatov",
+      "pdfStored": false,
+      "pdfUrl": "./files/slides/s_1779117847268_O._Davlatov.pdf",
+      "fileExt": ".pdf",
+      "date": 1779117847268
+    },
+    {
+      "id": "s_1779117878427",
+      "title": "DAVLAT TILI MAQOMINI MUSTAHKAMLASH OMILLARI",
+      "presenter": "R.Jumaniyozov",
+      "pdfStored": false,
+      "pdfUrl": "./files/slides/s_1779117878427_R._Jumaniyozov.pdf",
+      "fileExt": ".pdf",
+      "date": 1779117878427
     }
   ],
   "announcements": [],
