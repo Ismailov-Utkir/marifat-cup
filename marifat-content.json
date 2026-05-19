@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "exportedAt": "2026-05-19T07:16:19.227Z",
+  "exportedAt": "2026-05-19T07:22:00.280Z",
   "source": "marifat-cup-admin-auto",
   "courses": [
     {
@@ -1489,5 +1489,17 @@
       "createdAt": 1779169171329
     }
   ],
-  "labels": {}
+  "labels": {
+    "courses_desc": "Video darslar, testlar va amaliy mashg‘ulotlar orqali bilim oling",
+    "ebooks": "Elektron kutubxona",
+    "ebooks_desc": "Eng sara kitoblarni online o‘qing va yuklab oling",
+    "meetings": "Online uchrashuv va seminarlar",
+    "meetings_desc": "Mutaxassislar bilan jonli muloqot va videokonferensiyalar",
+    "newspapers": "Elektron gazetalar va maqolalar",
+    "newspapers_desc": "Dolzarb maqolalarni kuzating",
+    "achievements": "Mening natijalarim",
+    "achievements_desc": "Sertifikatlar, reyting va shaxsiy statistika jamlanmasi",
+    "create_quiz": "Aql Sinovi",
+    "create_quiz_desc": "O‘z savollaringiz asosida zamonaviy quizlar tuzing"
+  }
 }
