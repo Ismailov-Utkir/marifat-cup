@@ -1421,7 +1421,6 @@
       <div id="live-weather" class="live-widget" title="Ob-havo" style="display:none;">☀️ <span id="weather-text">--°</span></div>
       <button class="audio-mute-btn" onclick="toggleAudioMute()" title="Musiqani o'chirish" style="background: rgba(255,255,255,0.1); border: 2px solid rgba(255,255,255,0.2); color: white; width: 40px; height: 40px; border-radius: 50%; font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center;">🔊</button>
       <button class="theme-toggle-btn" onclick="toggleTheme()" title="Tungi rejim" style="background: rgba(255,255,255,0.1); border: 2px solid rgba(255,255,255,0.2); color: white; width: 40px; height: 40px; border-radius: 50%; font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center;">🌙</button>
-      <button class="lang-toggle-btn" onclick="toggleLanguage()" title="Til: Lotin / Kirill" style="background: rgba(255,255,255,0.1); border: 2px solid rgba(255,255,255,0.2); color: white; width: 40px; height: 40px; border-radius: 50%; font-size: 15px; font-weight: 800; cursor: pointer; display: flex; align-items: center; justify-content: center;">Aa</button>
       <div class="coin-display">🪙 <span id="topbar-coins">0</span></div>
       <button class="profile-btn" onclick="goToProfile()">
         <span class="avatar" id="topbar-avatar">A</span>
@@ -2161,6 +2160,44 @@
 </div>
 
 <!-- ====== MODAL ====== -->
+<!-- ====== FEEDBACK / MUROJAAT WIDGET ====== -->
+<button id="feedback-btn" onclick="openFeedbackModal()" title="Admin'ga murojaat" style="position: fixed; bottom: 24px; left: 24px; z-index: 998; background: linear-gradient(135deg, #f59e0b, #d97706); color: white; border: none; padding: 12px 20px; border-radius: 100px; font-weight: 800; font-size: 14px; cursor: pointer; box-shadow: 0 8px 24px rgba(245,158,11,0.4); display: inline-flex; align-items: center; gap: 8px; font-family: inherit;">✉️ Murojaat</button>
+
+<div id="feedback-modal" class="modal-overlay">
+  <div class="modal-card" style="max-width: 500px;">
+    <h3 style="font-family: 'Bricolage Grotesque'; font-size: 22px; margin-bottom: 8px;">✉️ Admin'ga murojaat</h3>
+    <p style="color: var(--ink-2); margin-bottom: 14px; font-size: 14px;">Talab, taklif yoki shikoyatingizni yozing. Admin ko'rib chiqadi.</p>
+    <div class="field">
+      <label>Ismingiz</label>
+      <input class="input" type="text" id="feedback-name" placeholder="Ismingiz" maxlength="50">
+    </div>
+    <div class="field">
+      <label>Aloqa (ixtiyoriy — telefon yoki Telegram)</label>
+      <input class="input" type="text" id="feedback-contact" placeholder="Masalan: +998901234567 yoki @username" maxlength="60">
+    </div>
+    <div class="field">
+      <label>Mavzu</label>
+      <select class="select" id="feedback-topic">
+        <option value="taklif">💡 Taklif</option>
+        <option value="shikoyat">😟 Shikoyat</option>
+        <option value="texnik">🔧 Texnik muammo</option>
+        <option value="boshqa">📩 Boshqa</option>
+      </select>
+    </div>
+    <div class="field">
+      <label>Xabar</label>
+      <textarea id="feedback-message" class="textarea" placeholder="Murojaatingizni batafsil yozing..." style="min-height: 120px;" maxlength="2000"></textarea>
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-secondary" onclick="closeFeedbackModal()">Bekor qilish</button>
+      <button class="btn btn-primary" onclick="sendFeedback()">📤 Yuborish</button>
+    </div>
+    <p style="font-size: 11px; color: var(--ink-2); margin-top: 12px; text-align: center;">
+      Murojaatingiz admin panelga ham, sizning qurilmangizga ham saqlanadi
+    </p>
+  </div>
+</div>
+
 <!-- ====== AI CHATBOT WIDGET ====== -->
 <button id="ai-chat-toggle" onclick="toggleAiChat()" title="AI yordamchi" style="position: fixed; bottom: 100px; right: 24px; z-index: 998; background: linear-gradient(135deg, #7c3aed, #ec4899); color: white; border: none; width: 60px; height: 60px; border-radius: 50%; font-size: 28px; cursor: pointer; box-shadow: 0 10px 30px rgba(124,58,237,0.4); display: flex; align-items: center; justify-content: center;">🤖</button>
 
@@ -5498,6 +5535,49 @@ function performGlobalSearch() {
 }
 
 // ====================================================================
+// FEEDBACK / MUROJAAT — Foydalanuvchidan admin'ga xabar
+// ====================================================================
+function openFeedbackModal() {
+  document.getElementById('feedback-modal').classList.add('active');
+  // Foydalanuvchi ismini avtomatik to'ldirish
+  if (user && user.name) {
+    document.getElementById('feedback-name').value = user.name;
+  }
+  setTimeout(() => document.getElementById('feedback-message').focus(), 100);
+}
+
+function closeFeedbackModal() {
+  document.getElementById('feedback-modal').classList.remove('active');
+  document.getElementById('feedback-message').value = '';
+  document.getElementById('feedback-contact').value = '';
+}
+
+async function sendFeedback() {
+  const name = document.getElementById('feedback-name').value.trim() || (user?.name || 'Anonim');
+  const contact = document.getElementById('feedback-contact').value.trim();
+  const topic = document.getElementById('feedback-topic').value;
+  const message = document.getElementById('feedback-message').value.trim();
+  if (!message) { toast('Xabar matnini yozing', 'error'); return; }
+  const feedback = {
+    id: 'fb_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6),
+    name,
+    contact,
+    topic,
+    message,
+    date: Date.now(),
+    seen: false,
+    fromUser: user?.username || (user?.name || 'guest')
+  };
+  // Lokal saqlash (admin shu qurilmadan ko'radi)
+  let all = [];
+  try { all = JSON.parse(localStorage.getItem('mc_feedback') || '[]'); } catch (e) {}
+  all.push(feedback);
+  try { localStorage.setItem('mc_feedback', JSON.stringify(all)); } catch (e) {}
+  toast("✅ Murojaatingiz yuborildi! Admin tez orada ko'rib chiqadi.", 'success');
+  closeFeedbackModal();
+}
+
+// ====================================================================
 // AI CHATBOT — Sun'iy intellekt yordamchi (bepul Pollinations API)
 // ====================================================================
 function toggleAiChat() {
@@ -5985,11 +6065,6 @@ async function initApp() {
   setInterval(loadWeather, 30 * 60 * 1000); // har 30 daqiqada yangilash
   // Musiqani oldindan yuklash — kviz boshlanganda darhol chalsin
   initBgmAudio();
-  // Til (Lotin/Kirill) — saqlangan tanlovga ko'ra
-  setTimeout(() => {
-    if (_siteLang === 'cyr') applyLanguage('cyr');
-    observeLanguageChanges();
-  }, 1000);
   // Try to sync admin content from hosted JSON file (if available)
   await syncFromServer();
   // Then load all data (server-synced + local user state)

@@ -366,6 +366,7 @@
     <button class="nav-tab" data-tab="meetings" onclick="showView('meetings')">📹 Yig'ilishlar</button>
     <button class="nav-tab" data-tab="newspapers" onclick="showView('newspapers')">📰 Gazetalar</button>
     <button class="nav-tab" data-tab="announcements" onclick="showView('announcements')">📢 E'lonlar</button>
+    <button class="nav-tab" data-tab="feedback" onclick="showView('feedback')">✉️ Murojaatlar <span id="feedback-count-badge" style="display:none; background:#ef4444; color:white; padding:1px 7px; border-radius:100px; font-size:10px; margin-left:4px;"></span></button>
     <button class="nav-tab" data-tab="settings" onclick="showView('settings')">⚙️ Sozlamalar</button>
   </div>
 
@@ -807,6 +808,15 @@ D) Noto'g'ri</pre>
         <button class="btn btn-secondary" onclick="showView('newspaper-editor')">Bekor qilish</button>
         <button class="btn btn-primary" onclick="saveIssue()">💾 Saqlash</button>
       </div>
+    </div>
+
+    <div class="view" id="view-feedback">
+      <div class="view-header">
+        <h1>✉️ Foydalanuvchi murojaatlari</h1>
+        <button class="btn btn-secondary btn-sm" onclick="markAllFeedbackSeen()">✓ Hammasini ko'rilgan deb belgilash</button>
+      </div>
+      <p class="sub">Foydalanuvchilar saytdagi "Murojaat" tugmasi orqali yuborgan xabarlar (shu qurilmadan).</p>
+      <div id="feedback-list" class="item-list"></div>
     </div>
 
     <div class="view" id="view-settings">
@@ -1331,6 +1341,9 @@ function enterAdmin() {
   startAdminClock();
   loadAdminWeather();
   setInterval(loadAdminWeather, 30 * 60 * 1000);
+  // Yangi murojaatlar sonini ko'rsatish
+  updateFeedbackBadge();
+  setInterval(updateFeedbackBadge, 60000); // Har daqiqada yangilanadi
 }
 
 function startAdminClock() {
@@ -1428,6 +1441,7 @@ function showView(name) {
   else if (name === 'ebooks') renderEbooksList();
   else if (name === 'meetings') renderMeetingsList();
   else if (name === 'newspapers') renderNewspapersList();
+  else if (name === 'feedback') renderFeedbackList();
   else if (name === 'settings') updateGhTokenStatus();
 }
 
@@ -1637,6 +1651,91 @@ function saveNewspaper() {
   editingNewspaperId = null;
   window._tempIssues = [];
   showView('newspapers');
+}
+
+// =============================================================
+// FEEDBACK — Foydalanuvchi murojaatlari (admin tomonida)
+// =============================================================
+function loadFeedback() {
+  try { return JSON.parse(localStorage.getItem('mc_feedback') || '[]'); } catch (e) { return []; }
+}
+function saveFeedback(arr) {
+  try { localStorage.setItem('mc_feedback', JSON.stringify(arr)); } catch (e) {}
+}
+
+const TOPIC_INFO = {
+  taklif: { icon: '💡', label: 'Taklif', color: '#10b981' },
+  shikoyat: { icon: '😟', label: 'Shikoyat', color: '#ef4444' },
+  texnik: { icon: '🔧', label: 'Texnik muammo', color: '#f59e0b' },
+  boshqa: { icon: '📩', label: 'Boshqa', color: '#6b7280' }
+};
+
+function renderFeedbackList() {
+  const list = document.getElementById('feedback-list');
+  const all = loadFeedback();
+  if (all.length === 0) {
+    list.innerHTML = `<div class="empty-msg"><div class="ico">📭</div>Hozircha murojaat yo'q.</div>`;
+    return;
+  }
+  // Eng yangidan
+  const sorted = [...all].sort((a, b) => (b.date || 0) - (a.date || 0));
+  list.innerHTML = sorted.map(fb => {
+    const ti = TOPIC_INFO[fb.topic] || TOPIC_INFO.boshqa;
+    return `
+      <div class="item-row" style="${fb.seen ? '' : 'border: 2px solid #f59e0b; background: #fef3c7;'} flex-wrap: wrap;">
+        <div class="ico" style="background: ${ti.color};">${ti.icon}</div>
+        <div class="info" style="flex-grow: 1; min-width: 0;">
+          <h3>${esc(fb.name)} ${fb.seen ? '' : '<span style="background:#ef4444; color:white; font-size:10px; padding:2px 8px; border-radius:100px; margin-left:6px; vertical-align:middle;">YANGI</span>'}</h3>
+          <p style="color: ${ti.color}; font-weight: 700; font-size: 13px;">${ti.icon} ${ti.label}</p>
+          <p style="margin-top: 6px; white-space: pre-wrap; line-height: 1.5;">${esc(fb.message)}</p>
+          ${fb.contact ? `<p style="margin-top: 8px; font-size: 13px;"><b>📞 Aloqa:</b> ${esc(fb.contact)}</p>` : ''}
+          <p style="margin-top: 6px; font-size: 11px; color: var(--ink-2);">🕐 ${new Date(fb.date).toLocaleString('uz-UZ')}</p>
+        </div>
+        <div class="actions">
+          ${fb.seen ? '' : `<button class="icon-btn" onclick="markFeedbackSeen('${fb.id}')" title="Ko'rilgan deb belgilash">✓</button>`}
+          <button class="icon-btn del" onclick="deleteFeedback('${fb.id}')" title="O'chirish">🗑️</button>
+        </div>
+      </div>
+    `;
+  }).join('');
+  updateFeedbackBadge();
+}
+
+function markFeedbackSeen(id) {
+  const all = loadFeedback();
+  const fb = all.find(x => x.id === id);
+  if (fb) { fb.seen = true; saveFeedback(all); renderFeedbackList(); }
+}
+
+function markAllFeedbackSeen() {
+  const all = loadFeedback();
+  all.forEach(fb => fb.seen = true);
+  saveFeedback(all);
+  renderFeedbackList();
+  toast("Hammasi ko'rilgan deb belgilandi", 'success');
+}
+
+function deleteFeedback(id) {
+  showModal("O'chirish", "Bu murojaatni o'chirmoqchimisiz?", () => {
+    const all = loadFeedback().filter(x => x.id !== id);
+    saveFeedback(all);
+    renderFeedbackList();
+    toast("O'chirildi", 'success');
+  });
+}
+
+function updateFeedbackBadge() {
+  const all = loadFeedback();
+  const newCount = all.filter(fb => !fb.seen).length;
+  const badge = document.getElementById('feedback-count-badge');
+  if (badge) {
+    if (newCount > 0) {
+      badge.textContent = newCount;
+      badge.style.display = '';
+    } else {
+      badge.style.display = 'none';
+    }
+  }
 }
 
 function deleteNewspaper(id) {
