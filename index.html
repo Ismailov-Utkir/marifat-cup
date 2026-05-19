@@ -225,7 +225,7 @@
 
   /* TOPBAR */
   .topbar {
-    width: 100%; max-width: 1100px; display: flex; align-items: center;
+    width: 100%; max-width: 1600px; display: flex; align-items: center;
     justify-content: space-between; margin-bottom: 24px; color: white; gap: 12px;
   }
   .topbar .logo-mini {
@@ -345,7 +345,7 @@
 
   /* ============ HOME ============ */
   .home-wrap {
-    max-width: 1100px; width: 100%; margin: auto; padding: 20px;
+    max-width: 1400px; width: 100%; margin: auto; padding: 20px;
   }
   .hero-banner {
     background: linear-gradient(135deg, var(--primary), var(--secondary));
@@ -1284,16 +1284,24 @@
   .ann-full-card .ann-body { line-height: 1.65; white-space: pre-wrap; }
   .urgent-badge { background: #ef4444; color: white; padding: 3px 10px; border-radius: 100px; font-size: 11px; font-weight: 800; }
   .home-grid {
-    display: grid; grid-template-columns: 1fr 320px;
-    gap: 20px; max-width: 1200px; margin: 0 auto; padding: 0 20px;
+    display: grid; grid-template-columns: 280px 1fr 340px;
+    gap: 24px; max-width: 1600px; margin: 0 auto; padding: 0 20px;
     align-items: start;
+  }
+  .home-sidebar-left { position: sticky; top: 20px; }
+  @media (max-width: 1280px) {
+    .home-grid { grid-template-columns: 1fr 340px; }
+    .home-sidebar-left { display: none; }
+  }
+  @media (max-width: 968px) {
+    .home-grid { grid-template-columns: 1fr; }
+    .home-sidebar { position: static; order: 99; }
   }
   .home-main { min-width: 0; }
   .home-sidebar { position: sticky; top: 20px; }
   .home-sidebar .leaderboard-widget { margin-bottom: 0; }
   @media (max-width: 968px) {
     .home-grid { grid-template-columns: 1fr; padding: 0; }
-    .home-sidebar { position: static; order: 99; }
   }
 
 
@@ -1338,15 +1346,65 @@
     <span class="signin-mark"></span>
     <div class="signin-logo">Ma'rifat<br>Cup</div>
     <p class="signin-sub">Ma'naviyat va ma'rifat markazi taqdim etadi</p>
-    <div class="signin-card">
+    <div class="signin-tabs" style="display: flex; gap: 4px; background: rgba(255,255,255,0.1); padding: 4px; border-radius: 100px; margin-bottom: 16px; max-width: 100%; flex-wrap: wrap;">
+      <button class="signin-tab active" data-tab="guest" onclick="switchSignInTab('guest')" style="flex: 1; min-width: 120px; background: white; color: var(--ink); border: none; padding: 10px 14px; border-radius: 100px; font-weight: 700; cursor: pointer; font-family: inherit; font-size: 13px;">👤 Mehmon</button>
+      <button class="signin-tab" data-tab="login" onclick="switchSignInTab('login')" style="flex: 1; min-width: 120px; background: transparent; color: white; border: none; padding: 10px 14px; border-radius: 100px; font-weight: 700; cursor: pointer; font-family: inherit; font-size: 13px;">🔓 Kirish</button>
+      <button class="signin-tab" data-tab="register" onclick="switchSignInTab('register')" style="flex: 1; min-width: 120px; background: transparent; color: white; border: none; padding: 10px 14px; border-radius: 100px; font-weight: 700; cursor: pointer; font-family: inherit; font-size: 13px;">📝 Ro'yxat</button>
+    </div>
+
+    <div class="signin-card" id="signin-guest-form">
+      <p style="font-size: 13px; color: var(--ink-2); margin-bottom: 14px; line-height: 1.6; background: #f0fdfa; padding: 12px; border-radius: 10px; border-left: 4px solid var(--primary);">
+        ℹ️ <b>Mehmon sifatida</b> kvizlarda qatnashishingiz mumkin. <br>Kurslar va sertifikat uchun <b>"Ro'yxat"</b> bo'limidan o'ting.
+      </p>
       <div class="field">
         <label>Ismingizni kiriting</label>
         <input class="input" id="signin-name" placeholder="Ismingiz" maxlength="20">
       </div>
-      <button class="btn btn-primary" style="width: 100%;" onclick="signIn()">Kirish</button>
+      <button class="btn btn-primary" style="width: 100%;" onclick="signInAsGuest()">👤 Mehmon sifatida kirish</button>
     </div>
-    <p style="color: rgba(255,255,255,0.5); font-size: 13px;">
-      Ismingiz qurilmangizda saqlanadi va boshqa o'yinchilarga ko'rinadi
+
+    <div class="signin-card" id="signin-login-form" style="display: none;">
+      <p style="font-size: 13px; color: var(--ink-2); margin-bottom: 14px; line-height: 1.6;">
+        Avval ro'yxatdan o'tgan bo'lsangiz, login va parolingizni kiriting.
+      </p>
+      <div class="field">
+        <label>Login (foydalanuvchi nomi)</label>
+        <input class="input" id="login-username" placeholder="masalan: olimjon" maxlength="20">
+      </div>
+      <div class="field">
+        <label>Parol</label>
+        <input class="input" type="password" id="login-password" placeholder="••••••">
+      </div>
+      <button class="btn btn-primary" style="width: 100%;" onclick="loginUser()">🔓 Kirish</button>
+      <p id="login-err" style="margin-top: 12px; color: var(--danger); font-size: 13px; display: none; text-align: center;"></p>
+    </div>
+
+    <div class="signin-card" id="signin-register-form" style="display: none;">
+      <p style="font-size: 13px; color: var(--ink-2); margin-bottom: 14px; line-height: 1.6; background: #fef3c7; padding: 12px; border-radius: 10px; border-left: 4px solid #f59e0b;">
+        📝 Kurslarda qatnashish va sertifikat olish uchun ro'yxatdan o'ting. Login va parolni o'zingiz o'ylab toping.
+      </p>
+      <div class="field">
+        <label>To'liq ism (boshqalarga ko'rinadi)</label>
+        <input class="input" id="reg-name" placeholder="masalan: Olimjon Davlatov" maxlength="40">
+      </div>
+      <div class="field">
+        <label>Login (faqat lotin harf va raqamlar)</label>
+        <input class="input" id="reg-username" placeholder="masalan: olimjon123" maxlength="20">
+      </div>
+      <div class="field">
+        <label>Parol (kamida 4 ta belgi)</label>
+        <input class="input" type="password" id="reg-password" placeholder="••••••">
+      </div>
+      <div class="field">
+        <label>Parolni tasdiqlang</label>
+        <input class="input" type="password" id="reg-password-2" placeholder="••••••">
+      </div>
+      <button class="btn btn-primary" style="width: 100%;" onclick="registerUser()">📝 Ro'yxatdan o'tish</button>
+      <p id="reg-err" style="margin-top: 12px; color: var(--danger); font-size: 13px; display: none; text-align: center;"></p>
+    </div>
+
+    <p style="color: rgba(255,255,255,0.5); font-size: 13px; margin-top: 12px;">
+      Ma'lumotlar faqat qurilmangizda saqlanadi
     </p>
   </div>
 </div>
@@ -1372,12 +1430,32 @@
   </div>
 
   <div class="home-grid">
+   <div class="home-sidebar-left">
+    <div class="leaderboard-widget">
+      <h3>📌 Tezkor harakat</h3>
+      <div style="display: flex; flex-direction: column; gap: 8px;">
+        <button class="btn btn-primary" onclick="goToCourses()" style="width:100%; padding: 12px; font-size: 14px;">📚 Kurslar</button>
+        <button class="btn btn-accent" onclick="showScreen('live-options-screen')" style="width:100%; padding: 12px; font-size: 14px;">🎥 Kviz o'yin</button>
+        <button class="btn btn-secondary" onclick="showScreen('slides-screen'); renderSlidesList();" style="width:100%; padding: 12px; font-size: 14px;">📊 Slaydlar</button>
+        <button class="btn btn-secondary" onclick="showScreen('ebooks-screen'); renderEbooksList();" style="width:100%; padding: 12px; font-size: 14px;">📖 E-kitoblar</button>
+        <button class="btn btn-secondary" onclick="showScreen('meetings-screen'); renderMeetingsList();" style="width:100%; padding: 12px; font-size: 14px;">🎬 Yig'ilishlar</button>
+        <button class="btn btn-secondary" onclick="goToProfile()" style="width:100%; padding: 12px; font-size: 14px;">👤 Profil</button>
+      </div>
+    </div>
+    <div class="leaderboard-widget" style="margin-top: 14px;">
+      <h3>📅 Bugun</h3>
+      <p id="today-date" style="color: var(--ink-2); font-size: 14px; font-weight: 600;">--</p>
+      <p style="font-size: 13px; color: var(--ink-2); margin-top: 8px; line-height: 1.5;">
+        💡 Har kuni 10-15 daqiqa o'qish — uzoq muddatda buyuk natija beradi.
+      </p>
+    </div>
+   </div>
    <div class="home-main">
     <div class="hero-banner">
       <h1 class="hero-title" id="hero-greeting">Salom!</h1>
       <p class="hero-sub">Video darslarni o'rganing, yakuniy testdan o'ting, sertifikat va tangalar qo'lga kiriting.</p>
       <div class="hero-actions">
-        <button class="btn btn-accent" onclick="showScreen('courses-screen'); renderCoursesList();">📚 Kurslarni boshlash</button>
+        <button class="btn btn-accent" onclick="goToCourses()">📚 Kurslarni boshlash</button>
         <button class="btn btn-secondary" onclick="showScreen('live-options-screen')">👥 Jonli o'yin</button>
       </div>
     </div>
@@ -1388,7 +1466,7 @@
       <h2>📖 O'qish va o'rganish</h2>
     </div>
     <div class="grid-3">
-      <button class="action-card" onclick="showScreen('courses-screen'); renderCoursesList();">
+      <button class="action-card" onclick="goToCourses()">
         <span class="ac-icon">📚</span>
         <h3>Kurslar va darsliklar</h3>
         <p>Video darslarni ko'ring va testlardan o'ting</p>
@@ -2175,78 +2253,194 @@ function playNoise(duration, volume = 0.05) {
   src.stop(ctx.currentTime + duration);
 }
 
-// 🎵 Kahoot uslubidagi gevarvon bg music — savol davomida
+// 🎵 O'zbek milliy uslubdagi musiqa — dutor + doira (kviz savollar uchun)
+function playDutorNote(freq, duration, vol = 0.18) {
+  if (_audioMuted) return;
+  const ctx = getAudioCtx();
+  if (!ctx) return;
+  const t = ctx.currentTime;
+  // Asosiy tor ovozi
+  const osc1 = ctx.createOscillator();
+  osc1.type = 'triangle';
+  osc1.frequency.value = freq;
+  // Garmoniya (tor xususiyatini beradi)
+  const osc2 = ctx.createOscillator();
+  osc2.type = 'sine';
+  osc2.frequency.value = freq * 2;
+  // Sub-tovush (cholg'u tanasi)
+  const osc3 = ctx.createOscillator();
+  osc3.type = 'triangle';
+  osc3.frequency.value = freq * 0.5;
+  const gain = ctx.createGain();
+  const filter = ctx.createBiquadFilter();
+  filter.type = 'lowpass';
+  filter.frequency.value = freq * 6;
+  osc1.connect(gain);
+  osc2.connect(gain);
+  osc3.connect(gain);
+  gain.connect(filter);
+  filter.connect(ctx.destination);
+  // Sharp attack (chertish), dutor-uslubi
+  gain.gain.setValueAtTime(0, t);
+  gain.gain.linearRampToValueAtTime(vol, t + 0.008);
+  gain.gain.exponentialRampToValueAtTime(vol * 0.4, t + duration * 0.25);
+  gain.gain.exponentialRampToValueAtTime(0.001, t + duration);
+  osc1.start(t); osc2.start(t); osc3.start(t);
+  osc1.stop(t + duration);
+  osc2.stop(t + duration);
+  osc3.stop(t + duration);
+}
+
+function playDoiraDum(vol = 0.32) {
+  // Doiraning markazga zarbi — past, ko'krak ovozi
+  if (_audioMuted) return;
+  const ctx = getAudioCtx();
+  if (!ctx) return;
+  const t = ctx.currentTime;
+  const osc = ctx.createOscillator();
+  const gain = ctx.createGain();
+  osc.type = 'sine';
+  osc.frequency.setValueAtTime(110, t);
+  osc.frequency.exponentialRampToValueAtTime(45, t + 0.18);
+  gain.gain.setValueAtTime(vol, t);
+  gain.gain.exponentialRampToValueAtTime(0.001, t + 0.18);
+  osc.connect(gain); gain.connect(ctx.destination);
+  osc.start(t);
+  osc.stop(t + 0.18);
+}
+
+function playDoiraTak(vol = 0.2) {
+  // Doira chetiga zarba — yuqori, qisqa
+  if (_audioMuted) return;
+  const ctx = getAudioCtx();
+  if (!ctx) return;
+  const t = ctx.currentTime;
+  // Shovqin zarbi (rim hit)
+  const noiseBuf = ctx.createBuffer(1, Math.floor(0.05 * ctx.sampleRate), ctx.sampleRate);
+  const data = noiseBuf.getChannelData(0);
+  for (let i = 0; i < data.length; i++) data[i] = (Math.random() * 2 - 1);
+  const noiseSrc = ctx.createBufferSource();
+  noiseSrc.buffer = noiseBuf;
+  const noiseGain = ctx.createGain();
+  const hp = ctx.createBiquadFilter();
+  hp.type = 'highpass'; hp.frequency.value = 3500;
+  noiseSrc.connect(hp); hp.connect(noiseGain); noiseGain.connect(ctx.destination);
+  noiseGain.gain.setValueAtTime(vol, t);
+  noiseGain.gain.exponentialRampToValueAtTime(0.001, t + 0.05);
+  noiseSrc.start(t);
+  // Ohang xalqasi (doira chetining jaranglashi)
+  const osc = ctx.createOscillator();
+  const og = ctx.createGain();
+  osc.type = 'triangle';
+  osc.frequency.value = 850;
+  osc.connect(og); og.connect(ctx.destination);
+  og.gain.setValueAtTime(vol * 0.5, t);
+  og.gain.exponentialRampToValueAtTime(0.001, t + 0.05);
+  osc.start(t); osc.stop(t + 0.05);
+}
+
 function startQuizMusic() {
   if (_audioMuted) return;
-  // Audio'ni qulfdan chiqarish (har ehtimolga qarshi)
   _unlockAudio();
   stopQuizMusic();
-  // Am - F - C - G akkord progressiyasi (mashhur "happy/tense" combo)
-  const bassPattern = [110.00, 110.00, 110.00, 110.00, 174.61, 174.61, 174.61, 174.61, 130.81, 130.81, 130.81, 130.81, 196.00, 196.00, 196.00, 196.00];
-  const melodyPattern = [
-    [659.25, 0.3], [783.99, 0.3], [659.25, 0.3], [523.25, 0.3],
-    [698.46, 0.3], [880.00, 0.3], [698.46, 0.3], [523.25, 0.3],
-    [659.25, 0.3], [783.99, 0.3], [987.77, 0.3], [783.99, 0.3],
-    [783.99, 0.3], [880.00, 0.3], [659.25, 0.3], [587.33, 0.3]
+
+  // O'zbek maqomi uslubidagi melodiya (D-modal scale: D-Eb-F-G-A-Bb-C-D)
+  // Dutor chertib chalinadigan, qadimiy Buxoro/Samarqand uslubida
+  const melody = [
+    [587.33, 0.55], // D5 (uzun)
+    [523.25, 0.28], // C5
+    [466.16, 0.28], // Bb4
+    [440.00, 0.55], // A4 (uzun)
+    [392.00, 0.28], // G4
+    [349.23, 0.28], // F4
+    [311.13, 0.55], // Eb4
+    [293.66, 1.10], // D4 (juda uzun, qaror)
+    [349.23, 0.28], // F4
+    [392.00, 0.28], // G4
+    [440.00, 0.55], // A4
+    [392.00, 0.28], // G4
+    [349.23, 0.55], // F4
+    [293.66, 0.85]  // D4 (qaror)
   ];
-  let beat = 0;
-  const beatDuration = 250; // ms
-  const playBeat = () => {
+
+  // Doira ritmi — 6/8 vazni, an'anaviy bayot
+  // DUM = past, TAK = baland
+  const drumPattern = [
+    'dum', 'tak', 'tak',
+    'dum', 'tak', 'tak'
+  ];
+
+  let melodyIdx = 0;
+  let drumIdx = 0;
+
+  // Melodiya chalish — har note tugaganda keyingisini boshlaydi
+  function nextMelodyNote() {
+    if (_audioMuted || _bgmInterval === null) return;
+    if (melodyIdx >= melody.length) melodyIdx = 0;
+    const [freq, dur] = melody[melodyIdx];
+    playDutorNote(freq, dur);
+    melodyIdx++;
+    // 80% overlap — yumshoq o'tish
+    _melodyTimer = setTimeout(nextMelodyNote, dur * 1000 * 0.85);
+  }
+
+  // Doira ritmi (har 320ms)
+  function playDrumBeat() {
     if (_audioMuted) { stopQuizMusic(); return; }
-    const ctx = getAudioCtx();
-    if (!ctx) return;
-    // Bass drum (kick)
-    if (beat % 2 === 0) {
-      const osc = ctx.createOscillator();
-      const gain = ctx.createGain();
-      osc.connect(gain); gain.connect(ctx.destination);
-      osc.type = 'sine';
-      osc.frequency.setValueAtTime(150, ctx.currentTime);
-      osc.frequency.exponentialRampToValueAtTime(40, ctx.currentTime + 0.1);
-      gain.gain.setValueAtTime(0.4, ctx.currentTime);
-      gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.15);
-      osc.start();
-      osc.stop(ctx.currentTime + 0.15);
-    }
-    // Hi-hat (offbeat)
-    if (beat % 2 === 1) playNoise(0.04, 0.08);
-    // Bass synth
-    playTone(bassPattern[beat % bassPattern.length], 0.2, 'sawtooth', 0.12);
-    // Melody (har bir beat)
-    const [mf, md] = melodyPattern[beat % melodyPattern.length];
-    playTone(mf, md, 'square', 0.08);
-    beat++;
-  };
-  playBeat(); // birinchi beat darhol
-  _bgmInterval = setInterval(playBeat, beatDuration);
+    const t = drumPattern[drumIdx % drumPattern.length];
+    if (t === 'dum') playDoiraDum();
+    else playDoiraTak();
+    drumIdx++;
+  }
+  playDrumBeat();
+  _bgmInterval = setInterval(playDrumBeat, 320);
+  nextMelodyNote();
 }
 
+let _melodyTimer = null;
 function stopQuizMusic() {
   if (_bgmInterval) { clearInterval(_bgmInterval); _bgmInterval = null; }
+  if (_melodyTimer) { clearTimeout(_melodyTimer); _melodyTimer = null; }
 }
 
-// 🎉 To'g'ri javob — yorqin yuksaluvchi akkord
+// 🎉 To'g'ri javob — dutorda yuksaluvchi maqom melodiyasi
 function playCorrectSound() {
   if (_audioMuted) return;
-  playTone(523.25, 0.12, 'triangle', 0.18, 0);     // C5
-  playTone(659.25, 0.12, 'triangle', 0.18, 0.08);  // E5
-  playTone(783.99, 0.12, 'triangle', 0.18, 0.16);  // G5
-  playTone(1046.50, 0.35, 'triangle', 0.18, 0.24); // C6
+  setTimeout(() => playDutorNote(440.00, 0.18, 0.22), 0);   // A4
+  setTimeout(() => playDutorNote(523.25, 0.18, 0.22), 100); // C5
+  setTimeout(() => playDutorNote(587.33, 0.35, 0.22), 200); // D5 — qaror
+  setTimeout(() => playDoiraDum(0.25), 0);
 }
 
-// ❌ Xato javob — pasayuvchi disgarmonik
+// ❌ Xato javob — pasayuvchi melodiya
 function playWrongSound() {
   if (_audioMuted) return;
-  playTone(220, 0.15, 'sawtooth', 0.1, 0);      // A3
-  playTone(196, 0.15, 'sawtooth', 0.1, 0.1);    // G3
-  playTone(155.56, 0.4, 'sawtooth', 0.1, 0.2);  // D#3
+  setTimeout(() => playDutorNote(311.13, 0.2, 0.18), 0);    // Eb4
+  setTimeout(() => playDutorNote(277.18, 0.4, 0.18), 150);  // C#4 (g'amgin tushish)
+  setTimeout(() => playDoiraTak(0.2), 0);
 }
 
-// 🏆 Yakuniy — g'alaba fanfari
+// 🏆 Yakuniy — g'alaba maqomi (an'anaviy ohang)
 function playFinalSound() {
   if (_audioMuted) return;
-  const notes = [523.25, 659.25, 783.99, 1046.50, 783.99, 1046.50, 1318.51];
-  notes.forEach((n, i) => playTone(n, 0.25, 'triangle', 0.18, i * 0.15));
+  const notes = [
+    [293.66, 0.25], // D4
+    [349.23, 0.25], // F4
+    [392.00, 0.25], // G4
+    [440.00, 0.25], // A4
+    [523.25, 0.35], // C5
+    [587.33, 0.6]   // D5 — qaror
+  ];
+  let delay = 0;
+  notes.forEach((n) => {
+    const [freq, dur] = n;
+    setTimeout(() => playDutorNote(freq, dur, 0.22), delay);
+    delay += dur * 1000 * 0.7;
+  });
+  // Doira bilan jo'r bo'lish
+  setTimeout(() => playDoiraDum(0.3), 0);
+  setTimeout(() => playDoiraTak(0.2), 250);
+  setTimeout(() => playDoiraDum(0.3), 500);
 }
 
 function toggleAudioMute() {
@@ -2456,6 +2650,8 @@ function loadData() {
       const parsed = JSON.parse(u);
       user = {
         name: parsed.name || 'Foydalanuvchi',
+        username: parsed.username || null,
+        isGuest: parsed.isGuest !== undefined ? parsed.isGuest : true,
         coins: parsed.coins || 0,
         completedLessons: new Set(parsed.completedLessons || []),
         certificates: parsed.certificates || []
@@ -2473,10 +2669,23 @@ function saveUser() {
   try {
     localStorage.setItem('mc_user', JSON.stringify({
       name: user.name,
+      username: user.username,
+      isGuest: user.isGuest,
       coins: user.coins,
       completedLessons: [...user.completedLessons],
       certificates: user.certificates
     }));
+    // Ro'yxatdan o'tgan foydalanuvchining akkauntini ham yangilash
+    if (!user.isGuest && user.username) {
+      const accounts = getAccounts();
+      if (accounts[user.username]) {
+        accounts[user.username].coins = user.coins;
+        accounts[user.username].completedLessons = [...user.completedLessons];
+        accounts[user.username].certificates = user.certificates;
+        accounts[user.username].name = user.name;
+        saveAccounts(accounts);
+      }
+    }
   } catch (e) {}
 }
 
@@ -2544,16 +2753,133 @@ function addCoins(amount, reason = '') {
 // ====================================================================
 // SIGN IN
 // ====================================================================
-function signIn() {
+// ===== ACCOUNTS — Ro'yxatdan o'tish va kirish =====
+function getAccounts() {
+  try { return JSON.parse(localStorage.getItem('mc_accounts') || '{}'); } catch (e) { return {}; }
+}
+function saveAccounts(a) { try { localStorage.setItem('mc_accounts', JSON.stringify(a)); } catch (e) {} }
+
+function hashUserPassword(pwd) {
+  const SALT = 'MarifatCupUser_2026';
+  let result = SALT + ':' + pwd + ':' + SALT;
+  for (let r = 0; r < 1000; r++) {
+    let h = 0x811c9dc5;
+    const s = result + r;
+    for (let i = 0; i < s.length; i++) {
+      h ^= s.charCodeAt(i);
+      h = Math.imul(h, 0x01000193);
+    }
+    result = (h >>> 0).toString(16).padStart(8, '0');
+  }
+  return result;
+}
+
+function switchSignInTab(tabName) {
+  document.querySelectorAll('.signin-tab').forEach(b => {
+    const isActive = b.dataset.tab === tabName;
+    b.classList.toggle('active', isActive);
+    b.style.background = isActive ? 'white' : 'transparent';
+    b.style.color = isActive ? 'var(--ink)' : 'white';
+  });
+  document.getElementById('signin-guest-form').style.display = tabName === 'guest' ? '' : 'none';
+  document.getElementById('signin-login-form').style.display = tabName === 'login' ? '' : 'none';
+  document.getElementById('signin-register-form').style.display = tabName === 'register' ? '' : 'none';
+}
+
+function signInAsGuest() {
   const name = document.getElementById('signin-name').value.trim();
-  if (!name) { toast('Iltimos, ismingizni kiriting', 'error'); return; }
-  user = { name, coins: 0, completedLessons: new Set(), certificates: [] };
+  if (!name) { toast("Ismingizni kiriting", 'error'); return; }
+  user = { name, isGuest: true, coins: 0, completedLessons: new Set(), certificates: [] };
   saveUser();
   loadUsersLog();
   trackUserActivity();
   updateTopbar();
   goHome();
 }
+
+function registerUser() {
+  const name = document.getElementById('reg-name').value.trim();
+  const username = document.getElementById('reg-username').value.trim().toLowerCase();
+  const pwd = document.getElementById('reg-password').value;
+  const pwd2 = document.getElementById('reg-password-2').value;
+  const errEl = document.getElementById('reg-err');
+  const showErr = (msg) => { errEl.textContent = "❌ " + msg; errEl.style.display = 'block'; };
+  errEl.style.display = 'none';
+
+  if (!name) return showErr("To'liq ismingizni kiriting");
+  if (!username) return showErr("Login kiriting");
+  if (!/^[a-z0-9_]{3,}$/.test(username)) return showErr("Login faqat lotin harf/raqamlar, kamida 3 ta belgi");
+  if (pwd.length < 4) return showErr("Parol kamida 4 ta belgi bo'lsin");
+  if (pwd !== pwd2) return showErr("Parollar mos kelmaydi");
+
+  const accounts = getAccounts();
+  if (accounts[username]) return showErr("Bu login allaqachon mavjud. Boshqa tanlang.");
+
+  const hash = hashUserPassword(pwd);
+  accounts[username] = {
+    username, name,
+    passwordHash: hash,
+    coins: 0,
+    completedLessons: [],
+    certificates: [],
+    createdAt: Date.now()
+  };
+  saveAccounts(accounts);
+
+  // Avtomatik kirish
+  user = { username, name, isGuest: false, coins: 0, completedLessons: new Set(), certificates: [] };
+  saveUser();
+  loadUsersLog();
+  trackUserActivity();
+  updateTopbar();
+  toast(`Tabriklayman, ${name}! Ro'yxatdan o'tdingiz`, 'success');
+  goHome();
+}
+
+function loginUser() {
+  const username = document.getElementById('login-username').value.trim().toLowerCase();
+  const pwd = document.getElementById('login-password').value;
+  const errEl = document.getElementById('login-err');
+  const showErr = (msg) => { errEl.textContent = "❌ " + msg; errEl.style.display = 'block'; };
+  errEl.style.display = 'none';
+
+  if (!username || !pwd) return showErr("Login va parolni to'ldiring");
+  const accounts = getAccounts();
+  const acc = accounts[username];
+  if (!acc) return showErr("Bu login mavjud emas. Ro'yxatdan o'ting.");
+  const hash = hashUserPassword(pwd);
+  if (hash !== acc.passwordHash) return showErr("Parol noto'g'ri");
+
+  // Muvaffaqiyatli kirish
+  user = {
+    username: acc.username,
+    name: acc.name,
+    isGuest: false,
+    coins: acc.coins || 0,
+    completedLessons: new Set(acc.completedLessons || []),
+    certificates: acc.certificates || []
+  };
+  saveUser();
+  loadUsersLog();
+  trackUserActivity();
+  updateTopbar();
+  toast(`Xush kelibsiz, ${user.name}!`, 'success');
+  goHome();
+}
+
+function showRegisterPrompt() {
+  showModal(
+    "🔒 Ro'yxatdan o'tish kerak",
+    "Kursda qatnashish va sertifikat olish uchun ro'yxatdan o'tishingiz kerak. Mehmon sifatida faqat kvizlar mumkin.",
+    () => {
+      signOut();
+      setTimeout(() => switchSignInTab('register'), 300);
+    }
+  );
+  document.getElementById('modal-confirm').textContent = "Ro'yxatdan o'tish";
+}
+
+function signIn() { signInAsGuest(); } // backward compat
 
 function signOut() {
   showModal('Chiqishni tasdiqlang', 'Haqiqatan ham chiqishni xohlaysizmi? Ma\'lumotlaringiz saqlangan holatda qoladi.', () => {
@@ -2681,7 +3007,21 @@ function renderCoursesList() {
   }).join('');
 }
 
+function goToCourses() {
+  if (user && user.isGuest) {
+    showRegisterPrompt();
+    return;
+  }
+  showScreen('courses-screen');
+  renderCoursesList();
+}
+
 function openCourse(id) {
+  // Mehmonlar uchun ro'yxatdan o'tish talab qilinadi
+  if (user && user.isGuest) {
+    showRegisterPrompt();
+    return;
+  }
   const course = getAllCourses().find(c => c.id === id);
   if (!course) return;
   state.currentCourse = course;
@@ -5104,6 +5444,14 @@ function startLiveClock() {
     const ss = String(now.getSeconds()).padStart(2, '0');
     const el = document.getElementById('clock-time');
     if (el) el.textContent = `${hh}:${mm}:${ss}`;
+    // Bugungi sanani ham yangilash
+    const dateEl = document.getElementById('today-date');
+    if (dateEl) {
+      const days = ['Yakshanba', 'Dushanba', 'Seshanba', 'Chorshanba', 'Payshanba', 'Juma', 'Shanba'];
+      const months = ['Yanvar', 'Fevral', 'Mart', 'Aprel', 'May', 'Iyun', 'Iyul', 'Avgust', 'Sentabr', 'Oktabr', 'Noyabr', 'Dekabr'];
+      dateEl.textContent = `${days[now.getDay()]}\n${now.getDate()}-${months[now.getMonth()]}, ${now.getFullYear()}`;
+      dateEl.style.whiteSpace = 'pre-line';
+    }
   };
   update();
   setInterval(update, 1000);
@@ -5259,7 +5607,13 @@ async function initApp() {
 initApp();
 
 document.getElementById('signin-name').addEventListener('keypress', e => {
-  if (e.key === 'Enter') signIn();
+  if (e.key === 'Enter') signInAsGuest();
+});
+document.getElementById('login-password').addEventListener('keypress', e => {
+  if (e.key === 'Enter') loginUser();
+});
+document.getElementById('reg-password-2').addEventListener('keypress', e => {
+  if (e.key === 'Enter') registerUser();
 });
 document.getElementById('join-pin-input').addEventListener('keypress', e => {
   if (e.key === 'Enter') joinGame();
