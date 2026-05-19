@@ -919,6 +919,14 @@ D) Noto'g'ri</pre>
             <label>🎓 Yutuqlarim — izoh</label>
             <input class="input" id="label-achievements_desc" placeholder="Sertifikatlar, tangalar va statistika">
           </div>
+          <div class="field" style="margin-bottom: 0;">
+            <label>➕ Kviz yaratish — sarlavha</label>
+            <input class="input" id="label-create_quiz" placeholder="Yangi kviz yaratish">
+          </div>
+          <div class="field" style="margin-bottom: 0;">
+            <label>➕ Kviz yaratish — izoh</label>
+            <input class="input" id="label-create_quiz_desc" placeholder="O'qituvchilar uchun — o'z savollaringiz bilan kviz tuzing">
+          </div>
         </div>
 
         <div style="display: flex; gap: 8px; flex-wrap: wrap;">
@@ -2942,7 +2950,7 @@ function loadCustomLabels() {
   return customLabels;
 }
 function saveCustomLabels() {
-  const keys = ['courses', 'courses_desc', 'ebooks', 'ebooks_desc', 'meetings', 'meetings_desc', 'newspapers', 'newspapers_desc', 'achievements', 'achievements_desc'];
+  const keys = ['courses', 'courses_desc', 'ebooks', 'ebooks_desc', 'meetings', 'meetings_desc', 'newspapers', 'newspapers_desc', 'achievements', 'achievements_desc', 'create_quiz', 'create_quiz_desc'];
   const newLabels = {};
   keys.forEach(k => {
     const el = document.getElementById('label-' + k);
