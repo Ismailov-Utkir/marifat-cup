@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "exportedAt": "2026-05-19T05:59:27.496Z",
+  "exportedAt": "2026-05-19T06:15:16.489Z",
   "source": "marifat-cup-admin-auto",
   "courses": [
     {
@@ -1418,6 +1418,8 @@
       "title": "Tez kunda: “Ma’rifat CUP – Zakovat va Liderlik Maydoni”",
       "body": "Yoshlarning bilim, tafakkur va jamoaviy fikrlashini rivojlantirishga qaratilgan yangi platforma — Ma’rifat CUP tez orada o‘z faoliyatini boshlaydi. Bu yerda intellektual bellashuvlar, kreativ loyihalar, maxsus tanlovlar va zamonaviy yoshlar uchun yangi imkoniyatlar jamlanadi.\n\nBilim kuchga aylanuvchi maydon — Ma’rifat CUP.",
       "priority": "urgent",
+      "mediaUrl": "./files/announcements/a_1779170367489.png",
+      "mediaType": "image",
       "date": 1779170367489
     }
   ],
