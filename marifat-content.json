@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "exportedAt": "2026-05-19T05:45:37.920Z",
+  "exportedAt": "2026-05-19T05:48:53.486Z",
   "source": "marifat-cup-admin-auto",
   "courses": [
     {
@@ -1438,24 +1438,24 @@
       "issues": [
         {
           "date": "2026-05-15",
-          "title": "2026-yil 15-may, 20-son",
+          "title": "20-son",
           "pdfUrl": "./files/newspapers/np_1779169156112/2026-05-15__Jadid_gazetasi.pdf",
           "fileExt": ".pdf"
         },
         {
           "date": "2026-05-01",
-          "title": "2026-yil 1-may, 18-son",
+          "title": "18-son",
           "pdfUrl": "./files/newspapers/np_1779169171329/2026-05-01_jadid.-2026-yil-1-may.-18-son.pdf",
           "fileExt": ".pdf"
         },
         {
           "date": "2026-05-08",
-          "title": "2026-yil 8-may, 19-son",
+          "title": "19-son",
           "pdfUrl": "./files/newspapers/np_1779169171329/2026-05-08_jadid.-2026-yil-8-may.-19-son.pdf",
           "fileExt": ".pdf"
         }
       ],
-      "updatedAt": 1779169537915,
+      "updatedAt": 1779169733480,
       "createdAt": 1779169171329
     }
   ]
