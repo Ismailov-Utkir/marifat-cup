@@ -11,18 +11,18 @@
 <script src="https://cdn.jsdelivr.net/npm/mammoth@1.6.0/mammoth.browser.min.js"></script>
 <style>
   :root {
-    --bg: #0d1421; --bg-2: #1a2942;
-    --primary: #14b8a6; --primary-dark: #0d9488;
-    --secondary: #7c3aed; --accent: #fbbf24;
+    --bg: #eff6ff; --bg-2: #dbeafe;
+    --primary: #1e40af; --primary-dark: #1e3a8a;
+    --secondary: #7c3aed; --accent: #f59e0b;
     --danger: #ef4444; --success: #10b981;
-    --ink: #0f0a1f; --ink-2: #6b6480;
-    --border: #e5e7eb; --bg-soft: #f9fafb;
+    --ink: #0f172a; --ink-2: #475569;
+    --border: #e2e8f0; --bg-soft: #f1f5f9;
     --radius: 12px; --radius-lg: 20px;
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body {
     font-family: 'Plus Jakarta Sans', sans-serif;
-    background: linear-gradient(135deg, var(--bg) 0%, var(--bg-2) 100%);
+    background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 50%, #bfdbfe 100%);
     background-attachment: fixed;
     color: var(--ink); min-height: 100vh;
   }
@@ -88,27 +88,30 @@
   .btn-full { width: 100%; }
   .btn-sm { padding: 8px 14px; font-size: 13px; }
   .admin-header {
-    background: white; border-radius: var(--radius-lg); padding: 14px 20px;
+    background: linear-gradient(135deg, #1e3a8a, #1e40af);
+    border-radius: var(--radius-lg); padding: 14px 20px;
     width: 100%; max-width: 1100px; margin-bottom: 14px;
     display: flex; justify-content: space-between; align-items: center;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.2); gap: 12px; flex-wrap: wrap;
+    box-shadow: 0 6px 24px rgba(30, 58, 138, 0.3); gap: 12px; flex-wrap: wrap;
+    color: white;
   }
   .admin-logo {
     font-family: 'Bricolage Grotesque'; font-weight: 900; font-size: 20px;
     letter-spacing: -0.02em; display: flex; align-items: center; gap: 8px;
+    color: white;
   }
   .admin-logo .badge {
-    background: var(--secondary); color: white; padding: 3px 8px;
+    background: var(--accent); color: var(--ink); padding: 3px 8px;
     border-radius: 6px; font-size: 10px;
     font-weight: 800; text-transform: uppercase;
   }
   .admin-header-right { display: flex; align-items: center; gap: 10px; }
   .session-badge {
-    background: #f0fdfa; color: var(--primary-dark);
+    background: rgba(255,255,255,0.2); color: white;
     padding: 6px 12px; border-radius: 100px; font-size: 12px; font-weight: 700;
   }
   .admin-widget {
-    background: #f3f4f6; color: var(--ink);
+    background: rgba(255,255,255,0.15); color: white;
     padding: 6px 12px; border-radius: 100px;
     font-weight: 700; font-size: 13px;
     display: inline-flex; align-items: center; gap: 5px;
@@ -119,7 +122,7 @@
   .nav-tabs {
     background: white; border-radius: var(--radius-lg); padding: 6px;
     width: 100%; max-width: 1100px; margin-bottom: 14px;
-    display: flex; gap: 4px; box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+    display: flex; gap: 4px; box-shadow: 0 4px 20px rgba(30, 58, 138, 0.15);
     flex-wrap: wrap;
   }
   .nav-tab {
@@ -129,8 +132,8 @@
     display: flex; align-items: center; gap: 6px;
     transition: all 0.15s; flex: 1; justify-content: center; min-width: 100px;
   }
-  .nav-tab:hover { background: #f3f4f6; }
-  .nav-tab.active { background: var(--primary); color: white; }
+  .nav-tab:hover { background: #eff6ff; color: var(--primary-dark); }
+  .nav-tab.active { background: linear-gradient(135deg, #1e40af, #3b82f6); color: white; }
   .admin-content {
     background: white; border-radius: var(--radius-lg); padding: 24px;
     width: 100%; max-width: 1100px; box-shadow: 0 4px 20px rgba(0,0,0,0.2);
@@ -875,61 +878,110 @@ D) Noto'g'ri</pre>
       </div>
 
       <div class="settings-block" style="background: linear-gradient(135deg, #f3e8ff, #e9d5ff); border-color: var(--secondary);">
-        <h3>✏️ Bo'lim nomlarini tahrirlash</h3>
-        <p>Asosiy saytdagi bo'lim sarlavhalari va izohlarini o'zgartiring. O'zgarishlar barcha foydalanuvchilar qurilmalarida ko'rinadi.</p>
+        <h3>✏️ Bo'lim nomlarini tahrirlash (to'liq)</h3>
+        <p>Saytdagi barcha bo'lim sarlavhalari, tugmalar va izohlarni o'zgartiring. O'zgarishlar barcha qurilmalarda ko'rinadi.</p>
 
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px;">
-          <div class="field" style="margin-bottom: 0;">
-            <label>📚 Kurslar — sarlavha</label>
-            <input class="input" id="label-courses" placeholder="Kurslar va darsliklar">
+        <details open style="margin-bottom: 10px;">
+          <summary style="cursor: pointer; font-weight: 800; font-size: 15px; padding: 8px; background: white; border-radius: 8px; margin-bottom: 8px;">🏠 Bosh sahifa</summary>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; padding: 8px;">
+            <div class="field" style="margin-bottom: 0;">
+              <label>Kirish ekrani — taqdim etadi</label>
+              <input class="input" id="label-signin_subtitle" placeholder="Ma'naviyat va ma'rifat markazi taqdim etadi">
+            </div>
+            <div class="field" style="margin-bottom: 0;">
+              <label>Hero — izoh matni</label>
+              <input class="input" id="label-hero_subtitle" placeholder="Video darslarni o'rganing...">
+            </div>
+            <div class="field" style="margin-bottom: 0;">
+              <label>Tugma — Kurslarni boshlash</label>
+              <input class="input" id="label-btn_start_courses" placeholder="📚 Kurslarni boshlash">
+            </div>
+            <div class="field" style="margin-bottom: 0;">
+              <label>Tugma — Jonli o'yin</label>
+              <input class="input" id="label-btn_live_game" placeholder="👥 Jonli o'yin">
+            </div>
+            <div class="field" style="margin-bottom: 0;">
+              <label>O'qish bo'limi sarlavha</label>
+              <input class="input" id="label-section_learn" placeholder="📖 O'qish va o'rganish">
+            </div>
+            <div class="field" style="margin-bottom: 0;">
+              <label>TOP 10 widget</label>
+              <input class="input" id="label-widget_top10" placeholder="🏆 TOP 10 faol">
+            </div>
+            <div class="field" style="margin-bottom: 0;">
+              <label>Vaqt widget sarlavhasi</label>
+              <input class="input" id="label-widget_time_title" placeholder="🕐 Hozirgi vaqt">
+            </div>
+            <div class="field" style="margin-bottom: 0;">
+              <label>Maslahat sarlavhasi</label>
+              <input class="input" id="label-widget_tip_title" placeholder="💡 Maslahat">
+            </div>
+            <div class="field" style="margin-bottom: 0; grid-column: 1/-1;">
+              <label>Maslahat matni</label>
+              <input class="input" id="label-widget_tip_text" placeholder="Har kuni 10-15 daqiqa o'qish...">
+            </div>
+            <div class="field" style="margin-bottom: 0;">
+              <label>Murojaat tugmasi</label>
+              <input class="input" id="label-btn_feedback" placeholder="✉️ Murojaat">
+            </div>
           </div>
-          <div class="field" style="margin-bottom: 0;">
-            <label>📚 Kurslar — izoh</label>
-            <input class="input" id="label-courses_desc" placeholder="Video darslarni ko'ring va testlardan o'ting">
-          </div>
-          <div class="field" style="margin-bottom: 0;">
-            <label>📖 E-kitoblar — sarlavha</label>
-            <input class="input" id="label-ebooks" placeholder="E-kitoblar">
-          </div>
-          <div class="field" style="margin-bottom: 0;">
-            <label>📖 E-kitoblar — izoh</label>
-            <input class="input" id="label-ebooks_desc" placeholder="Kitoblar kutubxonasi — onlayn o'qing">
-          </div>
-          <div class="field" style="margin-bottom: 0;">
-            <label>📹 Yig'ilishlar — sarlavha</label>
-            <input class="input" id="label-meetings" placeholder="Online yig'ilishlar">
-          </div>
-          <div class="field" style="margin-bottom: 0;">
-            <label>📹 Yig'ilishlar — izoh</label>
-            <input class="input" id="label-meetings_desc" placeholder="Vaqt cheklovsiz video konferensiya">
-          </div>
-          <div class="field" style="margin-bottom: 0;">
-            <label>📰 Gazetalar — sarlavha</label>
-            <input class="input" id="label-newspapers" placeholder="Gazetalar">
-          </div>
-          <div class="field" style="margin-bottom: 0;">
-            <label>📰 Gazetalar — izoh</label>
-            <input class="input" id="label-newspapers_desc" placeholder="Jadid, Yangi O'zbekiston va boshqalar">
-          </div>
-          <div class="field" style="margin-bottom: 0;">
-            <label>🎓 Yutuqlarim — sarlavha</label>
-            <input class="input" id="label-achievements" placeholder="Mening yutuqlarim">
-          </div>
-          <div class="field" style="margin-bottom: 0;">
-            <label>🎓 Yutuqlarim — izoh</label>
-            <input class="input" id="label-achievements_desc" placeholder="Sertifikatlar, tangalar va statistika">
-          </div>
-          <div class="field" style="margin-bottom: 0;">
-            <label>➕ Kviz yaratish — sarlavha</label>
-            <input class="input" id="label-create_quiz" placeholder="Yangi kviz yaratish">
-          </div>
-          <div class="field" style="margin-bottom: 0;">
-            <label>➕ Kviz yaratish — izoh</label>
-            <input class="input" id="label-create_quiz_desc" placeholder="O'qituvchilar uchun — o'z savollaringiz bilan kviz tuzing">
-          </div>
-        </div>
+        </details>
 
-        <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+        <details style="margin-bottom: 10px;">
+          <summary style="cursor: pointer; font-weight: 800; font-size: 15px; padding: 8px; background: white; border-radius: 8px; margin-bottom: 8px;">📚 Bo'lim kartalari (sarlavha + izoh)</summary>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; padding: 8px;">
+            <div class="field" style="margin-bottom: 0;">
+              <label>📚 Kurslar sarlavha</label>
+              <input class="input" id="label-courses" placeholder="Kurslar va darsliklar">
+            </div>
+            <div class="field" style="margin-bottom: 0;">
+              <label>📚 Kurslar izoh</label>
+              <input class="input" id="label-courses_desc" placeholder="Video darslarni ko'ring...">
+            </div>
+            <div class="field" style="margin-bottom: 0;">
+              <label>📖 E-kitoblar sarlavha</label>
+              <input class="input" id="label-ebooks" placeholder="E-kitoblar">
+            </div>
+            <div class="field" style="margin-bottom: 0;">
+              <label>📖 E-kitoblar izoh</label>
+              <input class="input" id="label-ebooks_desc" placeholder="Kitoblar kutubxonasi...">
+            </div>
+            <div class="field" style="margin-bottom: 0;">
+              <label>📹 Yig'ilishlar sarlavha</label>
+              <input class="input" id="label-meetings" placeholder="Online yig'ilishlar">
+            </div>
+            <div class="field" style="margin-bottom: 0;">
+              <label>📹 Yig'ilishlar izoh</label>
+              <input class="input" id="label-meetings_desc" placeholder="Vaqt cheklovsiz video...">
+            </div>
+            <div class="field" style="margin-bottom: 0;">
+              <label>📰 Gazetalar sarlavha</label>
+              <input class="input" id="label-newspapers" placeholder="Gazetalar">
+            </div>
+            <div class="field" style="margin-bottom: 0;">
+              <label>📰 Gazetalar izoh</label>
+              <input class="input" id="label-newspapers_desc" placeholder="Jadid, Yangi O'zbekiston...">
+            </div>
+            <div class="field" style="margin-bottom: 0;">
+              <label>🎓 Yutuqlarim sarlavha</label>
+              <input class="input" id="label-achievements" placeholder="Mening yutuqlarim">
+            </div>
+            <div class="field" style="margin-bottom: 0;">
+              <label>🎓 Yutuqlarim izoh</label>
+              <input class="input" id="label-achievements_desc" placeholder="Sertifikatlar, tangalar...">
+            </div>
+            <div class="field" style="margin-bottom: 0;">
+              <label>➕ Kviz yaratish sarlavha</label>
+              <input class="input" id="label-create_quiz" placeholder="Yangi kviz yaratish">
+            </div>
+            <div class="field" style="margin-bottom: 0;">
+              <label>➕ Kviz yaratish izoh</label>
+              <input class="input" id="label-create_quiz_desc" placeholder="O'qituvchilar uchun...">
+            </div>
+          </div>
+        </details>
+
+        <div style="display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px;">
           <button class="btn btn-primary" onclick="saveCustomLabels()">💾 Saqlash va sinxronlash</button>
           <button class="btn btn-secondary" onclick="resetCustomLabels()">🔄 Avvalgi nomlarga qaytarish</button>
         </div>
