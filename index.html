@@ -1486,6 +1486,11 @@
         <h3>Online yig'ilishlar</h3>
         <p>Vaqt cheklovsiz video konferensiya</p>
       </button>
+      <button class="action-card" onclick="showScreen('newspapers-screen'); renderNewspapersList();">
+        <span class="ac-icon">📰</span>
+        <h3>Gazetalar</h3>
+        <p>Jadid, Yangi O'zbekiston va boshqalar — oylar bo'yicha</p>
+      </button>
       <button class="action-card" onclick="showScreen('live-options-screen')">
         <span class="ac-icon">👥</span>
         <h3>Jonli kviz o'yin</h3>
@@ -1877,6 +1882,48 @@
       💡 <b>Yozib olish</b>: yig'ilish ichida o'ng tomondagi 3 nuqta (⋮) → "Start Recording" tugmasini bosing. Yozuv Dropbox'ga saqlanadi. Faqat birinchi kirgan host yozib olishi mumkin.<br>
       🔗 Boshqalarga ulanish kodi: <code id="meeting-view-code" style="background: rgba(255,255,255,0.15); padding: 2px 8px; border-radius: 6px; color: white;"></code>
     </p>
+  </div>
+</div>
+
+<!-- ====== NEWSPAPERS ====== -->
+<div id="newspapers-screen" class="screen">
+  <div class="topbar">
+    <div class="logo-mini" onclick="goHome()"><span class="logo-mark"></span> Ma'rifat <span class="badge">Cup</span></div>
+    <button class="btn-back" onclick="goHome()">← Bosh sahifa</button>
+  </div>
+  <div class="home-wrap">
+    <div class="section-header">
+      <h2>📰 Gazetalar</h2>
+    </div>
+    <p style="color: rgba(255,255,255,0.7); margin-bottom: 20px; text-align: center;">
+      Gazetalardan birini tanlang — oylar va sanalar bo'yicha nashrlarni o'qiy olasiz
+    </p>
+    <div class="grid-2" id="newspapers-list"></div>
+  </div>
+</div>
+
+<div id="newspaper-detail-screen" class="screen">
+  <div class="topbar">
+    <div class="logo-mini" onclick="goHome()"><span class="logo-mark"></span> Ma'rifat <span class="badge">Cup</span></div>
+    <button class="btn-back" onclick="showScreen('newspapers-screen'); renderNewspapersList();">← Gazetalar</button>
+  </div>
+  <div style="width: 100%; max-width: 1100px; margin: auto;">
+    <div id="newspaper-detail-header"></div>
+    <div id="newspaper-issues-grid"></div>
+  </div>
+</div>
+
+<div id="newspaper-viewer-screen" class="screen">
+  <div class="topbar">
+    <div class="logo-mini" onclick="goHome()"><span class="logo-mark"></span> Ma'rifat <span class="badge">Cup</span></div>
+    <button class="btn-back" onclick="goBackToNewspaperDetail()">← Ortga</button>
+  </div>
+  <div style="width: 100%; max-width: 1100px; margin: auto;">
+    <h2 id="np-issue-title" style="color: white; font-family: 'Bricolage Grotesque', sans-serif; font-size: 26px; margin-bottom: 6px;"></h2>
+    <p id="np-issue-meta" style="color: rgba(255,255,255,0.7); margin-bottom: 16px;"></p>
+    <div class="slide-viewer">
+      <div class="slide-viewer-frame" id="np-issue-frame"></div>
+    </div>
   </div>
 </div>
 
@@ -5491,6 +5538,130 @@ function toggleTheme() {
 }
 
 // ====================================================================
+// =============================================================
+// NEWSPAPERS — Gazetalarni ko'rish (foydalanuvchi tomonida)
+// =============================================================
+let savedNewspapers = [];
+let currentNewspaper = null;
+
+function loadNewspapers() {
+  try { savedNewspapers = JSON.parse(localStorage.getItem('mc_newspapers') || '[]'); } catch (e) { savedNewspapers = []; }
+}
+
+function renderNewspapersList() {
+  loadNewspapers();
+  const list = document.getElementById('newspapers-list');
+  if (!savedNewspapers || savedNewspapers.length === 0) {
+    list.innerHTML = `<div class="empty-state" style="grid-column: 1/-1;"><div class="empty-state-emoji">📰</div><p>Hozircha gazetalar qo'shilmagan</p></div>`;
+    return;
+  }
+  list.innerHTML = savedNewspapers.map(n => `
+    <div class="course-card" onclick="openNewspaper('${n.id}')">
+      <div class="course-thumb bg-${n.color || 3}">${escapeHtml(n.emoji || '📰')}</div>
+      <div class="course-content">
+        <h3>${escapeHtml(n.name)}</h3>
+        <p>${escapeHtml(n.description || '')}</p>
+        <div class="course-meta">
+          <span>📅 ${(n.issues || []).length} ta nashr</span>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+function openNewspaper(id) {
+  loadNewspapers();
+  const n = savedNewspapers.find(x => x.id === id);
+  if (!n) return;
+  currentNewspaper = n;
+  // Sarlavha
+  const grads = { 1: 'linear-gradient(135deg, #f97316, #ea580c)', 2: 'linear-gradient(135deg, #8b5cf6, #6d28d9)', 3: 'linear-gradient(135deg, #06b6d4, #0e7490)', 4: 'linear-gradient(135deg, #10b981, #047857)', 5: 'linear-gradient(135deg, #ec4899, #be185d)', 6: 'linear-gradient(135deg, #f59e0b, #b45309)' };
+  document.getElementById('newspaper-detail-header').innerHTML = `
+    <div class="course-header-big">
+      <div class="course-icon-big" style="background: ${grads[n.color] || grads[3]};">${escapeHtml(n.emoji || '📰')}</div>
+      <div class="course-info">
+        <h1>${escapeHtml(n.name)}</h1>
+        <p>${escapeHtml(n.description || '')}</p>
+        <div class="course-stats">
+          <div class="stat-pill">📅 ${(n.issues || []).length} ta nashr</div>
+        </div>
+      </div>
+    </div>
+  `;
+  renderIssuesByMonth(n.issues || []);
+  showScreen('newspaper-detail-screen');
+}
+
+const UZ_MONTHS = ['Yanvar', 'Fevral', 'Mart', 'Aprel', 'May', 'Iyun', 'Iyul', 'Avgust', 'Sentabr', 'Oktabr', 'Noyabr', 'Dekabr'];
+const UZ_WEEKDAYS = ['Yak', 'Du', 'Se', 'Cho', 'Pay', 'Ju', 'Sha'];
+
+function renderIssuesByMonth(issues) {
+  const container = document.getElementById('newspaper-issues-grid');
+  if (!issues || issues.length === 0) {
+    container.innerHTML = `<div class="empty-state"><div class="empty-state-emoji">📭</div><p>Hozircha nashrlar qo'shilmagan</p></div>`;
+    return;
+  }
+  // Oylar bo'yicha guruhlash
+  const byMonth = {};
+  issues.forEach(iss => {
+    if (!iss.date) return;
+    const d = new Date(iss.date);
+    const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
+    if (!byMonth[key]) byMonth[key] = [];
+    byMonth[key].push(iss);
+  });
+  // Tartiblash (eng yangidan eski tomon)
+  const sortedKeys = Object.keys(byMonth).sort().reverse();
+  container.innerHTML = sortedKeys.map(key => {
+    const [year, month] = key.split('-').map(Number);
+    const monthIssues = byMonth[key].sort((a, b) => (b.date || '').localeCompare(a.date || ''));
+    return `
+      <div style="background: white; border-radius: 16px; padding: 22px; margin-bottom: 16px; box-shadow: var(--shadow-card);">
+        <h3 style="font-family: 'Bricolage Grotesque', sans-serif; font-size: 22px; margin-bottom: 14px; color: var(--ink);">
+          📅 ${UZ_MONTHS[month - 1]} ${year}
+          <span style="font-size: 13px; color: var(--ink-2); font-weight: 600;">(${monthIssues.length} ta nashr)</span>
+        </h3>
+        <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 10px;">
+          ${monthIssues.map(iss => {
+            const d = new Date(iss.date);
+            const dayNum = d.getDate();
+            const weekday = UZ_WEEKDAYS[d.getDay()];
+            return `
+              <div onclick='openIssue(${JSON.stringify(iss).replace(/'/g, "&#39;")})' style="background: linear-gradient(135deg, #f0fdfa, #ccfbf1); border: 2px solid #5eead4; border-radius: 12px; padding: 12px; cursor: pointer; text-align: center; transition: transform 0.15s;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
+                <div style="font-family: 'Bricolage Grotesque'; font-size: 32px; font-weight: 900; color: var(--primary-dark); line-height: 1;">${dayNum}</div>
+                <div style="font-size: 11px; color: var(--ink-2); font-weight: 700; margin-top: 2px;">${weekday}</div>
+                <div style="font-size: 11px; color: var(--ink); margin-top: 6px; font-weight: 600;">${escapeHtml((iss.title || '').slice(0, 20))}</div>
+              </div>
+            `;
+          }).join('')}
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+function openIssue(issue) {
+  document.getElementById('np-issue-title').textContent = issue.title || new Date(issue.date).toLocaleDateString('uz-UZ');
+  document.getElementById('np-issue-meta').textContent = currentNewspaper ? currentNewspaper.name + ' · ' + new Date(issue.date).toLocaleDateString('uz-UZ', { day: 'numeric', month: 'long', year: 'numeric' }) : '';
+  const frame = document.getElementById('np-issue-frame');
+  if (issue.pdfUrl) {
+    frame.innerHTML = buildFileViewerHtml(issue.pdfUrl, issue.fileExt);
+  } else {
+    frame.innerHTML = `<div style="color: rgba(255,255,255,0.6); padding: 40px; text-align: center;">Fayl topilmadi</div>`;
+  }
+  showScreen('newspaper-viewer-screen');
+}
+
+function goBackToNewspaperDetail() {
+  if (currentNewspaper) {
+    showScreen('newspaper-detail-screen');
+  } else {
+    showScreen('newspapers-screen');
+    renderNewspapersList();
+  }
+}
+
+// =============================================================
 // AUTO-SYNC FROM SERVER (marifat-content.json)
 // ====================================================================
 async function syncFromServer() {
@@ -5516,13 +5687,17 @@ async function syncFromServer() {
     if (Array.isArray(data.announcements)) {
       localStorage.setItem('mc_announcements', JSON.stringify(data.announcements));
     }
+    if (Array.isArray(data.newspapers)) {
+      localStorage.setItem('mc_newspapers', JSON.stringify(data.newspapers));
+    }
     console.log('[Ma\'rifat Cup] Server kontenti yuklandi:', {
       courses: data.courses?.length || 0,
       quizzes: data.quizzes?.length || 0,
       slides: data.slides?.length || 0,
       ebooks: data.ebooks?.length || 0,
       meetings: data.meetings?.length || 0,
-      announcements: data.announcements?.length || 0
+      announcements: data.announcements?.length || 0,
+      newspapers: data.newspapers?.length || 0
     });
     return true;
   } catch (e) {
@@ -5555,6 +5730,7 @@ async function initApp() {
   loadAnnouncements();
   loadEbooks();
   loadMeetings();
+  loadNewspapers();
   // 🎵 Audio mute holatini yangilash (saqlangan tanlovga qarab)
   document.querySelectorAll('.audio-mute-btn').forEach(b => {
     b.textContent = _audioMuted ? '🔇' : '🔊';

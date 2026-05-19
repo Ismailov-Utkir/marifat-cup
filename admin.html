@@ -364,6 +364,7 @@
     <button class="nav-tab" data-tab="slides" onclick="showView('slides')">📊 Slaydlar</button>
     <button class="nav-tab" data-tab="ebooks" onclick="showView('ebooks')">📖 E-kitoblar</button>
     <button class="nav-tab" data-tab="meetings" onclick="showView('meetings')">📹 Yig'ilishlar</button>
+    <button class="nav-tab" data-tab="newspapers" onclick="showView('newspapers')">📰 Gazetalar</button>
     <button class="nav-tab" data-tab="announcements" onclick="showView('announcements')">📢 E'lonlar</button>
     <button class="nav-tab" data-tab="settings" onclick="showView('settings')">⚙️ Sozlamalar</button>
   </div>
@@ -724,6 +725,74 @@ D) Noto'g'ri</pre>
       </div>
     </div>
 
+    <div class="view" id="view-newspapers">
+      <div class="view-header">
+        <h1>📰 Gazetalar</h1>
+        <button class="btn btn-primary" onclick="openNewspaperEditor()">+ Yangi gazeta</button>
+      </div>
+      <p class="sub">Gazetalar va ularning kunlik nashrlarini boshqaring (Jadid, Yangi O'zbekiston va h.k.)</p>
+      <div id="newspapers-list" class="item-list"></div>
+    </div>
+
+    <div class="view" id="view-newspaper-editor">
+      <div class="view-header">
+        <h1 id="newspaper-editor-title">Yangi gazeta</h1>
+        <button class="btn btn-secondary btn-sm" onclick="showView('newspapers')">← Ortga</button>
+      </div>
+      <div class="field"><label>Gazeta nomi *</label>
+        <input class="input" id="newspaper-name-input" placeholder="Masalan: Yangi O'zbekiston"></div>
+      <div class="field"><label>Tavsif</label>
+        <textarea class="textarea" id="newspaper-desc-input" placeholder="Gazeta haqida qisqacha..."></textarea></div>
+      <div class="field-row">
+        <div class="field"><label>Emoji</label>
+          <input class="input" id="newspaper-emoji-input" maxlength="3" value="📰"></div>
+        <div class="field"><label>Rang</label>
+          <select class="select" id="newspaper-color-input">
+            <option value="1">🟠 Apelsin</option><option value="2">🟣 Binafsha</option>
+            <option value="3">🔵 Moviy</option><option value="4">🟢 Yashil</option>
+            <option value="5">🩷 Pushti</option><option value="6">🟡 Sariq</option>
+          </select></div>
+      </div>
+
+      <h3 class="section-divider">📅 Nashrlar (sanalar bo'yicha)</h3>
+      <p class="sub" style="margin-top: -4px;">Har bir kun uchun PDF/rasm yuklang. Foydalanuvchi kalendardan kunni tanlab o'qiy oladi.</p>
+      <div id="newspaper-issues-list" class="item-list" style="margin-bottom: 14px;"></div>
+      <button class="add-btn" onclick="openIssueEditor()">+ Nashr qo'shish</button>
+
+      <div class="actions-bar">
+        <button class="btn btn-secondary" onclick="showView('newspapers')">Bekor qilish</button>
+        <button class="btn btn-primary" onclick="saveNewspaper()">💾 Saqlash</button>
+      </div>
+    </div>
+
+    <div class="view" id="view-issue-editor">
+      <div class="view-header">
+        <h1 id="issue-editor-title">Yangi nashr</h1>
+        <button class="btn btn-secondary btn-sm" onclick="showView('newspaper-editor')">← Ortga</button>
+      </div>
+      <div class="field"><label>Sana *</label>
+        <input class="input" type="date" id="issue-date-input"></div>
+      <div class="field"><label>Sarlavha (ixtiyoriy)</label>
+        <input class="input" id="issue-title-input" placeholder="Masalan: 14-son, Asosiy nashr"></div>
+
+      <h3 class="section-divider">📄 PDF/rasm fayl</h3>
+      <div class="field">
+        <label>Fayl yuklash (avtomatik GitHub'ga ketadi)</label>
+        <input type="file" id="issue-file-input" accept=".pdf,image/*" onchange="handleIssueFileUpload(event)" style="padding: 8px; width: 100%;">
+        <p id="issue-file-status" style="margin-top: 6px; font-size: 13px; color: var(--ink-2);"></p>
+      </div>
+      <p style="text-align:center; color: var(--ink-2); font-size: 13px; margin: 10px 0;">— yoki —</p>
+      <div class="field">
+        <label>Tashqi URL (gazetaning original havolasi)</label>
+        <input class="input" id="issue-url-input" placeholder="https://...">
+      </div>
+
+      <div class="actions-bar">
+        <button class="btn btn-secondary" onclick="showView('newspaper-editor')">Bekor qilish</button>
+        <button class="btn btn-primary" onclick="saveIssue()">💾 Saqlash</button>
+      </div>
+    </div>
+
     <div class="view" id="view-settings">
       <h1>⚙️ Sozlamalar</h1>
       <p class="sub">Parol, GitHub sinxron va boshqa konfiguratsiyalar</p>
@@ -892,7 +961,7 @@ const COLOR_GRADS = {
   5: 'linear-gradient(135deg, #ec4899, #be185d)',
   6: 'linear-gradient(135deg, #f59e0b, #b45309)'
 };
-const STORAGE = { COURSES: 'mc_courses', QUIZZES: 'mc_quizzes', SLIDES: 'mc_slides', EBOOKS: 'mc_ebooks', MEETINGS: 'mc_meetings', ANN: 'mc_announcements', PWD: 'mc_admin_pwd', SESSION: 'mc_admin_session', GH_TOKEN: 'mc_admin_gh_token' };
+const STORAGE = { COURSES: 'mc_courses', QUIZZES: 'mc_quizzes', SLIDES: 'mc_slides', EBOOKS: 'mc_ebooks', MEETINGS: 'mc_meetings', ANN: 'mc_announcements', NEWSPAPERS: 'mc_newspapers', PWD: 'mc_admin_pwd', SESSION: 'mc_admin_session', GH_TOKEN: 'mc_admin_gh_token' };
 
 // Qattiq belgilangan admin parol hash'i (faqat egasi biladi).
 // Boshqalar har qancha urinsa ham, faqat to'g'ri parol bilan kira oladi.
@@ -993,7 +1062,7 @@ async function syncToGitHub(silent) {
     exportedAt: new Date().toISOString(),
     source: 'marifat-cup-admin-auto',
     courses, quizzes, slides,
-    announcements: anns, ebooks, meetings
+    announcements: anns, ebooks, meetings, newspapers
   };
   const json = JSON.stringify(payload, null, 2);
   const contentBase64 = btoa(unescape(encodeURIComponent(json)));
@@ -1098,6 +1167,11 @@ let slides = [];
 let anns = [];
 let ebooks = [];
 let meetings = [];
+let newspapers = [];
+let editingNewspaperId = null;
+let currentNewspaperIdForIssue = null;
+let editingIssueIdx = null;
+let currentIssueFile = null;
 let editingCourseId = null;
 let editingQuizId = null;
 let editingSlideId = null;
@@ -1304,13 +1378,15 @@ function loadData() {
     anns = JSON.parse(localStorage.getItem(STORAGE.ANN) || '[]');
     ebooks = JSON.parse(localStorage.getItem(STORAGE.EBOOKS) || '[]');
     meetings = JSON.parse(localStorage.getItem(STORAGE.MEETINGS) || '[]');
-  } catch (e) { courses = []; quizzes = []; slides = []; anns = []; ebooks = []; meetings = []; }
+    newspapers = JSON.parse(localStorage.getItem(STORAGE.NEWSPAPERS) || '[]');
+  } catch (e) { courses = []; quizzes = []; slides = []; anns = []; ebooks = []; meetings = []; newspapers = []; }
 }
 function saveData() {
   localStorage.setItem(STORAGE.COURSES, JSON.stringify(courses));
   localStorage.setItem(STORAGE.QUIZZES, JSON.stringify(quizzes));
   localStorage.setItem(STORAGE.ANN, JSON.stringify(anns));
   localStorage.setItem(STORAGE.MEETINGS, JSON.stringify(meetings));
+  localStorage.setItem(STORAGE.NEWSPAPERS, JSON.stringify(newspapers));
   try {
     localStorage.setItem(STORAGE.SLIDES, JSON.stringify(slides));
     localStorage.setItem(STORAGE.EBOOKS, JSON.stringify(ebooks));
@@ -1335,7 +1411,227 @@ function showView(name) {
   else if (name === 'announcements') renderAnnList();
   else if (name === 'ebooks') renderEbooksList();
   else if (name === 'meetings') renderMeetingsList();
+  else if (name === 'newspapers') renderNewspapersList();
   else if (name === 'settings') updateGhTokenStatus();
+}
+
+// =============================================================
+// NEWSPAPERS — Gazetalar boshqaruvi
+// =============================================================
+function renderNewspapersList() {
+  const list = document.getElementById('newspapers-list');
+  if (!newspapers || newspapers.length === 0) {
+    list.innerHTML = `<div class="empty-msg"><div class="ico">📰</div>Hali gazeta qo'shilmagan.<br><br>
+      <button class="btn btn-primary" onclick="openNewspaperEditor()">+ Birinchi gazetani qo'shish</button></div>`;
+    return;
+  }
+  list.innerHTML = newspapers.map(n => `
+    <div class="item-row">
+      <div class="ico" style="background: ${COLOR_GRADS[n.color] || COLOR_GRADS[1]};">${esc(n.emoji || '📰')}</div>
+      <div class="info">
+        <h3>${esc(n.name)}</h3>
+        <p>📅 ${(n.issues || []).length} ta nashr · ${esc((n.description || '').slice(0, 80))}</p>
+      </div>
+      <div class="actions">
+        <button class="icon-btn edit" onclick="openNewspaperEditor('${n.id}')">✏️</button>
+        <button class="icon-btn del" onclick="deleteNewspaper('${n.id}')">🗑️</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+function openNewspaperEditor(id = null) {
+  editingNewspaperId = id;
+  const n = id ? newspapers.find(x => x.id === id) : null;
+  document.getElementById('newspaper-editor-title').textContent = n ? 'Gazetani tahrirlash' : 'Yangi gazeta';
+  document.getElementById('newspaper-name-input').value = n?.name || '';
+  document.getElementById('newspaper-desc-input').value = n?.description || '';
+  document.getElementById('newspaper-emoji-input').value = n?.emoji || '📰';
+  document.getElementById('newspaper-color-input').value = n?.color || 3;
+  renderIssuesList(n?.issues || []);
+  showView('newspaper-editor');
+}
+
+function renderIssuesList(issues) {
+  const el = document.getElementById('newspaper-issues-list');
+  if (!issues || issues.length === 0) {
+    el.innerHTML = `<p style="color: var(--ink-2); text-align:center; padding: 16px;">Hali nashrlar yo'q. Birinchi nashrni qo'shing.</p>`;
+    return;
+  }
+  const sorted = [...issues].sort((a, b) => (b.date || '').localeCompare(a.date || ''));
+  el.innerHTML = sorted.map((iss, idx) => `
+    <div class="item-row">
+      <div class="ico" style="background: linear-gradient(135deg, #14b8a6, #0d9488);">📅</div>
+      <div class="info">
+        <h3>${new Date(iss.date).toLocaleDateString('uz-UZ', { day: 'numeric', month: 'long', year: 'numeric' })}</h3>
+        <p>${esc(iss.title || 'Nashr')} · ${iss.pdfUrl ? '🔗 ' + (iss.pdfUrl.length > 50 ? iss.pdfUrl.slice(0, 50) + '...' : iss.pdfUrl) : '⚠️ Fayl yo\'q'}</p>
+      </div>
+      <div class="actions">
+        <button class="icon-btn edit" onclick="openIssueEditor(${idx})">✏️</button>
+        <button class="icon-btn del" onclick="deleteIssue(${idx})">🗑️</button>
+      </div>
+    </div>
+  `).join('');
+}
+
+function openIssueEditor(idx = null) {
+  editingIssueIdx = idx;
+  currentIssueFile = null;
+  // Joriy gazetaning nashrlarini olamiz
+  const issues = getCurrentEditingIssues();
+  const iss = idx !== null ? issues[idx] : null;
+  document.getElementById('issue-editor-title').textContent = iss ? 'Nashrni tahrirlash' : 'Yangi nashr';
+  document.getElementById('issue-date-input').value = iss?.date || new Date().toISOString().slice(0, 10);
+  document.getElementById('issue-title-input').value = iss?.title || '';
+  document.getElementById('issue-url-input').value = iss?.pdfUrl || '';
+  document.getElementById('issue-file-input').value = '';
+  document.getElementById('issue-file-status').textContent = iss?.pdfUrl ? '✓ Mavjud fayl: ' + iss.pdfUrl : '';
+  showView('issue-editor');
+}
+
+function getCurrentEditingIssues() {
+  // Tahrirlash rejimida — saqlangan gazetaning issues
+  // Yangi gazetada — temporary buffer
+  if (!window._tempIssues) window._tempIssues = [];
+  if (editingNewspaperId) {
+    const n = newspapers.find(x => x.id === editingNewspaperId);
+    if (n) {
+      window._tempIssues = n.issues || [];
+      return window._tempIssues;
+    }
+  }
+  return window._tempIssues;
+}
+
+function handleIssueFileUpload(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  const sizeMB = file.size / 1024 / 1024;
+  if (sizeMB > 95) {
+    toast("Fayl 95 MB dan katta. URL ishlatishni tavsiya qilamiz.", 'error');
+    e.target.value = '';
+    return;
+  }
+  currentIssueFile = file;
+  document.getElementById('issue-file-status').textContent = `✓ ${file.name} (${sizeMB.toFixed(2)} MB) tanlandi`;
+}
+
+async function saveIssue() {
+  const date = document.getElementById('issue-date-input').value;
+  if (!date) { toast('Sanani tanlang', 'error'); return; }
+  const title = document.getElementById('issue-title-input').value.trim();
+  const urlField = document.getElementById('issue-url-input').value.trim();
+
+  let pdfUrl = urlField;
+  let fileExt = '.pdf';
+
+  // Fayl yuklangan bo'lsa — GitHub'ga
+  if (currentIssueFile) {
+    const token = localStorage.getItem(STORAGE.GH_TOKEN);
+    if (!token) {
+      toast("GitHub token sozlanmagan. Avval Sozlamalardan tokenni kiriting.", 'error');
+      return;
+    }
+    fileExt = getFileExt(currentIssueFile.name) || '.pdf';
+    toast(`🔄 Fayl GitHub'ga yuklanmoqda...`, '');
+    try {
+      const nameSafe = safeFileName(currentIssueFile.name);
+      const newspaperId = editingNewspaperId || ('np_' + Date.now());
+      const githubPath = `files/newspapers/${newspaperId}/${date}_${nameSafe}`;
+      pdfUrl = await ghUploadBinaryFile(currentIssueFile, githubPath);
+      toast(`✅ Fayl GitHub'ga yuklandi`, 'success');
+    } catch (err) {
+      toast(`❌ Yuklash xato: ${err.message}`, 'error');
+      return;
+    }
+  } else if (urlField) {
+    fileExt = getFileExt(urlField) || '.pdf';
+  } else if (editingIssueIdx === null) {
+    toast("Fayl yuklang yoki URL kiriting", 'error');
+    return;
+  }
+
+  const issue = {
+    date,
+    title: title || `${new Date(date).toLocaleDateString('uz-UZ')} nashri`,
+    pdfUrl: pdfUrl || null,
+    fileExt
+  };
+
+  const issues = getCurrentEditingIssues();
+  if (editingIssueIdx !== null) {
+    issues[editingIssueIdx] = { ...issues[editingIssueIdx], ...issue };
+  } else {
+    issues.push(issue);
+  }
+  // Mavjud gazeta tahrirlanayotgan bo'lsa, ham yangilash
+  if (editingNewspaperId) {
+    const n = newspapers.find(x => x.id === editingNewspaperId);
+    if (n) n.issues = issues;
+  }
+  toast(`✓ Nashr saqlandi`, 'success');
+  renderIssuesList(issues);
+  editingIssueIdx = null;
+  currentIssueFile = null;
+  showView('newspaper-editor');
+}
+
+function deleteIssue(idx) {
+  const issues = getCurrentEditingIssues();
+  const iss = issues[idx];
+  if (!iss) return;
+  showModal("Nashrni o'chirish", `${new Date(iss.date).toLocaleDateString('uz-UZ')} nashrini o'chirmoqchimisiz?`, () => {
+    issues.splice(idx, 1);
+    if (editingNewspaperId) {
+      const n = newspapers.find(x => x.id === editingNewspaperId);
+      if (n) n.issues = issues;
+    }
+    renderIssuesList(issues);
+    toast("O'chirildi", 'success');
+  });
+}
+
+function saveNewspaper() {
+  const name = document.getElementById('newspaper-name-input').value.trim();
+  if (!name) { toast('Gazeta nomini kiriting', 'error'); return; }
+  const description = document.getElementById('newspaper-desc-input').value.trim();
+  const emoji = document.getElementById('newspaper-emoji-input').value.trim() || '📰';
+  const color = parseInt(document.getElementById('newspaper-color-input').value);
+  const issues = getCurrentEditingIssues();
+
+  const newspaper = {
+    id: editingNewspaperId || ('np_' + Date.now()),
+    name,
+    description,
+    emoji,
+    color,
+    issues,
+    updatedAt: Date.now(),
+    createdAt: editingNewspaperId ? (newspapers.find(n => n.id === editingNewspaperId)?.createdAt || Date.now()) : Date.now()
+  };
+
+  if (editingNewspaperId) {
+    const idx = newspapers.findIndex(n => n.id === editingNewspaperId);
+    if (idx >= 0) newspapers[idx] = newspaper;
+  } else {
+    newspapers.push(newspaper);
+  }
+  saveData();
+  toast("Gazeta saqlandi ✓", 'success');
+  editingNewspaperId = null;
+  window._tempIssues = [];
+  showView('newspapers');
+}
+
+function deleteNewspaper(id) {
+  const n = newspapers.find(x => x.id === id);
+  if (!n) return;
+  showModal("Gazetani o'chirish", `"${n.name}" gazetasini va uning barcha nashrlarini o'chirmoqchimisiz?`, () => {
+    newspapers = newspapers.filter(x => x.id !== id);
+    saveData();
+    renderNewspapersList();
+    toast("Gazeta o'chirildi", 'success');
+  });
 }
 function renderDashboard() {
   document.getElementById('stat-courses').textContent = courses.length;
@@ -2603,7 +2899,7 @@ function exportData() {
   const data = {
     version: 1, exportedAt: new Date().toISOString(),
     source: 'marifat-cup-admin', courses, quizzes, slides,
-    announcements: anns, ebooks, meetings
+    announcements: anns, ebooks, meetings, newspapers
   };
   const json = JSON.stringify(data, null, 2);
   const blob = new Blob([json], { type: 'application/json' });
@@ -2636,6 +2932,7 @@ function handleImportFile(e) {
           if (Array.isArray(data.announcements)) anns = data.announcements;
           if (Array.isArray(data.ebooks)) ebooks = data.ebooks;
           if (Array.isArray(data.meetings)) meetings = data.meetings;
+          if (Array.isArray(data.newspapers)) newspapers = data.newspapers;
           saveData();
           toast('Import qilindi ✓', 'success');
           renderDashboard();
@@ -2652,7 +2949,7 @@ function resetAll() {
   showModal("Hammasini o'chirish",
     "Barcha kurslar, kvizlar, taqdimotlar va e'lonlar abadiy o'chiriladi! Davom etasizmi?",
     () => {
-      courses = []; quizzes = []; slides = []; anns = []; ebooks = []; meetings = [];
+      courses = []; quizzes = []; slides = []; anns = []; ebooks = []; meetings = []; newspapers = [];
       saveData();
       renderDashboard();
       showView('dashboard');
