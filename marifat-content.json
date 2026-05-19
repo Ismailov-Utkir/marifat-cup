@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "exportedAt": "2026-05-19T05:39:31.334Z",
+  "exportedAt": "2026-05-19T05:43:29.028Z",
   "source": "marifat-cup-admin-auto",
   "courses": [
     {
@@ -1432,7 +1432,7 @@
     {
       "id": "np_1779169171329",
       "name": "Jadid",
-      "description": "“Jadid” gazetasining 2026-yil 15-maydagi 20-soni",
+      "description": "Tilda, fikrda, ishda birlik!",
       "emoji": "📰",
       "color": 3,
       "issues": [
@@ -1443,7 +1443,7 @@
           "fileExt": ".pdf"
         }
       ],
-      "updatedAt": 1779169171329,
+      "updatedAt": 1779169409023,
       "createdAt": 1779169171329
     }
   ]
