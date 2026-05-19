@@ -1922,7 +1922,11 @@
     <h2 id="np-issue-title" style="color: white; font-family: 'Bricolage Grotesque', sans-serif; font-size: 26px; margin-bottom: 6px;"></h2>
     <p id="np-issue-meta" style="color: rgba(255,255,255,0.7); margin-bottom: 16px;"></p>
     <div class="slide-viewer">
-      <div class="slide-viewer-frame" id="np-issue-frame"></div>
+      <div class="slide-viewer-frame" id="np-issue-frame" style="aspect-ratio: 4/5;"></div>
+      <div class="slide-controls">
+        <button class="slide-fullscreen-btn" onclick="toggleNewspaperFullscreen()">⛶ To'liq ekran</button>
+        <a id="np-download-link" href="#" target="_blank" class="btn btn-accent" style="padding: 10px 18px; text-decoration: none;">📥 Yangi tabda ochish</a>
+      </div>
     </div>
   </div>
 </div>
@@ -5573,6 +5577,10 @@ function openNewspaper(id) {
   loadNewspapers();
   const n = savedNewspapers.find(x => x.id === id);
   if (!n) return;
+  // Boshqa gazeta ochilsa, yil filtrini tozalash
+  if (!currentNewspaper || currentNewspaper.id !== id) {
+    _newspaperYearFilter = null;
+  }
   currentNewspaper = n;
   // Sarlavha
   const grads = { 1: 'linear-gradient(135deg, #f97316, #ea580c)', 2: 'linear-gradient(135deg, #8b5cf6, #6d28d9)', 3: 'linear-gradient(135deg, #06b6d4, #0e7490)', 4: 'linear-gradient(135deg, #10b981, #047857)', 5: 'linear-gradient(135deg, #ec4899, #be185d)', 6: 'linear-gradient(135deg, #f59e0b, #b45309)' };
@@ -5593,7 +5601,11 @@ function openNewspaper(id) {
 }
 
 const UZ_MONTHS = ['Yanvar', 'Fevral', 'Mart', 'Aprel', 'May', 'Iyun', 'Iyul', 'Avgust', 'Sentabr', 'Oktabr', 'Noyabr', 'Dekabr'];
-const UZ_WEEKDAYS = ['Yak', 'Du', 'Se', 'Cho', 'Pay', 'Ju', 'Sha'];
+const UZ_MONTHS_SHORT = ['Yan', 'Fev', 'Mar', 'Apr', 'May', 'Iyun', 'Iyul', 'Avg', 'Sen', 'Okt', 'Noy', 'Dek'];
+const UZ_WEEKDAYS = ['Yakshanba', 'Dushanba', 'Seshanba', 'Chorshanba', 'Payshanba', 'Juma', 'Shanba'];
+const UZ_WEEKDAYS_SHORT = ['Yak', 'Du', 'Se', 'Cho', 'Pay', 'Ju', 'Sha'];
+
+let _newspaperYearFilter = null;
 
 function renderIssuesByMonth(issues) {
   const container = document.getElementById('newspaper-issues-grid');
@@ -5601,55 +5613,119 @@ function renderIssuesByMonth(issues) {
     container.innerHTML = `<div class="empty-state"><div class="empty-state-emoji">📭</div><p>Hozircha nashrlar qo'shilmagan</p></div>`;
     return;
   }
+
+  // Yillarni topish
+  const years = [...new Set(issues.map(i => new Date(i.date).getFullYear()))].sort((a, b) => b - a);
+  if (!_newspaperYearFilter || !years.includes(_newspaperYearFilter)) {
+    _newspaperYearFilter = years[0];
+  }
+  const selectedYear = _newspaperYearFilter;
+
+  // Yil bo'yicha filtrlangan nashrlar
+  const yearIssues = issues.filter(i => new Date(i.date).getFullYear() === selectedYear);
+
   // Oylar bo'yicha guruhlash
   const byMonth = {};
-  issues.forEach(iss => {
-    if (!iss.date) return;
+  yearIssues.forEach(iss => {
     const d = new Date(iss.date);
-    const key = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
-    if (!byMonth[key]) byMonth[key] = [];
-    byMonth[key].push(iss);
+    const m = d.getMonth();
+    if (!byMonth[m]) byMonth[m] = [];
+    byMonth[m].push(iss);
   });
-  // Tartiblash (eng yangidan eski tomon)
-  const sortedKeys = Object.keys(byMonth).sort().reverse();
-  container.innerHTML = sortedKeys.map(key => {
-    const [year, month] = key.split('-').map(Number);
-    const monthIssues = byMonth[key].sort((a, b) => (b.date || '').localeCompare(a.date || ''));
-    return `
-      <div style="background: white; border-radius: 16px; padding: 22px; margin-bottom: 16px; box-shadow: var(--shadow-card);">
-        <h3 style="font-family: 'Bricolage Grotesque', sans-serif; font-size: 22px; margin-bottom: 14px; color: var(--ink);">
-          📅 ${UZ_MONTHS[month - 1]} ${year}
-          <span style="font-size: 13px; color: var(--ink-2); font-weight: 600;">(${monthIssues.length} ta nashr)</span>
-        </h3>
-        <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 10px;">
-          ${monthIssues.map(iss => {
-            const d = new Date(iss.date);
-            const dayNum = d.getDate();
-            const weekday = UZ_WEEKDAYS[d.getDay()];
-            return `
-              <div onclick='openIssue(${JSON.stringify(iss).replace(/'/g, "&#39;")})' style="background: linear-gradient(135deg, #f0fdfa, #ccfbf1); border: 2px solid #5eead4; border-radius: 12px; padding: 12px; cursor: pointer; text-align: center; transition: transform 0.15s;" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
-                <div style="font-family: 'Bricolage Grotesque'; font-size: 32px; font-weight: 900; color: var(--primary-dark); line-height: 1;">${dayNum}</div>
-                <div style="font-size: 11px; color: var(--ink-2); font-weight: 700; margin-top: 2px;">${weekday}</div>
-                <div style="font-size: 11px; color: var(--ink); margin-top: 6px; font-weight: 600;">${escapeHtml((iss.title || '').slice(0, 20))}</div>
-              </div>
-            `;
-          }).join('')}
-        </div>
-      </div>
-    `;
-  }).join('');
+  const sortedMonths = Object.keys(byMonth).map(Number).sort((a, b) => b - a);
+
+  // Yil tablari
+  const yearTabs = years.map(y => `
+    <button onclick="_newspaperYearFilter=${y}; openNewspaper('${currentNewspaper.id}')"
+      style="padding: 10px 22px; border-radius: 100px; border: 2px solid ${y === selectedYear ? 'var(--accent)' : 'rgba(255,255,255,0.3)'};
+             background: ${y === selectedYear ? 'var(--accent)' : 'transparent'};
+             color: ${y === selectedYear ? 'var(--ink)' : 'white'};
+             font-weight: 800; font-size: 16px; cursor: pointer; font-family: 'Bricolage Grotesque', sans-serif;
+             transition: all 0.2s;">
+      ${y}
+    </button>
+  `).join('');
+
+  container.innerHTML = `
+    <div style="display: flex; gap: 8px; margin-bottom: 24px; flex-wrap: wrap; justify-content: center;">
+      ${yearTabs}
+    </div>
+
+    ${sortedMonths.length === 0 ? '<p style="color: rgba(255,255,255,0.6); text-align: center; padding: 40px;">Bu yilda nashrlar yo\'q</p>' :
+      sortedMonths.map(m => {
+        const monthIssues = byMonth[m].sort((a, b) => (b.date || '').localeCompare(a.date || ''));
+        return `
+          <div style="background: white; border-radius: 20px; padding: 28px; margin-bottom: 20px; box-shadow: var(--shadow-card); position: relative; overflow: hidden;">
+            <!-- Decorative background number -->
+            <div style="position: absolute; top: -20px; right: -10px; font-family: 'Bricolage Grotesque', sans-serif; font-size: 180px; font-weight: 900; color: rgba(20,184,166,0.06); line-height: 1; pointer-events: none; user-select: none;">${m + 1}</div>
+
+            <!-- Month header -->
+            <div style="display: flex; align-items: baseline; gap: 12px; margin-bottom: 22px; position: relative;">
+              <h3 style="font-family: 'Bricolage Grotesque', sans-serif; font-size: 32px; font-weight: 900; color: var(--ink); letter-spacing: -0.02em;">${UZ_MONTHS[m]}</h3>
+              <span style="font-size: 14px; color: var(--ink-2); font-weight: 700; background: #f0fdfa; padding: 4px 12px; border-radius: 100px;">${monthIssues.length} ta nashr</span>
+            </div>
+
+            <!-- Issues grid -->
+            <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 14px; position: relative;">
+              ${monthIssues.map((iss, idx) => {
+                const d = new Date(iss.date);
+                const dayNum = d.getDate();
+                const weekday = UZ_WEEKDAYS_SHORT[d.getDay()];
+                const isLatest = idx === 0;
+                return `
+                  <div onclick='openIssue(${JSON.stringify(iss).replace(/'/g, "&#39;")})' style="background: white; border: 2px solid #e5e7eb; border-radius: 14px; padding: 0; cursor: pointer; transition: all 0.2s; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.05);"
+                    onmouseover="this.style.transform='translateY(-4px)'; this.style.borderColor='var(--primary)'; this.style.boxShadow='0 12px 24px rgba(20,184,166,0.2)';"
+                    onmouseout="this.style.transform='translateY(0)'; this.style.borderColor='#e5e7eb'; this.style.boxShadow='0 2px 8px rgba(0,0,0,0.05)';">
+
+                    <!-- Date strip (newspaper style) -->
+                    <div style="background: ${isLatest ? 'linear-gradient(135deg, #14b8a6, #0d9488)' : 'linear-gradient(135deg, #0f172a, #1e293b)'}; color: white; padding: 14px; text-align: center; position: relative;">
+                      ${isLatest ? '<div style="position: absolute; top: 6px; right: 6px; background: #fbbf24; color: var(--ink); padding: 2px 8px; border-radius: 100px; font-size: 9px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.05em;">YANGI</div>' : ''}
+                      <div style="font-family: 'Bricolage Grotesque', sans-serif; font-size: 44px; font-weight: 900; line-height: 1; letter-spacing: -0.04em;">${dayNum}</div>
+                      <div style="font-size: 11px; opacity: 0.9; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; margin-top: 4px;">${weekday} · ${UZ_MONTHS_SHORT[m]}</div>
+                    </div>
+
+                    <!-- Title & meta -->
+                    <div style="padding: 12px 14px;">
+                      <div style="font-family: 'Bricolage Grotesque', sans-serif; font-size: 14px; font-weight: 800; color: var(--ink); line-height: 1.3; overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;">
+                        ${escapeHtml(iss.title || 'Nashr')}
+                      </div>
+                      <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 8px;">
+                        <span style="font-size: 11px; color: var(--ink-2); font-weight: 600;">📄 O'qish</span>
+                        <span style="color: var(--primary); font-size: 18px;">→</span>
+                      </div>
+                    </div>
+                  </div>
+                `;
+              }).join('')}
+            </div>
+          </div>
+        `;
+      }).join('')}
+  `;
 }
 
 function openIssue(issue) {
   document.getElementById('np-issue-title').textContent = issue.title || new Date(issue.date).toLocaleDateString('uz-UZ');
   document.getElementById('np-issue-meta').textContent = currentNewspaper ? currentNewspaper.name + ' · ' + new Date(issue.date).toLocaleDateString('uz-UZ', { day: 'numeric', month: 'long', year: 'numeric' }) : '';
   const frame = document.getElementById('np-issue-frame');
+  const dlLink = document.getElementById('np-download-link');
   if (issue.pdfUrl) {
     frame.innerHTML = buildFileViewerHtml(issue.pdfUrl, issue.fileExt);
+    if (dlLink) dlLink.href = issue.pdfUrl;
   } else {
     frame.innerHTML = `<div style="color: rgba(255,255,255,0.6); padding: 40px; text-align: center;">Fayl topilmadi</div>`;
+    if (dlLink) dlLink.href = '#';
   }
   showScreen('newspaper-viewer-screen');
+}
+
+function toggleNewspaperFullscreen() {
+  const frame = document.getElementById('np-issue-frame');
+  if (!document.fullscreenElement) {
+    frame.requestFullscreen?.() || frame.webkitRequestFullscreen?.() || frame.msRequestFullscreen?.();
+  } else {
+    document.exitFullscreen?.() || document.webkitExitFullscreen?.() || document.msExitFullscreen?.();
+  }
 }
 
 function goBackToNewspaperDetail() {
