@@ -1467,28 +1467,28 @@
     <div class="grid-3">
       <button class="action-card" onclick="goToCourses()">
         <span class="ac-icon">📚</span>
-        <h3>Kurslar va darsliklar</h3>
-        <p>Video darslarni ko'ring va testlardan o'ting</p>
+        <h3 data-label="courses">Kurslar va darsliklar</h3>
+        <p data-label="courses_desc">Video darslarni ko'ring va testlardan o'ting</p>
       </button>
       <button class="action-card" onclick="showScreen('ebooks-screen'); renderEbooksList();">
         <span class="ac-icon">📖</span>
-        <h3>E-kitoblar</h3>
-        <p>Kitoblar kutubxonasi — onlayn o'qing</p>
+        <h3 data-label="ebooks">E-kitoblar</h3>
+        <p data-label="ebooks_desc">Kitoblar kutubxonasi — onlayn o'qing</p>
       </button>
       <button class="action-card" onclick="showScreen('meetings-screen'); renderMeetingsList();">
         <span class="ac-icon">📹</span>
-        <h3>Online yig'ilishlar</h3>
-        <p>Vaqt cheklovsiz video konferensiya</p>
+        <h3 data-label="meetings">Online yig'ilishlar</h3>
+        <p data-label="meetings_desc">Vaqt cheklovsiz video konferensiya</p>
       </button>
       <button class="action-card" onclick="showScreen('newspapers-screen'); renderNewspapersList();">
         <span class="ac-icon">📰</span>
-        <h3>Gazetalar</h3>
-        <p>Jadid, Yangi O'zbekiston va boshqalar — oylar bo'yicha</p>
+        <h3 data-label="newspapers">Gazetalar</h3>
+        <p data-label="newspapers_desc">Jadid, Yangi O'zbekiston va boshqalar — oylar bo'yicha</p>
       </button>
       <button class="action-card" onclick="goToProfile()">
         <span class="ac-icon">🎓</span>
-        <h3>Mening yutuqlarim</h3>
-        <p>Sertifikatlar, tangalar va statistika</p>
+        <h3 data-label="achievements">Mening yutuqlarim</h3>
+        <p data-label="achievements_desc">Sertifikatlar, tangalar va statistika</p>
       </button>
     </div>
 
@@ -5586,6 +5586,24 @@ async function sendFeedback() {
 }
 
 // ====================================================================
+// CUSTOM LABELS — Admin tahrirlagan bo'lim nomlari
+// ====================================================================
+function loadCustomLabels() {
+  try {
+    return JSON.parse(localStorage.getItem('mc_labels') || '{}');
+  } catch (e) { return {}; }
+}
+
+function applyCustomLabels() {
+  const labels = loadCustomLabels();
+  if (!labels || Object.keys(labels).length === 0) return;
+  document.querySelectorAll('[data-label]').forEach(el => {
+    const key = el.dataset.label;
+    if (labels[key]) el.textContent = labels[key];
+  });
+}
+
+// ====================================================================
 // AI CHATBOT — Sun'iy intellekt yordamchi (bepul Pollinations API)
 // ====================================================================
 function toggleAiChat() {
@@ -6071,6 +6089,9 @@ async function syncFromServer() {
     if (Array.isArray(data.newspapers)) {
       localStorage.setItem('mc_newspapers', JSON.stringify(data.newspapers));
     }
+    if (data.labels && typeof data.labels === 'object') {
+      localStorage.setItem('mc_labels', JSON.stringify(data.labels));
+    }
     console.log('[Ma\'rifat Cup] Server kontenti yuklandi:', {
       courses: data.courses?.length || 0,
       quizzes: data.quizzes?.length || 0,
@@ -6112,6 +6133,8 @@ async function initApp() {
   loadEbooks();
   loadMeetings();
   loadNewspapers();
+  // Maxsus bo'lim nomlarini qo'llash
+  applyCustomLabels();
   // 🎵 Audio mute holatini yangilash (saqlangan tanlovga qarab)
   document.querySelectorAll('.audio-mute-btn').forEach(b => {
     b.textContent = _audioMuted ? '🔇' : '🔊';

@@ -874,6 +874,62 @@ D) Noto'g'ri</pre>
         <button class="btn btn-accent" onclick="exportData()">📥 JSON yuklash</button>
       </div>
 
+      <div class="settings-block" style="background: linear-gradient(135deg, #f3e8ff, #e9d5ff); border-color: var(--secondary);">
+        <h3>✏️ Bo'lim nomlarini tahrirlash</h3>
+        <p>Asosiy saytdagi bo'lim sarlavhalari va izohlarini o'zgartiring. O'zgarishlar barcha foydalanuvchilar qurilmalarida ko'rinadi.</p>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px;">
+          <div class="field" style="margin-bottom: 0;">
+            <label>📚 Kurslar — sarlavha</label>
+            <input class="input" id="label-courses" placeholder="Kurslar va darsliklar">
+          </div>
+          <div class="field" style="margin-bottom: 0;">
+            <label>📚 Kurslar — izoh</label>
+            <input class="input" id="label-courses_desc" placeholder="Video darslarni ko'ring va testlardan o'ting">
+          </div>
+          <div class="field" style="margin-bottom: 0;">
+            <label>📖 E-kitoblar — sarlavha</label>
+            <input class="input" id="label-ebooks" placeholder="E-kitoblar">
+          </div>
+          <div class="field" style="margin-bottom: 0;">
+            <label>📖 E-kitoblar — izoh</label>
+            <input class="input" id="label-ebooks_desc" placeholder="Kitoblar kutubxonasi — onlayn o'qing">
+          </div>
+          <div class="field" style="margin-bottom: 0;">
+            <label>📹 Yig'ilishlar — sarlavha</label>
+            <input class="input" id="label-meetings" placeholder="Online yig'ilishlar">
+          </div>
+          <div class="field" style="margin-bottom: 0;">
+            <label>📹 Yig'ilishlar — izoh</label>
+            <input class="input" id="label-meetings_desc" placeholder="Vaqt cheklovsiz video konferensiya">
+          </div>
+          <div class="field" style="margin-bottom: 0;">
+            <label>📰 Gazetalar — sarlavha</label>
+            <input class="input" id="label-newspapers" placeholder="Gazetalar">
+          </div>
+          <div class="field" style="margin-bottom: 0;">
+            <label>📰 Gazetalar — izoh</label>
+            <input class="input" id="label-newspapers_desc" placeholder="Jadid, Yangi O'zbekiston va boshqalar">
+          </div>
+          <div class="field" style="margin-bottom: 0;">
+            <label>🎓 Yutuqlarim — sarlavha</label>
+            <input class="input" id="label-achievements" placeholder="Mening yutuqlarim">
+          </div>
+          <div class="field" style="margin-bottom: 0;">
+            <label>🎓 Yutuqlarim — izoh</label>
+            <input class="input" id="label-achievements_desc" placeholder="Sertifikatlar, tangalar va statistika">
+          </div>
+        </div>
+
+        <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+          <button class="btn btn-primary" onclick="saveCustomLabels()">💾 Saqlash va sinxronlash</button>
+          <button class="btn btn-secondary" onclick="resetCustomLabels()">🔄 Avvalgi nomlarga qaytarish</button>
+        </div>
+        <p style="font-size: 12px; color: var(--ink-2); margin-top: 10px;">
+          ℹ️ Bo'sh qoldirilgan maydonlar — avvalgi nomi saqlanadi. GitHub'ga avtomatik sinxron bo'ladi.
+        </p>
+      </div>
+
       <div class="settings-block" style="background: linear-gradient(135deg, #f0fdfa, #ccfbf1); border-color: var(--primary);">
         <h3>📈 Batafsil statistika</h3>
         <p>Lokal qurilmangizdagi ma'lumotlar — qaysi kurs ko'p ko'rilgan, kim sertifikat olgan va h.k.</p>
@@ -1088,7 +1144,7 @@ async function syncToGitHub(silent) {
     exportedAt: new Date().toISOString(),
     source: 'marifat-cup-admin-auto',
     courses, quizzes, slides,
-    announcements: anns, ebooks, meetings, newspapers
+    announcements: anns, ebooks, meetings, newspapers, labels: (function(){ try { return JSON.parse(localStorage.getItem('mc_labels')||'{}'); } catch(e){ return {}; } })()
   };
   const json = JSON.stringify(payload, null, 2);
   const contentBase64 = btoa(unescape(encodeURIComponent(json)));
@@ -1442,7 +1498,7 @@ function showView(name) {
   else if (name === 'meetings') renderMeetingsList();
   else if (name === 'newspapers') renderNewspapersList();
   else if (name === 'feedback') renderFeedbackList();
-  else if (name === 'settings') updateGhTokenStatus();
+  else if (name === 'settings') { updateGhTokenStatus(); loadLabelsToForm(); }
 }
 
 // =============================================================
@@ -2879,6 +2935,46 @@ function deleteAnn(id) {
   });
 }
 
+// Bo'lim nomlari (labels)
+let customLabels = {};
+function loadCustomLabels() {
+  try { customLabels = JSON.parse(localStorage.getItem('mc_labels') || '{}'); } catch (e) { customLabels = {}; }
+  return customLabels;
+}
+function saveCustomLabels() {
+  const keys = ['courses', 'courses_desc', 'ebooks', 'ebooks_desc', 'meetings', 'meetings_desc', 'newspapers', 'newspapers_desc', 'achievements', 'achievements_desc'];
+  const newLabels = {};
+  keys.forEach(k => {
+    const el = document.getElementById('label-' + k);
+    if (el && el.value.trim()) newLabels[k] = el.value.trim();
+  });
+  customLabels = newLabels;
+  localStorage.setItem('mc_labels', JSON.stringify(customLabels));
+  // GitHub'ga sinxron qilish
+  if (localStorage.getItem(STORAGE.GH_TOKEN)) {
+    syncToGitHub(false);
+  }
+  toast("✅ Bo'lim nomlari saqlandi va sinxronlandi", 'success');
+}
+
+function resetCustomLabels() {
+  showModal("Avvalgi nomlarga qaytarish", "Barcha o'zgartirilgan bo'lim nomlarini standart holatga qaytarishni xohlaysizmi?", () => {
+    customLabels = {};
+    localStorage.removeItem('mc_labels');
+    document.querySelectorAll('[id^="label-"]').forEach(el => el.value = '');
+    if (localStorage.getItem(STORAGE.GH_TOKEN)) syncToGitHub(false);
+    toast("Standart nomlarga qaytarildi", 'success');
+  });
+}
+
+function loadLabelsToForm() {
+  loadCustomLabels();
+  Object.keys(customLabels).forEach(k => {
+    const el = document.getElementById('label-' + k);
+    if (el) el.value = customLabels[k];
+  });
+}
+
 function showDetailedStats() {
   const container = document.getElementById('detailed-stats-container');
   let usersLog = [];
@@ -3117,7 +3213,7 @@ function exportData() {
   const data = {
     version: 1, exportedAt: new Date().toISOString(),
     source: 'marifat-cup-admin', courses, quizzes, slides,
-    announcements: anns, ebooks, meetings, newspapers
+    announcements: anns, ebooks, meetings, newspapers, labels: (function(){ try { return JSON.parse(localStorage.getItem('mc_labels')||'{}'); } catch(e){ return {}; } })()
   };
   const json = JSON.stringify(data, null, 2);
   const blob = new Blob([json], { type: 'application/json' });
