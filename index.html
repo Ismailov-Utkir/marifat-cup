@@ -1431,22 +1431,23 @@
 
   <div class="home-grid">
    <div class="home-sidebar-left">
-    <div class="leaderboard-widget">
-      <h3>📌 Tezkor harakat</h3>
-      <div style="display: flex; flex-direction: column; gap: 8px;">
-        <button class="btn btn-primary" onclick="goToCourses()" style="width:100%; padding: 12px; font-size: 14px;">📚 Kurslar</button>
-        <button class="btn btn-accent" onclick="showScreen('live-options-screen')" style="width:100%; padding: 12px; font-size: 14px;">🎥 Kviz o'yin</button>
-        <button class="btn btn-secondary" onclick="showScreen('slides-screen'); renderSlidesList();" style="width:100%; padding: 12px; font-size: 14px;">📊 Slaydlar</button>
-        <button class="btn btn-secondary" onclick="showScreen('ebooks-screen'); renderEbooksList();" style="width:100%; padding: 12px; font-size: 14px;">📖 E-kitoblar</button>
-        <button class="btn btn-secondary" onclick="showScreen('meetings-screen'); renderMeetingsList();" style="width:100%; padding: 12px; font-size: 14px;">🎬 Yig'ilishlar</button>
-        <button class="btn btn-secondary" onclick="goToProfile()" style="width:100%; padding: 12px; font-size: 14px;">👤 Profil</button>
+    <div class="leaderboard-widget" style="text-align: center; padding: 24px;">
+      <h3 style="display: flex; align-items: center; justify-content: center; gap: 8px;">🕐 Hozirgi vaqt</h3>
+      <div id="sidebar-clock" style="font-family: 'Bricolage Grotesque', sans-serif; font-size: 44px; font-weight: 900; color: var(--primary); letter-spacing: -0.02em; margin: 12px 0; line-height: 1;">--:--:--</div>
+      <div id="sidebar-date" style="color: var(--ink-2); font-size: 14px; font-weight: 700; margin-bottom: 18px;">--</div>
+
+      <div style="border-top: 2px solid #f3f4f6; padding-top: 16px; margin-top: 8px;">
+        <div style="font-size: 13px; color: var(--ink-2); font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 8px;">☀️ Ob-havo</div>
+        <div id="sidebar-weather-icon" style="font-size: 56px; margin: 8px 0;">🌡️</div>
+        <div id="sidebar-weather-temp" style="font-family: 'Bricolage Grotesque', sans-serif; font-size: 36px; font-weight: 900; color: var(--ink); line-height: 1;">--°C</div>
+        <div id="sidebar-weather-city" style="font-size: 13px; color: var(--ink-2); font-weight: 600; margin-top: 4px;">Toshkent</div>
       </div>
     </div>
+
     <div class="leaderboard-widget" style="margin-top: 14px;">
-      <h3>📅 Bugun</h3>
-      <p id="today-date" style="color: var(--ink-2); font-size: 14px; font-weight: 600;">--</p>
-      <p style="font-size: 13px; color: var(--ink-2); margin-top: 8px; line-height: 1.5;">
-        💡 Har kuni 10-15 daqiqa o'qish — uzoq muddatda buyuk natija beradi.
+      <h3>💡 Maslahat</h3>
+      <p style="font-size: 13px; color: var(--ink-2); line-height: 1.6;">
+        Har kuni <b style="color: var(--primary);">10-15 daqiqa</b> o'qish — uzoq muddatda buyuk natija beradi.
       </p>
     </div>
    </div>
@@ -1491,11 +1492,6 @@
         <h3>Gazetalar</h3>
         <p>Jadid, Yangi O'zbekiston va boshqalar — oylar bo'yicha</p>
       </button>
-      <button class="action-card" onclick="showScreen('live-options-screen')">
-        <span class="ac-icon">👥</span>
-        <h3>Jonli kviz o'yin</h3>
-        <p>Yangi o'yin yaratish yoki PIN bilan ulanish</p>
-      </button>
       <button class="action-card" onclick="goToProfile()">
         <span class="ac-icon">🎓</span>
         <h3>Mening yutuqlarim</h3>
@@ -1511,11 +1507,6 @@
         <span class="ac-icon">➕</span>
         <h3>Yangi kviz yaratish</h3>
         <p>O'z savollaringiz bilan kviz tuzing va o'quvchilar bilan o'ynang</p>
-      </button>
-      <button class="action-card" onclick="renderMyQuizzes(); showScreen('myquizzes-screen')">
-        <span class="ac-icon">📋</span>
-        <h3>Mening kvizlarim</h3>
-        <p>Yaratgan kvizlaringiz: tahrirlash va jonli o'ynash</p>
       </button>
     </div>
    </div>
@@ -5728,21 +5719,23 @@ function observeLanguageChanges() {
 // LIVE CLOCK + WEATHER + THEME
 // ====================================================================
 function startLiveClock() {
+  const days = ['Yakshanba', 'Dushanba', 'Seshanba', 'Chorshanba', 'Payshanba', 'Juma', 'Shanba'];
+  const months = ['Yanvar', 'Fevral', 'Mart', 'Aprel', 'May', 'Iyun', 'Iyul', 'Avgust', 'Sentabr', 'Oktabr', 'Noyabr', 'Dekabr'];
   const update = () => {
     const now = new Date();
     const hh = String(now.getHours()).padStart(2, '0');
     const mm = String(now.getMinutes()).padStart(2, '0');
     const ss = String(now.getSeconds()).padStart(2, '0');
-    const el = document.getElementById('clock-time');
-    if (el) el.textContent = `${hh}:${mm}:${ss}`;
-    // Bugungi sanani ham yangilash
-    const dateEl = document.getElementById('today-date');
-    if (dateEl) {
-      const days = ['Yakshanba', 'Dushanba', 'Seshanba', 'Chorshanba', 'Payshanba', 'Juma', 'Shanba'];
-      const months = ['Yanvar', 'Fevral', 'Mart', 'Aprel', 'May', 'Iyun', 'Iyul', 'Avgust', 'Sentabr', 'Oktabr', 'Noyabr', 'Dekabr'];
-      dateEl.textContent = `${days[now.getDay()]}\n${now.getDate()}-${months[now.getMonth()]}, ${now.getFullYear()}`;
-      dateEl.style.whiteSpace = 'pre-line';
-    }
+    const timeStr = `${hh}:${mm}:${ss}`;
+    // Topbar soat
+    const topEl = document.getElementById('clock-time');
+    if (topEl) topEl.textContent = timeStr;
+    // Yon panel soati
+    const sideEl = document.getElementById('sidebar-clock');
+    if (sideEl) sideEl.textContent = timeStr;
+    // Yon panel sanasi
+    const sideDate = document.getElementById('sidebar-date');
+    if (sideDate) sideDate.textContent = `${days[now.getDay()]}, ${now.getDate()}-${months[now.getMonth()]} ${now.getFullYear()}`;
   };
   update();
   setInterval(update, 1000);
