@@ -1505,7 +1505,7 @@
       <button onclick="openGlobalSearch()" title="Qidiruv (kurs, kitob, kviz)" style="background: rgba(255,255,255,0.1); border: 2px solid rgba(255,255,255,0.2); color: white; width: 40px; height: 40px; border-radius: 50%; font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center;">🔍</button>
       <button class="audio-mute-btn" onclick="toggleAudioMute()" title="Musiqani o'chirish" style="background: rgba(255,255,255,0.1); border: 2px solid rgba(255,255,255,0.2); color: white; width: 40px; height: 40px; border-radius: 50%; font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center;">🔊</button>
       <button class="theme-toggle-btn" onclick="toggleTheme()" title="Tungi rejim" style="background: rgba(255,255,255,0.1); border: 2px solid rgba(255,255,255,0.2); color: white; width: 40px; height: 40px; border-radius: 50%; font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center;">🌙</button>
-      <div class="coin-display">🪙 <span id="topbar-coins">0</span></div>
+      <div class="coin-display">💰 <span id="topbar-coins">0</span></div>
       <button class="profile-btn" onclick="goToProfile()">
         <span class="avatar" id="topbar-avatar">A</span>
         <span id="topbar-name">User</span>
@@ -1735,8 +1735,8 @@
       <ul>
         <li>Savollar <b>tasodifiy</b> tartibda barcha mavzulardan tanlanadi</li>
         <li><b>70%</b> dan ortiq to'g'ri javob — kursni tamomlaganingizdan dalolat</li>
-        <li>Har bir to'g'ri javob uchun <b>+5 🪙</b> tanga</li>
-        <li>Testdan o'tsangiz, <b>+100 🪙</b> tanga va <b>sertifikat</b> beriladi</li>
+        <li>Har bir to'g'ri javob uchun <b>+5 💰</b> tanga</li>
+        <li>Testdan o'tsangiz, <b>+100 💰</b> tanga va <b>sertifikat</b> beriladi</li>
         <li>Vaqt cheklangan — tezkor javob bering</li>
       </ul>
     </div>
@@ -2148,7 +2148,7 @@
   <div class="result-wrap">
     <div class="result-badge" id="result-badge">To'g'ri!</div>
     <div class="result-points" id="result-points">+<span class="num">0</span> ball</div>
-    <div id="coin-reward-display" style="display:none;" class="coin-reward">🪙 +5 tanga</div>
+    <div id="coin-reward-display" style="display:none;" class="coin-reward">💰 +5 tanga</div>
     <div class="mini-leaderboard">
       <h4>📊 Liderlik jadvali</h4>
       <div id="mini-board"></div>
@@ -2210,7 +2210,7 @@
         <h1 id="profile-name">Foydalanuvchi</h1>
         <div class="profile-stats">
           <div class="profile-stat">
-            <div class="num">🪙 <span id="profile-coins">0</span></div>
+            <div class="num">💰 <span id="profile-coins">0</span></div>
             <div class="label">Tangalar</div>
           </div>
           <div class="profile-stat">
@@ -2888,7 +2888,7 @@ function addCoins(amount, reason = '') {
   updateTopbar();
   trackUserActivity();
   if (amount > 0) {
-    toast(`🪙 +${amount} tanga ${reason ? '· ' + reason : ''}`, 'coin');
+    toast(`💰 +${amount} tanga ${reason ? '· ' + reason : ''}`, 'coin');
   }
 }
 
@@ -3237,7 +3237,7 @@ function renderCourseDetail() {
       <div class="course-stats">
         <div class="stat-pill">📚 ${c.lessons.length} mavzu</div>
         <div class="stat-pill">📝 ${getCourseTestCount(c)} ta savol testda</div>
-        <div class="stat-pill">🪙 ${c.lessons.length * COIN_PER_LESSON + COIN_PASS_TEST}+ tanga</div>
+        <div class="stat-pill">💰 ${c.lessons.length * COIN_PER_LESSON + COIN_PASS_TEST}+ tanga</div>
         ${hasCert ? '<div class="stat-pill" style="background: var(--success); color: white;">✓ Sertifikat olingan</div>' : ''}
       </div>
       <div style="margin-top: 14px; padding-top: 14px; border-top: 1px solid #f3f4f6;">
@@ -3522,7 +3522,7 @@ function finishMavzuTest() {
   document.getElementById('score-percent').textContent = percent + '%';
   document.getElementById('score-circle').style.setProperty('--p', percent + '%');
   document.getElementById('score-detail').textContent = `"${lesson.title}" — ${correct}/${total} ta to'g'ri javob`;
-  document.getElementById('rewards-earned').innerHTML = `<div class="reward-chip">🪙 +${COIN_PER_LESSON + bonusCoins} tanga</div>`;
+  document.getElementById('rewards-earned').innerHTML = `<div class="reward-chip">💰 +${COIN_PER_LESSON + bonusCoins} tanga</div>`;
   document.getElementById('view-cert-btn').style.display = 'none';
   // Tugmalarni dinamik o'zgartiramiz: "Keyingi mavzu" yoki "Yakuniy testga"
   const actions = document.querySelector('#test-result-screen .final-actions');
@@ -3658,7 +3658,7 @@ function finishCourseTest() {
   document.getElementById('score-detail').textContent = `${correct}/${total} ta to'g'ri javob`;
 
   const rewardsEl = document.getElementById('rewards-earned');
-  let rewards = `<div class="reward-chip">🪙 +${coinReward} tanga</div>`;
+  let rewards = `<div class="reward-chip">💰 +${coinReward} tanga</div>`;
   if (earnedCert) {
     rewards += `<div class="reward-chip cert">🎓 Sertifikat olindi!</div>`;
   } else if (passed) {
@@ -4316,7 +4316,7 @@ function showResult(isCorrect, points) {
   // Coin reward (only for test mode at correct answers)
   const coinEl = document.getElementById('coin-reward-display');
   if (state.mode === 'test' && isCorrect) {
-    coinEl.textContent = `🪙 +${COIN_PER_CORRECT} tanga`;
+    coinEl.textContent = `💰 +${COIN_PER_CORRECT} tanga`;
     coinEl.style.display = '';
   } else {
     coinEl.style.display = 'none';
@@ -4935,7 +4935,7 @@ function renderTop10() {
         <div class="lb-name">
           ${escapeHtml(u.name)}${isMe ? ' <span style="color:var(--primary);font-size:12px;">(siz)</span>' : ''}
         </div>
-        <div class="lb-coins">🪙 ${u.coins}</div>
+        <div class="lb-coins">💰 ${u.coins}</div>
       </div>
     `;
   }).join('');
@@ -4962,7 +4962,7 @@ function renderAllUsers() {
         <div class="history-row">
           <div class="lb-rank ${i===0?'gold':i===1?'silver':i===2?'bronze':''}" style="width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:800;font-family:'Bricolage Grotesque';${i>2?'background:#f3f4f6;color:var(--ink-2);':''}">${i + 1}</div>
           <div class="h-name">${escapeHtml(u.name)}${user && u.name === user.name ? ' <span style="color:var(--primary);font-size:11px;">(siz)</span>' : ''}</div>
-          <div class="h-coins">🪙 ${u.coins}</div>
+          <div class="h-coins">💰 ${u.coins}</div>
           <div class="h-date">${new Date(u.firstSeen).toLocaleDateString('uz-UZ')}</div>
         </div>
       `).join('')}
@@ -5024,7 +5024,7 @@ function renderCourseLeaderboard(courseId) {
           ${escapeHtml(s.name)}${isMe ? ' <span style="color:var(--primary);font-size:12px;">(siz)</span>' : ''}
           <span class="lb-meta">· ${s.percent}% · ${new Date(s.date).toLocaleDateString('uz-UZ')}</span>
         </div>
-        <div class="lb-coins">🪙 ${s.coins}</div>
+        <div class="lb-coins">💰 ${s.coins}</div>
       </div>
     `;
   }).join('');
