@@ -1370,13 +1370,13 @@
   .ann-full-card .ann-body { line-height: 1.65; white-space: pre-wrap; }
   .urgent-badge { background: #ef4444; color: white; padding: 3px 10px; border-radius: 100px; font-size: 11px; font-weight: 800; }
   .home-grid {
-    display: grid; grid-template-columns: 280px 1fr 340px;
-    gap: 24px; max-width: 1600px; margin: 0 auto; padding: 0 20px;
+    display: grid; grid-template-columns: 280px 1fr 420px;
+    gap: 24px; max-width: 1700px; margin: 0 auto; padding: 0 20px;
     align-items: start;
   }
   .home-sidebar-left { position: sticky; top: 20px; }
-  @media (max-width: 1280px) {
-    .home-grid { grid-template-columns: 1fr 340px; }
+  @media (max-width: 1400px) {
+    .home-grid { grid-template-columns: 1fr 380px; }
     .home-sidebar-left { display: none; }
   }
   @media (max-width: 968px) {
@@ -2130,6 +2130,7 @@
 <div id="game-screen" class="screen">
   <div class="game-wrap">
     <div class="game-header">
+      <button onclick="exitQuiz()" title="Testdan chiqish" style="background: rgba(239,68,68,0.9); border: none; color: white; padding: 8px 14px; border-radius: 100px; font-weight: 700; font-size: 13px; cursor: pointer; font-family: inherit; display: flex; align-items: center; gap: 6px;">✕ Chiqish</button>
       <div class="q-counter" id="q-counter">Savol 1/5</div>
       <div class="q-timer" id="q-timer">30</div>
       <div class="q-score" id="q-score">0 ball</div>
@@ -3065,6 +3066,34 @@ function goHome() {
   showScreen('home-screen');
   renderTop10();
   renderAnnouncementsHome();
+}
+
+function exitQuiz() {
+  // Test/kviz davomida chiqish — tasdiqlash so'raymiz
+  showModal(
+    "Testdan chiqish",
+    "Haqiqatan ham testni to'xtatishni xohlaysizmi? Hozirgi natijangiz saqlanmaydi.",
+    () => {
+      // Hammasini to'xtatamiz
+      clearTimer();
+      stopQuizMusic();
+      // Mavzu testi bo'lsa — kursga qaytamiz
+      if (state.isMavzuTest && state.currentCourse) {
+        state.isMavzuTest = false;
+        state.mode = null;
+        backToCourseDetail();
+      } else if (state.mode === 'test' && state.currentCourse) {
+        // Yakuniy test
+        state.mode = null;
+        backToCourseDetail();
+      } else {
+        // Kviz o'yin
+        leavePeerConnections();
+        state.mode = null;
+        goHome();
+      }
+    }
+  );
 }
 
 function goToProfile() {
