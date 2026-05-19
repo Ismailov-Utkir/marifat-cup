@@ -2339,37 +2339,57 @@ function playDoiraTak(vol = 0.2) {
   osc.start(t); osc.stop(t + 0.05);
 }
 
-// 🎵 Fon musiqasi — quiz-music.mp3 (Telegram'dan yuklangan o'zbek musiqasi)
+// 🎵 Fon musiqasi — quiz-music (Telegram'dan yuklangan o'zbek musiqasi)
 let _bgmAudio = null;
+let _bgmReady = false;
+
+// Audio faylni oldindan yuklash (sayt ochilganda bir marta)
+function initBgmAudio() {
+  if (_bgmAudio) return;
+  _bgmAudio = new Audio();
+  _bgmAudio.loop = true;
+  _bgmAudio.volume = 0.45;
+  _bgmAudio.preload = 'auto';
+  // Mavjud audio fayllarning ehtimoliy nomlarini sinab ko'ramiz
+  const tryFiles = ['./quiz-music.mp3', './quiz-music.m4a', './quiz-music.mp3.m4a', './quiz-music.ogg'];
+  let tryIdx = 0;
+  function tryNext() {
+    if (tryIdx >= tryFiles.length) {
+      console.warn('[Ma\'rifat Cup] Audio fayl topilmadi. GitHub\'ga yuklang.');
+      return;
+    }
+    _bgmAudio.src = tryFiles[tryIdx++];
+    _bgmAudio.load();
+  }
+  _bgmAudio.addEventListener('error', () => {
+    if (!_bgmReady) tryNext();
+  });
+  _bgmAudio.addEventListener('canplay', () => {
+    if (!_bgmReady) {
+      _bgmReady = true;
+      console.log('[Ma\'rifat Cup] Musiqa tayyor:', _bgmAudio.src);
+    }
+  });
+  tryNext();
+}
 
 function startQuizMusic() {
   if (_audioMuted) return;
   _unlockAudio();
+  // Agar audio hali yaratilmagan bo'lsa, yaratib oldindan yuklaymiz
+  if (!_bgmAudio) initBgmAudio();
   // Agar allaqachon chalinayotgan bo'lsa, qaytadan boshlamaymiz
   if (_bgmAudio && !_bgmAudio.paused && !_bgmAudio.ended) return;
-  // Audio faylni yuklash va loop qilib chalish (bir nechta fayl nomini sinab ko'ramiz)
-  if (!_bgmAudio) {
-    _bgmAudio = new Audio();
-    _bgmAudio.loop = true;
-    _bgmAudio.volume = 0.45;
-    _bgmAudio.preload = 'auto';
-    // Mavjud audio fayllarning ehtimoliy nomlarini sinab ko'ramiz
-    const tryFiles = ['./quiz-music.mp3', './quiz-music.m4a', './quiz-music.mp3.m4a', './quiz-music.ogg'];
-    let tryIdx = 0;
-    const tryNext = () => {
-      if (tryIdx >= tryFiles.length) {
-        console.warn('[Ma\'rifat Cup] Audio fayl topilmadi. GitHub\'ga yuklang.');
-        return;
-      }
-      _bgmAudio.src = tryFiles[tryIdx++];
-      _bgmAudio.load();
-    };
-    _bgmAudio.addEventListener('error', tryNext);
-    tryNext();
-  }
+  // Chalish
   _bgmAudio.currentTime = 0;
   _bgmAudio.play().catch(err => {
     console.warn('[Ma\'rifat Cup] Musiqani chalib bo\'lmadi:', err.message);
+    // Kichik kechikishdan keyin yana urinish (audio yuklanishi mumkin)
+    setTimeout(() => {
+      if (!_audioMuted && _bgmAudio && _bgmAudio.paused) {
+        _bgmAudio.play().catch(e => console.warn('Retry play failed:', e.message));
+      }
+    }, 500);
   });
 }
 
@@ -5651,6 +5671,8 @@ async function initApp() {
   startLiveClock();
   loadWeather();
   setInterval(loadWeather, 30 * 60 * 1000); // har 30 daqiqada yangilash
+  // Musiqani oldindan yuklash — kviz boshlanganda darhol chalsin
+  initBgmAudio();
   // Try to sync admin content from hosted JSON file (if available)
   await syncFromServer();
   // Then load all data (server-synced + local user state)
