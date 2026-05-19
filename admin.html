@@ -767,11 +767,27 @@ D) Noto'g'ri</pre>
         <div id="detailed-stats-container" style="margin-top: 16px;"></div>
       </div>
 
+      <div class="settings-block" style="background: linear-gradient(135deg, #fef3c7, #fde68a); border-color: #f59e0b;">
+        <h3>📊 Kurs qatnashchilarini Excel'ga yuklash</h3>
+        <p style="line-height: 1.6;">
+          <b>Ism familiya · Kurs nomi · Ball · O'tdimi</b> — Excel'da ochiladigan fayl.<br>
+          Foydalanuvchilarga sertifikat berish, hisobot tayyorlash uchun foydali.
+        </p>
+        <button class="btn btn-primary" onclick="exportCourseParticipantsCSV()" style="background: #92400e; color: #fef3c7; box-shadow: 0 4px 0 #422006;">
+          📊 Kurs qatnashchilari (Excel)
+        </button>
+        <p style="font-size: 12px; color: #78350f; margin-top: 12px; line-height: 1.5;">
+          ⚠️ <b>Eslatma:</b> Bu eksport faqat <b>shu admin qurilmasida</b> sinab ko'rgan foydalanuvchilarni ko'rsatadi.
+          Boshqa qurilmalardan kursni o'tgan ishtirokchilarni ham yig'ish uchun siz har bir qurilmada admin sifatida kirib eksport olishingiz kerak.
+          Yoki Google Forms orqali ishtirokchilardan hisobot so'rashingiz mumkin.
+        </p>
+      </div>
+
       <div class="settings-block">
-        <h3>📊 Foydalanuvchilar CSV eksport</h3>
-        <p>Foydalanuvchilarni Excel uchun CSV ga eksport qiling.
+        <h3>👥 Boshqa eksportlar</h3>
+        <p>Foydalanuvchilarni boshqa formatda eksport qiling.
           <br><b>Eslatma:</b> Faqat shu admin qurilmasidan kirgan foydalanuvchilar ko'rinadi.
-          Boshqa qurilmalardagi foydalanuvchilar uchun Google Analytics'ni ishlating.
+          Boshqa qurilmalar uchun Google Analytics'ni ishlating.
         </p>
         <div style="display:flex; gap:8px; flex-wrap:wrap;">
           <button class="btn btn-secondary" onclick="exportUsersCSV()">👥 Barcha foydalanuvchilar (CSV)</button>
@@ -2386,6 +2402,82 @@ function showDetailedStats() {
       </p>
     </div>
   `;
+}
+
+function exportCourseParticipantsCSV() {
+  // courseScores'dan kurs bo'yicha qatnashganlar ro'yxati
+  let courseScores = {};
+  try { courseScores = JSON.parse(localStorage.getItem('mc_course_scores') || '{}'); } catch (e) {}
+  let usersLog = [];
+  try { usersLog = JSON.parse(localStorage.getItem('mc_users_log') || '[]'); } catch (e) {}
+
+  // Akkauntlardan to'liq ism (familiya bilan) olish
+  let accounts = {};
+  try { accounts = JSON.parse(localStorage.getItem('mc_accounts') || '{}'); } catch (e) {}
+
+  // Har bir kurs uchun, har bir foydalanuvchi uchun eng yaxshi natija
+  const rows = [];
+  Object.entries(courseScores).forEach(([courseId, scores]) => {
+    const course = courses.find(c => c.id === courseId) || { title: courseId };
+    // Foydalanuvchilar bo'yicha guruhlash, eng yaxshi natijani olish
+    const byUser = {};
+    (scores || []).forEach(s => {
+      if (!byUser[s.name] || s.percent > byUser[s.name].percent) {
+        byUser[s.name] = s;
+      }
+    });
+    Object.entries(byUser).forEach(([name, s]) => {
+      // Akkaunt mavjud bo'lsa, to'liq ismni olish
+      const acc = Object.values(accounts).find(a => a.name === name || a.username === name);
+      const fullName = acc ? acc.name : name;
+      const userLogged = usersLog.find(u => u.name === name);
+      rows.push({
+        course: course.title,
+        fullName,
+        percent: s.percent,
+        coins: s.coins || 0,
+        passed: s.percent >= 70 ? 'Ha' : "Yo'q",
+        date: new Date(s.date).toLocaleDateString('uz-UZ'),
+        totalCoins: userLogged ? userLogged.coins : 0
+      });
+    });
+  });
+
+  if (rows.length === 0) {
+    toast("Hozircha kurs qatnashchilari yo'q", 'error');
+    return;
+  }
+
+  // Kurs bo'yicha tartiblash, keyin foiz bo'yicha
+  rows.sort((a, b) => {
+    if (a.course !== b.course) return a.course.localeCompare(b.course);
+    return b.percent - a.percent;
+  });
+
+  // CSV yaratish (Excel bilan moslashtirilgan)
+  const header = ['№', 'Kurs nomi', 'Ism Familiya', 'Test natijasi (%)', 'Olingan ball (tanga)', 'O\'tdimi', 'Umumiy ball', 'Topshirgan sana'];
+  const escape = (s) => {
+    const str = String(s == null ? '' : s);
+    if (/[",\n;]/.test(str)) return '"' + str.replace(/"/g, '""') + '"';
+    return str;
+  };
+  let csv = '﻿'; // BOM — Excel UTF-8 ni to'g'ri o'qish uchun
+  csv += header.map(escape).join(';') + '\r\n';
+  rows.forEach((r, i) => {
+    csv += [i + 1, r.course, r.fullName, r.percent, r.coins, r.passed, r.totalCoins, r.date].map(escape).join(';') + '\r\n';
+  });
+
+  // Yuklab olish
+  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `kurs-qatnashchilari-${new Date().toISOString().slice(0,10)}.csv`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+  toast(`✅ ${rows.length} ta yozuv Excel uchun yuklandi`, 'success');
 }
 
 function exportUsersCSV() {

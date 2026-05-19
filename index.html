@@ -1346,10 +1346,9 @@
     <span class="signin-mark"></span>
     <div class="signin-logo">Ma'rifat<br>Cup</div>
     <p class="signin-sub">Ma'naviyat va ma'rifat markazi taqdim etadi</p>
-    <div class="signin-tabs" style="display: flex; gap: 4px; background: rgba(255,255,255,0.1); padding: 4px; border-radius: 100px; margin-bottom: 16px; max-width: 100%; flex-wrap: wrap;">
-      <button class="signin-tab active" data-tab="guest" onclick="switchSignInTab('guest')" style="flex: 1; min-width: 120px; background: white; color: var(--ink); border: none; padding: 10px 14px; border-radius: 100px; font-weight: 700; cursor: pointer; font-family: inherit; font-size: 13px;">👤 Mehmon</button>
-      <button class="signin-tab" data-tab="login" onclick="switchSignInTab('login')" style="flex: 1; min-width: 120px; background: transparent; color: white; border: none; padding: 10px 14px; border-radius: 100px; font-weight: 700; cursor: pointer; font-family: inherit; font-size: 13px;">🔓 Kirish</button>
-      <button class="signin-tab" data-tab="register" onclick="switchSignInTab('register')" style="flex: 1; min-width: 120px; background: transparent; color: white; border: none; padding: 10px 14px; border-radius: 100px; font-weight: 700; cursor: pointer; font-family: inherit; font-size: 13px;">📝 Ro'yxat</button>
+    <div class="signin-tabs" style="display: flex; gap: 4px; background: rgba(255,255,255,0.1); padding: 4px; border-radius: 100px; margin-bottom: 16px; max-width: 100%;">
+      <button class="signin-tab active" data-tab="guest" onclick="switchSignInTab('guest')" style="flex: 1; background: white; color: var(--ink); border: none; padding: 12px 18px; border-radius: 100px; font-weight: 700; cursor: pointer; font-family: inherit; font-size: 14px;">👤 Mehmon (kvizlar)</button>
+      <button class="signin-tab" data-tab="register" onclick="switchSignInTab('register')" style="flex: 1; background: transparent; color: white; border: none; padding: 12px 18px; border-radius: 100px; font-weight: 700; cursor: pointer; font-family: inherit; font-size: 14px;">📝 Ro'yxat (kurslar)</button>
     </div>
 
     <div class="signin-card" id="signin-guest-form">
@@ -1381,7 +1380,8 @@
 
     <div class="signin-card" id="signin-register-form" style="display: none;">
       <p style="font-size: 13px; color: var(--ink-2); margin-bottom: 14px; line-height: 1.6; background: #fef3c7; padding: 12px; border-radius: 10px; border-left: 4px solid #f59e0b;">
-        📝 Kurslarda qatnashish va sertifikat olish uchun ro'yxatdan o'ting. Login va parolni o'zingiz o'ylab toping.
+        📝 <b>Yangi foydalanuvchi?</b> Login va parolni o'ylab toping — kurslarda qatnashish va sertifikat olish uchun.
+        <br><b>Avval ro'yxatdan o'tgan?</b> Bu yerda o'sha login/parolingizni kiriting — kirib olasiz.
       </p>
       <div class="field">
         <label>To'liq ism (boshqalarga ko'rinadi)</label>
@@ -2339,86 +2339,41 @@ function playDoiraTak(vol = 0.2) {
   osc.start(t); osc.stop(t + 0.05);
 }
 
+// 🎵 Fon musiqasi — quiz-music.mp3 (Telegram'dan yuklangan o'zbek musiqasi)
+let _bgmAudio = null;
+
 function startQuizMusic() {
   if (_audioMuted) return;
   _unlockAudio();
   stopQuizMusic();
-
-  // O'zbek maqomi uslubidagi melodiya (D-modal scale: D-Eb-F-G-A-Bb-C-D)
-  // Dutor chertib chalinadigan, qadimiy Buxoro/Samarqand uslubida
-  const melody = [
-    [587.33, 0.55], // D5 (uzun)
-    [523.25, 0.28], // C5
-    [466.16, 0.28], // Bb4
-    [440.00, 0.55], // A4 (uzun)
-    [392.00, 0.28], // G4
-    [349.23, 0.28], // F4
-    [311.13, 0.55], // Eb4
-    [293.66, 1.10], // D4 (juda uzun, qaror)
-    [349.23, 0.28], // F4
-    [392.00, 0.28], // G4
-    [440.00, 0.55], // A4
-    [392.00, 0.28], // G4
-    [349.23, 0.55], // F4
-    [293.66, 0.85]  // D4 (qaror)
-  ];
-
-  // Doira ritmi — 6/8 vazni, an'anaviy bayot
-  // DUM = past, TAK = baland
-  const drumPattern = [
-    'dum', 'tak', 'tak',
-    'dum', 'tak', 'tak'
-  ];
-
-  let melodyIdx = 0;
-  let drumIdx = 0;
-
-  // Melodiya chalish — har note tugaganda keyingisini boshlaydi
-  function nextMelodyNote() {
-    if (_audioMuted || _bgmInterval === null) return;
-    if (melodyIdx >= melody.length) melodyIdx = 0;
-    const [freq, dur] = melody[melodyIdx];
-    playDutorNote(freq, dur);
-    melodyIdx++;
-    // 80% overlap — yumshoq o'tish
-    _melodyTimer = setTimeout(nextMelodyNote, dur * 1000 * 0.85);
+  // MP3 faylni yuklash va loop qilib chalish
+  if (!_bgmAudio) {
+    _bgmAudio = new Audio('./quiz-music.mp3');
+    _bgmAudio.loop = true;
+    _bgmAudio.volume = 0.45;
+    _bgmAudio.preload = 'auto';
+    _bgmAudio.addEventListener('error', () => {
+      console.warn('[Ma\'rifat Cup] quiz-music.mp3 fayli topilmadi. GitHub\'ga yuklang.');
+    });
   }
-
-  // Doira ritmi (har 320ms)
-  function playDrumBeat() {
-    if (_audioMuted) { stopQuizMusic(); return; }
-    const t = drumPattern[drumIdx % drumPattern.length];
-    if (t === 'dum') playDoiraDum();
-    else playDoiraTak();
-    drumIdx++;
-  }
-  playDrumBeat();
-  _bgmInterval = setInterval(playDrumBeat, 320);
-  nextMelodyNote();
+  _bgmAudio.currentTime = 0;
+  _bgmAudio.play().catch(err => {
+    console.warn('[Ma\'rifat Cup] Musiqani chalib bo\'lmadi:', err.message);
+  });
 }
 
 let _melodyTimer = null;
 function stopQuizMusic() {
+  if (_bgmAudio) {
+    try { _bgmAudio.pause(); _bgmAudio.currentTime = 0; } catch (e) {}
+  }
   if (_bgmInterval) { clearInterval(_bgmInterval); _bgmInterval = null; }
   if (_melodyTimer) { clearTimeout(_melodyTimer); _melodyTimer = null; }
 }
 
-// 🎉 To'g'ri javob — dutorda yuksaluvchi maqom melodiyasi
-function playCorrectSound() {
-  if (_audioMuted) return;
-  setTimeout(() => playDutorNote(440.00, 0.18, 0.22), 0);   // A4
-  setTimeout(() => playDutorNote(523.25, 0.18, 0.22), 100); // C5
-  setTimeout(() => playDutorNote(587.33, 0.35, 0.22), 200); // D5 — qaror
-  setTimeout(() => playDoiraDum(0.25), 0);
-}
-
-// ❌ Xato javob — pasayuvchi melodiya
-function playWrongSound() {
-  if (_audioMuted) return;
-  setTimeout(() => playDutorNote(311.13, 0.2, 0.18), 0);    // Eb4
-  setTimeout(() => playDutorNote(277.18, 0.4, 0.18), 150);  // C#4 (g'amgin tushish)
-  setTimeout(() => playDoiraTak(0.2), 0);
-}
+// To'g'ri/xato javob ovozlari — o'chirilgan (faqat fon musiqa chalindi)
+function playCorrectSound() { /* musiqa yo'q — fon davom etadi */ }
+function playWrongSound() { /* musiqa yo'q — fon davom etadi */ }
 
 // 🏆 Yakuniy — g'alaba maqomi (an'anaviy ohang)
 function playFinalSound() {
@@ -2813,9 +2768,33 @@ function registerUser() {
   if (pwd !== pwd2) return showErr("Parollar mos kelmaydi");
 
   const accounts = getAccounts();
-  if (accounts[username]) return showErr("Bu login allaqachon mavjud. Boshqa tanlang.");
-
   const hash = hashUserPassword(pwd);
+
+  if (accounts[username]) {
+    // Akkaunt mavjud — parol mos kelsa kirish, mos kelmasa xato
+    if (accounts[username].passwordHash !== hash) {
+      return showErr("Bu login allaqachon band va parol noto'g'ri. Boshqa login tanlang yoki to'g'ri parol kiriting.");
+    }
+    // Parol to'g'ri — kirish
+    const acc = accounts[username];
+    user = {
+      username: acc.username,
+      name: acc.name,
+      isGuest: false,
+      coins: acc.coins || 0,
+      completedLessons: new Set(acc.completedLessons || []),
+      certificates: acc.certificates || []
+    };
+    saveUser();
+    loadUsersLog();
+    trackUserActivity();
+    updateTopbar();
+    toast(`Xush kelibsiz, ${acc.name}!`, 'success');
+    goHome();
+    return;
+  }
+
+  // Yangi akkaunt yaratish
   accounts[username] = {
     username, name,
     passwordHash: hash,
