@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "exportedAt": "2026-05-19T05:29:01.853Z",
+  "exportedAt": "2026-05-19T05:39:31.334Z",
   "source": "marifat-cup-admin-auto",
   "courses": [
     {
@@ -1427,5 +1427,24 @@
       "date": 1779111051032
     }
   ],
-  "meetings": []
+  "meetings": [],
+  "newspapers": [
+    {
+      "id": "np_1779169171329",
+      "name": "Jadid",
+      "description": "“Jadid” gazetasining 2026-yil 15-maydagi 20-soni",
+      "emoji": "📰",
+      "color": 3,
+      "issues": [
+        {
+          "date": "2026-05-15",
+          "title": "20-son",
+          "pdfUrl": "./files/newspapers/np_1779169156112/2026-05-15__Jadid_gazetasi.pdf",
+          "fileExt": ".pdf"
+        }
+      ],
+      "updatedAt": 1779169171329,
+      "createdAt": 1779169171329
+    }
+  ]
 }
