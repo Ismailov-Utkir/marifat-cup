@@ -92,18 +92,18 @@
 <script src="https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js"></script>
 <style>
   :root {
-    --bg: #0d1421;
-    --bg-2: #1a2942;
+    --bg: #eff6ff;
+    --bg-2: #dbeafe;
     --surface: #ffffff;
-    --ink: #0f0a1f;
-    --ink-2: #6b6480;
+    --ink: #0f172a;
+    --ink-2: #475569;
     --card-bg: #ffffff;
-    --border-color: #e5e7eb;
-    --soft-bg: #f9fafb;
-    --primary: #14b8a6;
-    --primary-dark: #0d9488;
+    --border-color: #e2e8f0;
+    --soft-bg: #f1f5f9;
+    --primary: #1e40af;
+    --primary-dark: #1e3a8a;
     --secondary: #7c3aed;
-    --accent: #fbbf24;
+    --accent: #f59e0b;
     --red: #e11d48;
     --red-dark: #9f1239;
     --blue: #2563eb;
@@ -180,7 +180,7 @@
 
   body {
     font-family: 'Plus Jakarta Sans', -apple-system, sans-serif;
-    background: linear-gradient(135deg, var(--bg) 0%, var(--bg-2) 100%);
+    background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 50%, #bfdbfe 100%);
     background-attachment: fixed;
     color: var(--ink);
     min-height: 100vh;
@@ -188,7 +188,7 @@
   }
 
   .bg-shapes { position: fixed; inset: 0; overflow: hidden; pointer-events: none; z-index: 0; }
-  .bg-shape { position: absolute; opacity: 0.06; animation: float 20s ease-in-out infinite; }
+  .bg-shape { position: absolute; opacity: 0.1; animation: float 20s ease-in-out infinite; }
   .bg-shape:nth-child(1) { top: 5%; left: 8%; }
   .bg-shape:nth-child(2) { top: 15%; right: 10%; animation-delay: -5s; }
   .bg-shape:nth-child(3) { bottom: 20%; left: 15%; animation-delay: -10s; }
@@ -226,7 +226,10 @@
   /* TOPBAR */
   .topbar {
     width: 100%; max-width: 1600px; display: flex; align-items: center;
-    justify-content: space-between; margin-bottom: 24px; color: white; gap: 12px;
+    justify-content: space-between; margin-bottom: 24px; gap: 12px;
+    background: linear-gradient(135deg, #1e3a8a, #1e40af); color: white;
+    padding: 14px 20px; border-radius: var(--radius-lg);
+    box-shadow: 0 6px 24px rgba(30, 58, 138, 0.25);
   }
   .topbar .logo-mini {
     font-family: 'Bricolage Grotesque', sans-serif; font-weight: 900;
@@ -331,12 +334,12 @@
   .signin-logo {
     font-family: 'Bricolage Grotesque', sans-serif; font-weight: 900;
     font-size: clamp(48px, 9vw, 96px); line-height: 0.9; letter-spacing: -0.04em;
-    color: white; margin-bottom: 12px;
-    text-shadow: 6px 6px 0 var(--primary), 12px 12px 0 var(--accent);
+    color: var(--primary-dark); margin-bottom: 12px;
+    text-shadow: 4px 4px 0 #93c5fd, 8px 8px 0 #fde68a;
     transform: rotate(-2deg); display: inline-block;
   }
   .signin-sub {
-    color: rgba(255,255,255,0.7); font-size: 17px; font-weight: 500; margin-bottom: 40px;
+    color: var(--ink-2); font-size: 17px; font-weight: 600; margin-bottom: 40px;
   }
   .signin-card {
     background: white; border-radius: var(--radius-lg); padding: 28px;
@@ -348,9 +351,9 @@
     max-width: 1400px; width: 100%; margin: auto; padding: 20px;
   }
   .hero-banner {
-    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    background: linear-gradient(135deg, #1e40af, #3b82f6, #60a5fa);
     border-radius: var(--radius-lg); padding: 36px; margin-bottom: 24px;
-    color: white; box-shadow: var(--shadow-card); position: relative; overflow: hidden;
+    color: white; box-shadow: 0 20px 50px -10px rgba(30, 64, 175, 0.4); position: relative; overflow: hidden;
   }
   .hero-banner::before {
     content: ''; position: absolute; top: -50%; right: -10%; width: 400px; height: 400px;
@@ -368,7 +371,7 @@
 
   .section-header {
     display: flex; justify-content: space-between; align-items: baseline;
-    margin: 32px 0 16px; color: white; flex-wrap: wrap; gap: 10px;
+    margin: 32px 0 16px; color: var(--primary-dark); flex-wrap: wrap; gap: 10px;
   }
   .section-header h2 {
     font-family: 'Bricolage Grotesque', sans-serif; font-size: 26px; font-weight: 800;
@@ -1333,11 +1336,11 @@
 <body>
 
 <div class="bg-shapes">
-  <svg class="bg-shape" width="120" height="120" viewBox="0 0 100 100"><polygon points="50,10 90,90 10,90" fill="#e11d48"/></svg>
-  <svg class="bg-shape" width="100" height="100" viewBox="0 0 100 100"><polygon points="50,5 95,50 50,95 5,50" fill="#2563eb"/></svg>
-  <svg class="bg-shape" width="140" height="140" viewBox="0 0 100 100"><circle cx="50" cy="50" r="45" fill="#eab308"/></svg>
-  <svg class="bg-shape" width="110" height="110" viewBox="0 0 100 100"><rect x="10" y="10" width="80" height="80" fill="#16a34a"/></svg>
-  <svg class="bg-shape" width="80" height="80" viewBox="0 0 100 100"><polygon points="50,10 90,90 10,90" fill="#fbbf24"/></svg>
+  <svg class="bg-shape" width="120" height="120" viewBox="0 0 100 100"><polygon points="50,10 90,90 10,90" fill="#3b82f6"/></svg>
+  <svg class="bg-shape" width="100" height="100" viewBox="0 0 100 100"><polygon points="50,5 95,50 50,95 5,50" fill="#1e40af"/></svg>
+  <svg class="bg-shape" width="140" height="140" viewBox="0 0 100 100"><circle cx="50" cy="50" r="45" fill="#60a5fa"/></svg>
+  <svg class="bg-shape" width="110" height="110" viewBox="0 0 100 100"><rect x="10" y="10" width="80" height="80" fill="#2563eb"/></svg>
+  <svg class="bg-shape" width="80" height="80" viewBox="0 0 100 100"><polygon points="50,10 90,90 10,90" fill="#93c5fd"/></svg>
 </div>
 
 <!-- ====== SIGN IN ====== -->
@@ -1345,7 +1348,7 @@
   <div class="signin-wrap">
     <span class="signin-mark"></span>
     <div class="signin-logo">Ma'rifat<br>Cup</div>
-    <p class="signin-sub">Ma'naviyat va ma'rifat markazi taqdim etadi</p>
+    <p class="signin-sub" data-label="signin_subtitle">Ma'naviyat va ma'rifat markazi taqdim etadi</p>
     <div class="signin-tabs" style="display: flex; gap: 4px; background: rgba(255,255,255,0.1); padding: 4px; border-radius: 100px; margin-bottom: 16px; max-width: 100%;">
       <button class="signin-tab active" data-tab="guest" onclick="switchSignInTab('guest')" style="flex: 1; background: white; color: var(--ink); border: none; padding: 12px 18px; border-radius: 100px; font-weight: 700; cursor: pointer; font-family: inherit; font-size: 14px;">👤 Mehmon (kvizlar)</button>
       <button class="signin-tab" data-tab="register" onclick="switchSignInTab('register')" style="flex: 1; background: transparent; color: white; border: none; padding: 12px 18px; border-radius: 100px; font-weight: 700; cursor: pointer; font-family: inherit; font-size: 14px;">📝 Ro'yxat (kurslar)</button>
@@ -1430,7 +1433,7 @@
   <div class="home-grid">
    <div class="home-sidebar-left">
     <div class="leaderboard-widget" style="text-align: center; padding: 24px;">
-      <h3 style="display: flex; align-items: center; justify-content: center; gap: 8px;">🕐 Hozirgi vaqt</h3>
+      <h3 style="display: flex; align-items: center; justify-content: center; gap: 8px;" data-label="widget_time_title">🕐 Hozirgi vaqt</h3>
       <div id="sidebar-clock" style="font-family: 'Bricolage Grotesque', sans-serif; font-size: 44px; font-weight: 900; color: var(--primary); letter-spacing: -0.02em; margin: 12px 0; line-height: 1;">--:--:--</div>
       <div id="sidebar-date" style="color: var(--ink-2); font-size: 14px; font-weight: 700; margin-bottom: 18px;">--</div>
 
@@ -1443,26 +1446,26 @@
     </div>
 
     <div class="leaderboard-widget" style="margin-top: 14px;">
-      <h3>💡 Maslahat</h3>
-      <p style="font-size: 13px; color: var(--ink-2); line-height: 1.6;">
-        Har kuni <b style="color: var(--primary);">10-15 daqiqa</b> o'qish — uzoq muddatda buyuk natija beradi.
+      <h3 data-label="widget_tip_title">💡 Maslahat</h3>
+      <p style="font-size: 13px; color: var(--ink-2); line-height: 1.6;" data-label="widget_tip_text">
+        Har kuni 10-15 daqiqa o'qish — uzoq muddatda buyuk natija beradi.
       </p>
     </div>
    </div>
    <div class="home-main">
     <div class="hero-banner">
       <h1 class="hero-title" id="hero-greeting">Salom!</h1>
-      <p class="hero-sub">Video darslarni o'rganing, yakuniy testdan o'ting, sertifikat va tangalar qo'lga kiriting.</p>
+      <p class="hero-sub" data-label="hero_subtitle">Video darslarni o'rganing, yakuniy testdan o'ting, sertifikat va tangalar qo'lga kiriting.</p>
       <div class="hero-actions">
-        <button class="btn btn-accent" onclick="goToCourses()">📚 Kurslarni boshlash</button>
-        <button class="btn btn-secondary" onclick="showScreen('live-options-screen')">👥 Jonli o'yin</button>
+        <button class="btn btn-accent" onclick="goToCourses()" data-label="btn_start_courses">📚 Kurslarni boshlash</button>
+        <button class="btn btn-secondary" onclick="showScreen('live-options-screen')" data-label="btn_live_game">👥 Jonli o'yin</button>
       </div>
     </div>
 
     <div id="announcements-area"></div>
 
     <div class="section-header">
-      <h2>📖 O'qish va o'rganish</h2>
+      <h2 data-label="section_learn">📖 O'qish va o'rganish</h2>
     </div>
     <div class="grid-3">
       <button class="action-card" onclick="goToCourses()">
@@ -1500,7 +1503,7 @@
 
    <div class="home-sidebar">
     <div class="leaderboard-widget">
-      <h3>🏆 TOP 10 faol</h3>
+      <h3 data-label="widget_top10">🏆 TOP 10 faol</h3>
       <div id="leaderboard-top10"></div>
       <button class="lb-show-all" onclick="showScreen('all-users-screen'); renderAllUsers();">📊 Barcha →</button>
     </div>
@@ -2151,7 +2154,7 @@
 
 <!-- ====== MODAL ====== -->
 <!-- ====== FEEDBACK / MUROJAAT WIDGET ====== -->
-<button id="feedback-btn" onclick="openFeedbackModal()" title="Admin'ga murojaat" style="position: fixed; bottom: 24px; left: 24px; z-index: 998; background: linear-gradient(135deg, #f59e0b, #d97706); color: white; border: none; padding: 12px 20px; border-radius: 100px; font-weight: 800; font-size: 14px; cursor: pointer; box-shadow: 0 8px 24px rgba(245,158,11,0.4); display: inline-flex; align-items: center; gap: 8px; font-family: inherit;">✉️ Murojaat</button>
+<button id="feedback-btn" onclick="openFeedbackModal()" title="Admin'ga murojaat" data-label="btn_feedback" style="position: fixed; bottom: 24px; left: 24px; z-index: 998; background: linear-gradient(135deg, #f59e0b, #d97706); color: white; border: none; padding: 12px 20px; border-radius: 100px; font-weight: 800; font-size: 14px; cursor: pointer; box-shadow: 0 8px 24px rgba(245,158,11,0.4); display: inline-flex; align-items: center; gap: 8px; font-family: inherit;">✉️ Murojaat</button>
 
 <div id="feedback-modal" class="modal-overlay">
   <div class="modal-card" style="max-width: 500px;">
