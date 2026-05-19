@@ -363,7 +363,7 @@
   <div class="nav-tabs">
     <button class="nav-tab active" data-tab="dashboard" onclick="showView('dashboard')">📊 Boshqaruv</button>
     <button class="nav-tab" data-tab="courses" onclick="showView('courses')">📚 Kurslar</button>
-    <button class="nav-tab" data-tab="quizzes" onclick="showView('quizzes')">🎯 Kvizlar</button>
+    <button class="nav-tab" data-tab="quizzes" onclick="showView('quizzes')">🎯 Quizlar</button>
     <button class="nav-tab" data-tab="slides" onclick="showView('slides')">📊 Slaydlar</button>
     <button class="nav-tab" data-tab="ebooks" onclick="showView('ebooks')">📖 E-kitoblar</button>
     <button class="nav-tab" data-tab="meetings" onclick="showView('meetings')">📹 Yig'ilishlar</button>
@@ -380,7 +380,7 @@
       <div class="stats-grid">
         <div class="stat-card"><div class="num" id="stat-courses">0</div><div class="label">Kurslar</div></div>
         <div class="stat-card"><div class="num" id="stat-lessons">0</div><div class="label">Mavzular</div></div>
-        <div class="stat-card"><div class="num" id="stat-quizzes">0</div><div class="label">Kvizlar</div></div>
+        <div class="stat-card"><div class="num" id="stat-quizzes">0</div><div class="label">Quizlar</div></div>
         <div class="stat-card"><div class="num" id="stat-slides">0</div><div class="label">Slaydlar</div></div>
         <div class="stat-card"><div class="num" id="stat-ebooks">0</div><div class="label">E-kitoblar</div></div>
         <div class="stat-card"><div class="num" id="stat-meetings">0</div><div class="label">Yig'ilishlar</div></div>
@@ -392,7 +392,7 @@
         <div class="stat-card" style="background: linear-gradient(135deg, #fef3c7, #fde68a); border-color: #f59e0b;">
           <div class="num" id="stat-guests" style="color: #92400e;">0</div>
           <div class="label">👤 Mehmonlar</div>
-          <p style="font-size: 11px; color: #78350f; margin-top: 6px;">Faqat kvizlar uchun</p>
+          <p style="font-size: 11px; color: #78350f; margin-top: 6px;">Faqat quizlar uchun</p>
         </div>
         <div class="stat-card" style="background: linear-gradient(135deg, #f0fdfa, #ccfbf1); border-color: var(--primary);">
           <div class="num" id="stat-registered" style="color: var(--primary-dark);">0</div>
@@ -432,7 +432,7 @@
       <div class="view-header" style="margin-top: 20px;"><h1 style="font-size: 20px;">Tezkor harakatlar</h1></div>
       <div style="display: flex; gap: 10px; flex-wrap: wrap;">
         <button class="btn btn-primary" onclick="openCourseEditor()">📚 Yangi kurs</button>
-        <button class="btn btn-accent" onclick="openQuizEditor()">🎯 Yangi kviz</button>
+        <button class="btn btn-accent" onclick="openQuizEditor()">🎯 Yangi quiz</button>
         <a href="https://ismailov-utkir.github.io/marifat-cup/" target="_blank" class="btn btn-secondary">🌐 Saytni ochish</a>
       </div>
     </div>
@@ -541,19 +541,19 @@ D) Noto'g'ri</pre>
 
     <div class="view" id="view-quizzes">
       <div class="view-header">
-        <h1>🎯 Kvizlar</h1>
-        <button class="btn btn-primary" onclick="openQuizEditor()">+ Yangi kviz</button>
+        <h1>🎯 Quizlar</h1>
+        <button class="btn btn-primary" onclick="openQuizEditor()">+ Yangi quiz</button>
       </div>
-      <p class="sub">Jonli o'yin yoki yakka tartibda o'ynaladigan kvizlar</p>
+      <p class="sub">Jonli o'yin yoki yakka tartibda o'ynaladigan quizlar</p>
       <div id="quizzes-list" class="item-list"></div>
     </div>
 
     <div class="view" id="view-quiz-editor">
       <div class="view-header">
-        <h1 id="quiz-editor-title">Yangi kviz</h1>
+        <h1 id="quiz-editor-title">Yangi quiz</h1>
         <button class="btn btn-secondary btn-sm" onclick="showView('quizzes')">← Ortga</button>
       </div>
-      <div class="field"><label>Kviz nomi *</label>
+      <div class="field"><label>Quiz nomi *</label>
         <input class="input" id="quiz-title" placeholder="Masalan: Tarix bo'yicha bilim"></div>
       <h3 class="section-divider">❓ Savollar</h3>
       <div id="quiz-questions-container"></div>
@@ -577,7 +577,7 @@ D) Noto'g'ri</pre>
         <h1>📊 Slayd taqdimotlar</h1>
         <button class="btn btn-primary" onclick="openSlideEditor()">+ Yangi taqdimot</button>
       </div>
-      <p class="sub">PDF formatdagi taqdimotlarni yuklang. Foydalanuvchilar marifat-cup saytida ko'rib, so'ng kvizga o'tib ketadi.</p>
+      <p class="sub">PDF formatdagi taqdimotlarni yuklang. Foydalanuvchilar marifat-cup saytida ko'rib, so'ng quizga o'tib ketadi.</p>
       <div id="slides-list" class="item-list"></div>
     </div>
 
@@ -873,7 +873,7 @@ D) Noto'g'ri</pre>
       </div>
       <div class="settings-block">
         <h3>📥 Ma'lumotlarni eksport qilish</h3>
-        <p>Barcha kurslar va kvizlarni JSON fayl sifatida yuklab oling. Boshqa qurilmaga uzatish uchun.</p>
+        <p>Barcha kurslar va quizlarni JSON fayl sifatida yuklab oling. Boshqa qurilmaga uzatish uchun.</p>
         <button class="btn btn-accent" onclick="exportData()">📥 JSON yuklash</button>
       </div>
 
@@ -971,11 +971,11 @@ D) Noto'g'ri</pre>
               <input class="input" id="label-achievements_desc" placeholder="Sertifikatlar, tangalar...">
             </div>
             <div class="field" style="margin-bottom: 0;">
-              <label>➕ Kviz yaratish sarlavha</label>
-              <input class="input" id="label-create_quiz" placeholder="Yangi kviz yaratish">
+              <label>➕ Quiz yaratish sarlavha</label>
+              <input class="input" id="label-create_quiz" placeholder="Yangi quiz yaratish">
             </div>
             <div class="field" style="margin-bottom: 0;">
-              <label>➕ Kviz yaratish izoh</label>
+              <label>➕ Quiz yaratish izoh</label>
               <input class="input" id="label-create_quiz_desc" placeholder="O'qituvchilar uchun...">
             </div>
           </div>
@@ -1032,7 +1032,7 @@ D) Noto'g'ri</pre>
       </div>
       <div class="settings-block danger">
         <h3>⚠️ Hammasini o'chirish</h3>
-        <p>Barcha kurslar va kvizlarni o'chiradi. Qaytarib bo'lmaydi!</p>
+        <p>Barcha kurslar va quizlarni o'chiradi. Qaytarib bo'lmaydi!</p>
         <button class="btn btn-danger" onclick="resetAll()">🗑️ Hammasini o'chirish</button>
       </div>
     </div>
@@ -1921,8 +1921,8 @@ function renderCoursesList() {
 function renderQuizzesList() {
   const list = document.getElementById('quizzes-list');
   if (quizzes.length === 0) {
-    list.innerHTML = `<div class="empty-msg"><div class="ico">📭</div>Hali kviz yaratilmagan.<br><br>
-      <button class="btn btn-primary" onclick="openQuizEditor()">+ Birinchi kvizni yaratish</button></div>`;
+    list.innerHTML = `<div class="empty-msg"><div class="ico">📭</div>Hali quiz yaratilmagan.<br><br>
+      <button class="btn btn-primary" onclick="openQuizEditor()">+ Birinchi quizni yaratish</button></div>`;
     return;
   }
   list.innerHTML = quizzes.map(q => `
@@ -2472,7 +2472,7 @@ function deleteCourse(id) {
 function openQuizEditor(id = null) {
   editingQuizId = id;
   const q = id ? quizzes.find(x => x.id === id) : null;
-  document.getElementById('quiz-editor-title').textContent = q ? 'Kvizni tahrirlash' : 'Yangi kviz';
+  document.getElementById('quiz-editor-title').textContent = q ? 'Quizni tahrirlash' : 'Yangi quiz';
   document.getElementById('quiz-title').value = q?.title || '';
   const qc = document.getElementById('quiz-questions-container');
   qc.innerHTML = '';
@@ -2482,7 +2482,7 @@ function openQuizEditor(id = null) {
 }
 function saveQuiz() {
   const title = document.getElementById('quiz-title').value.trim();
-  if (!title) { toast('Kviz nomini kiriting', 'error'); return; }
+  if (!title) { toast('Quiz nomini kiriting', 'error'); return; }
   const questions = [];
   const qBlocks = document.querySelectorAll('#quiz-questions-container .question-block');
   for (let i = 0; i < qBlocks.length; i++) {
@@ -2502,14 +2502,14 @@ function saveQuiz() {
     if (idx >= 0) quizzes[idx] = quiz;
   } else quizzes.push(quiz);
   saveData();
-  toast('Kviz saqlandi ✓', 'success');
+  toast('Quiz saqlandi ✓', 'success');
   editingQuizId = null;
   showView('quizzes');
 }
 function deleteQuiz(id) {
   const q = quizzes.find(x => x.id === id);
   if (!q) return;
-  showModal("O'chirishni tasdiqlang", `"${q.title}" kvizini o'chirmoqchimisiz?`, () => {
+  showModal("O'chirishni tasdiqlang", `"${q.title}" quizini o'chirmoqchimisiz?`, () => {
     quizzes = quizzes.filter(x => x.id !== id);
     saveData();
     renderQuizzesList();
@@ -3298,7 +3298,7 @@ function handleImportFile(e) {
         toast("Fayl noto'g'ri formatda", 'error'); return;
       }
       showModal('Import qilishni tasdiqlang',
-        `Faylda ${data.courses?.length || 0} ta kurs, ${data.quizzes?.length || 0} ta kviz, ${data.slides?.length || 0} ta taqdimot va ${data.announcements?.length || 0} ta e'lon bor. Mavjudlari o'rniga yoziladi!`,
+        `Faylda ${data.courses?.length || 0} ta kurs, ${data.quizzes?.length || 0} ta quiz, ${data.slides?.length || 0} ta taqdimot va ${data.announcements?.length || 0} ta e'lon bor. Mavjudlari o'rniga yoziladi!`,
         () => {
           if (Array.isArray(data.courses)) courses = data.courses;
           if (Array.isArray(data.quizzes)) quizzes = data.quizzes;
@@ -3321,7 +3321,7 @@ function handleImportFile(e) {
 }
 function resetAll() {
   showModal("Hammasini o'chirish",
-    "Barcha kurslar, kvizlar, taqdimotlar va e'lonlar abadiy o'chiriladi! Davom etasizmi?",
+    "Barcha kurslar, quizlar, taqdimotlar va e'lonlar abadiy o'chiriladi! Davom etasizmi?",
     () => {
       courses = []; quizzes = []; slides = []; anns = []; ebooks = []; meetings = []; newspapers = [];
       saveData();
