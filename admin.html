@@ -1885,6 +1885,17 @@ function addLessonBlock(initial = null) {
       </p>
     </div>
 
+    <div class="field" style="background:#f0fdfa; padding:14px; border-radius:10px; border:2px solid #5eead4;">
+      <label>📊 Mavzu uchun taqdimot (PDF / PPT / PPTX) — ixtiyoriy</label>
+      <input type="file" class="lesson-slide-file" accept=".pdf,.ppt,.pptx" onchange="handleLessonSlideUpload(event, this)" style="padding:8px; width:100%;">
+      <p class="lesson-slide-status" style="font-size:12px; color:var(--ink-2); margin-top:6px;">${initial?.slideUrl ? '✓ Mavjud taqdimot: ' + initial.slideUrl.slice(-40) : ''}</p>
+      <p style="text-align:center; color: var(--ink-2); font-size: 12px; margin: 8px 0;">— yoki —</p>
+      <input class="input lesson-slide-url" type="text" value="${esc(initial?.slideUrl || '')}" placeholder="Taqdimot URL (PDF/PPT havolasi)" style="font-size:13px;">
+      <p style="font-size:11px; color:#0d9488; margin-top:6px;">
+        💡 PDF — to'g'ridan-to'g'ri ochiladi. PPT/PPTX — Office Online viewer orqali.
+      </p>
+    </div>
+
     <div class="field"><label>Mavzu matni</label>
       <textarea class="textarea lesson-text" placeholder="Mavzu haqida batafsil...">${esc(initial?.text || '')}</textarea></div>
 
@@ -1948,6 +1959,42 @@ function deleteLessonBlock(btn) {
   }
   block.remove();
   renumberBlocks('lessons-container', 'Mavzu');
+}
+
+async function handleLessonSlideUpload(e, fileInput) {
+  const file = e.target.files[0];
+  if (!file) return;
+  const sizeMB = file.size / 1024 / 1024;
+  if (sizeMB > 95) {
+    toast("Fayl 95 MB dan katta. URL ishlatishni tavsiya qilamiz.", 'error');
+    e.target.value = '';
+    return;
+  }
+  const block = fileInput.closest('.lesson-block');
+  const lessonId = block.dataset.lessonId;
+  const statusEl = block.querySelector('.lesson-slide-status');
+  const urlInput = block.querySelector('.lesson-slide-url');
+  const token = localStorage.getItem(STORAGE.GH_TOKEN);
+  if (!token) {
+    toast("GitHub token sozlanmagan. Sozlamalardan kiriting yoki URL ishlating.", 'error');
+    e.target.value = '';
+    return;
+  }
+  statusEl.textContent = '🔄 GitHub\'ga yuklanmoqda...';
+  statusEl.style.color = 'var(--ink-2)';
+  try {
+    const ext = getFileExt(file.name) || '.pdf';
+    const githubPath = `files/lesson-slides/${lessonId}_${safeFileName(file.name)}`;
+    const url = await ghUploadBinaryFile(file, githubPath);
+    block.dataset.slideFileExt = ext;
+    urlInput.value = url;
+    statusEl.textContent = `✓ Yuklandi: ${file.name} (${sizeMB.toFixed(1)} MB)`;
+    statusEl.style.color = 'var(--success)';
+    toast(`✅ Taqdimot GitHub'ga yuklandi`, 'success');
+  } catch (err) {
+    statusEl.textContent = '❌ Xato: ' + err.message;
+    statusEl.style.color = 'var(--danger)';
+  }
 }
 
 async function handleLessonVideoUpload(e, fileInput) {
@@ -2254,6 +2301,8 @@ function saveCourse() {
       context: b.querySelector('.lesson-context').value.trim(),
       videoUrl: b.querySelector('.lesson-video').value.trim(),
       videoBlobKey: b.dataset.videoBlobKey || '',
+      slideUrl: (b.querySelector('.lesson-slide-url')?.value || '').trim() || null,
+      slideFileExt: b.dataset.slideFileExt || (b.querySelector('.lesson-slide-url')?.value ? (getFileExt(b.querySelector('.lesson-slide-url').value) || '.pdf') : null),
       text: b.querySelector('.lesson-text').value.trim(),
       questions: mavzuQuestions
     });

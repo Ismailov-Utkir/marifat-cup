@@ -1470,11 +1470,6 @@
         <h3>Kurslar va darsliklar</h3>
         <p>Video darslarni ko'ring va testlardan o'ting</p>
       </button>
-      <button class="action-card" onclick="showScreen('slides-screen'); renderSlidesList();">
-        <span class="ac-icon">📊</span>
-        <h3>Slayd taqdimotlar</h3>
-        <p>Ma'ruzachi taqdimotini ko'ring, so'ng kvizga o'ting</p>
-      </button>
       <button class="action-card" onclick="showScreen('ebooks-screen'); renderEbooksList();">
         <span class="ac-icon">📖</span>
         <h3>E-kitoblar</h3>
@@ -1558,6 +1553,18 @@
   </div>
   <div class="lesson-wrap">
     <div class="video-frame" id="video-frame"></div>
+
+    <div id="lesson-slide-section" style="display:none; margin-top: 16px;">
+      <div style="background: white; border-radius: var(--radius-lg); padding: 18px; box-shadow: var(--shadow-card); margin-bottom: 16px;">
+        <h3 style="font-family: 'Bricolage Grotesque'; font-size: 20px; margin-bottom: 10px; display: flex; align-items: center; gap: 8px;">📊 Mavzu uchun taqdimot</h3>
+        <div id="lesson-slide-frame" style="width:100%; aspect-ratio: 4/3; border-radius: 12px; overflow: hidden; background: #0d1421;"></div>
+        <div style="margin-top: 10px; display: flex; gap: 8px; flex-wrap: wrap;">
+          <button class="btn btn-secondary btn-sm" onclick="toggleLessonSlideFullscreen()">⛶ To'liq ekran</button>
+          <a id="lesson-slide-download" href="#" target="_blank" class="btn btn-secondary btn-sm" style="text-decoration: none;">📥 Yangi tabda ochish</a>
+        </div>
+      </div>
+    </div>
+
     <div class="lesson-body">
       <h1 id="lesson-title">Dars nomi</h1>
       <div class="lesson-context" id="lesson-context"></div>
@@ -3203,6 +3210,18 @@ async function openLesson(idx) {
   const videoUrl = lesson.videoUrl || '';
 
   await renderLessonVideo(frame, lesson, videoUrl);
+
+  // Mavzu uchun taqdimot (slide) — agar mavjud bo'lsa
+  const slideSection = document.getElementById('lesson-slide-section');
+  const slideFrame = document.getElementById('lesson-slide-frame');
+  const slideDownload = document.getElementById('lesson-slide-download');
+  if (lesson.slideUrl) {
+    slideFrame.innerHTML = buildFileViewerHtml(lesson.slideUrl, lesson.slideFileExt);
+    if (slideDownload) slideDownload.href = lesson.slideUrl;
+    slideSection.style.display = '';
+  } else {
+    slideSection.style.display = 'none';
+  }
 
   const isDone = user.completedLessons.has(`${c.id}::${lesson.title}`);
   const completeBtn = document.getElementById('complete-lesson-btn');
@@ -5998,6 +6017,15 @@ function openIssue(issue) {
 
 function toggleNewspaperFullscreen() {
   const frame = document.getElementById('np-issue-frame');
+  if (!document.fullscreenElement) {
+    frame.requestFullscreen?.() || frame.webkitRequestFullscreen?.() || frame.msRequestFullscreen?.();
+  } else {
+    document.exitFullscreen?.() || document.webkitExitFullscreen?.() || document.msExitFullscreen?.();
+  }
+}
+
+function toggleLessonSlideFullscreen() {
+  const frame = document.getElementById('lesson-slide-frame');
   if (!document.fullscreenElement) {
     frame.requestFullscreen?.() || frame.webkitRequestFullscreen?.() || frame.msRequestFullscreen?.();
   } else {
