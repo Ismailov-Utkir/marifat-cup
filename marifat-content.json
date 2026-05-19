@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "exportedAt": "2026-05-19T07:22:00.280Z",
+  "exportedAt": "2026-05-19T07:25:33.432Z",
   "source": "marifat-cup-admin-auto",
   "courses": [
     {
@@ -1499,7 +1499,7 @@
     "newspapers_desc": "Dolzarb maqolalarni kuzating",
     "achievements": "Mening natijalarim",
     "achievements_desc": "Sertifikatlar, reyting va shaxsiy statistika jamlanmasi",
-    "create_quiz": "Aql Sinovi",
+    "create_quiz": "Quiz Arena",
     "create_quiz_desc": "O‘z savollaringiz asosida zamonaviy quizlar tuzing"
   }
 }
