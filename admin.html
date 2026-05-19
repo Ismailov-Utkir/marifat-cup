@@ -634,6 +634,22 @@ D) Noto'g'ri</pre>
           <option value="urgent">🚨 Muhim (qizil rangda chiqadi)</option>
         </select>
       </div>
+
+      <h3 class="section-divider">🖼️ Rasm yoki video (ixtiyoriy)</h3>
+      <div class="field" style="background: #fef3c7; padding: 12px; border-radius: 10px; border: 2px solid #fbbf24;">
+        <label>Fayl yuklash (rasm yoki video — videolar ovozsiz chiqadi)</label>
+        <input type="file" id="ann-media-input" accept="image/*,video/*" onchange="handleAnnMediaUpload(event)" style="padding: 8px; width: 100%;">
+        <p id="ann-media-status" style="margin-top: 6px; font-size: 13px; color: var(--ink-2);"></p>
+        <p style="font-size: 11px; color: #92400e; margin-top: 6px;">
+          📌 Rasm uchun: .jpg, .png, .gif, .webp · Video uchun: .mp4, .webm (95 MB gacha)
+        </p>
+      </div>
+      <p style="text-align:center; color: var(--ink-2); font-size: 13px; margin: 10px 0;">— yoki —</p>
+      <div class="field">
+        <label>URL (tashqi havola)</label>
+        <input class="input" id="ann-media-url" placeholder="https://... rasm yoki video havolasi">
+      </div>
+
       <div class="actions-bar">
         <button class="btn btn-secondary" onclick="showView('announcements')">Bekor qilish</button>
         <button class="btn btn-primary" onclick="saveAnn()">💾 Saqlash</button>
@@ -2620,25 +2636,78 @@ function renderAnnList() {
   `).join('');
 }
 
+let currentAnnMediaFile = null;
+
+function handleAnnMediaUpload(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  const sizeMB = file.size / 1024 / 1024;
+  if (sizeMB > 95) {
+    toast("Fayl 95 MB dan katta — GitHub'ga sig'maydi. URL ishlatishni tavsiya qilamiz.", 'error');
+    e.target.value = '';
+    return;
+  }
+  currentAnnMediaFile = file;
+  const type = file.type.startsWith('video/') ? 'video' : 'rasm';
+  document.getElementById('ann-media-status').textContent = `✓ ${type}: ${file.name} (${sizeMB.toFixed(2)} MB) tanlandi`;
+}
+
 function openAnnEditor(id = null) {
   editingAnnId = id;
+  currentAnnMediaFile = null;
   const a = id ? anns.find(x => x.id === id) : null;
   document.getElementById('ann-editor-title').textContent = a ? 'E\'lonni tahrirlash' : 'Yangi e\'lon';
   document.getElementById('ann-title').value = a?.title || '';
   document.getElementById('ann-body').value = a?.body || '';
   document.getElementById('ann-priority').value = a?.priority || 'normal';
+  document.getElementById('ann-media-url').value = a?.mediaUrl || '';
+  document.getElementById('ann-media-input').value = '';
+  document.getElementById('ann-media-status').textContent = a?.mediaUrl ? '✓ Mavjud media: ' + (a.mediaType || '') : '';
   showView('ann-editor');
 }
 
-function saveAnn() {
+async function saveAnn() {
   const title = document.getElementById('ann-title').value.trim();
   if (!title) { toast('Sarlavhani kiriting', 'error'); return; }
+  const existing = editingAnnId ? anns.find(a => a.id === editingAnnId) : null;
+
+  let mediaUrl = document.getElementById('ann-media-url').value.trim() || existing?.mediaUrl || null;
+  let mediaType = existing?.mediaType || null;
+
+  // Yangi fayl yuklangan bo'lsa, GitHub'ga
+  if (currentAnnMediaFile) {
+    const token = localStorage.getItem(STORAGE.GH_TOKEN);
+    if (!token) {
+      toast("GitHub token sozlanmagan. Sozlamalardan kiriting yoki tashqi URL ishlating.", 'error');
+      return;
+    }
+    mediaType = currentAnnMediaFile.type.startsWith('video/') ? 'video' : 'image';
+    toast(`🔄 Media GitHub'ga yuklanmoqda...`, '');
+    try {
+      const annId = editingAnnId || ('a_' + Date.now());
+      const ext = getFileExt(currentAnnMediaFile.name) || (mediaType === 'video' ? '.mp4' : '.jpg');
+      const githubPath = `files/announcements/${annId}${ext}`;
+      mediaUrl = await ghUploadBinaryFile(currentAnnMediaFile, githubPath);
+      toast(`✅ Media yuklandi`, 'success');
+    } catch (err) {
+      toast(`❌ Yuklash xato: ${err.message}`, 'error');
+      return;
+    }
+  } else if (mediaUrl) {
+    // URL turini taxmin qilish
+    if (!mediaType) {
+      mediaType = /\.(mp4|webm|mov|ogg)(\?|$)/i.test(mediaUrl) ? 'video' : 'image';
+    }
+  }
+
   const ann = {
     id: editingAnnId || ('a_' + Date.now()),
     title,
     body: document.getElementById('ann-body').value.trim(),
     priority: document.getElementById('ann-priority').value,
-    date: editingAnnId ? (anns.find(a => a.id === editingAnnId)?.date || Date.now()) : Date.now()
+    mediaUrl: mediaUrl || null,
+    mediaType: mediaUrl ? mediaType : null,
+    date: editingAnnId ? (existing?.date || Date.now()) : Date.now()
   };
   if (editingAnnId) {
     const idx = anns.findIndex(a => a.id === editingAnnId);
@@ -2647,6 +2716,7 @@ function saveAnn() {
   saveData();
   toast("E'lon saqlandi ✓", 'success');
   editingAnnId = null;
+  currentAnnMediaFile = null;
   showView('announcements');
 }
 
