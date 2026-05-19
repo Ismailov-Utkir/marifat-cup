@@ -2346,15 +2346,25 @@ function startQuizMusic() {
   if (_audioMuted) return;
   _unlockAudio();
   stopQuizMusic();
-  // MP3 faylni yuklash va loop qilib chalish
+  // Audio faylni yuklash va loop qilib chalish (bir nechta fayl nomini sinab ko'ramiz)
   if (!_bgmAudio) {
-    _bgmAudio = new Audio('./quiz-music.mp3');
+    _bgmAudio = new Audio();
     _bgmAudio.loop = true;
     _bgmAudio.volume = 0.45;
     _bgmAudio.preload = 'auto';
-    _bgmAudio.addEventListener('error', () => {
-      console.warn('[Ma\'rifat Cup] quiz-music.mp3 fayli topilmadi. GitHub\'ga yuklang.');
-    });
+    // Mavjud audio fayllarning ehtimoliy nomlarini sinab ko'ramiz
+    const tryFiles = ['./quiz-music.mp3', './quiz-music.m4a', './quiz-music.mp3.m4a', './quiz-music.ogg'];
+    let tryIdx = 0;
+    const tryNext = () => {
+      if (tryIdx >= tryFiles.length) {
+        console.warn('[Ma\'rifat Cup] Audio fayl topilmadi. GitHub\'ga yuklang.');
+        return;
+      }
+      _bgmAudio.src = tryFiles[tryIdx++];
+      _bgmAudio.load();
+    };
+    _bgmAudio.addEventListener('error', tryNext);
+    tryNext();
   }
   _bgmAudio.currentTime = 0;
   _bgmAudio.play().catch(err => {
