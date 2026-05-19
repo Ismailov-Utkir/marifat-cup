@@ -2345,7 +2345,8 @@ let _bgmAudio = null;
 function startQuizMusic() {
   if (_audioMuted) return;
   _unlockAudio();
-  stopQuizMusic();
+  // Agar allaqachon chalinayotgan bo'lsa, qaytadan boshlamaymiz
+  if (_bgmAudio && !_bgmAudio.paused && !_bgmAudio.ended) return;
   // Audio faylni yuklash va loop qilib chalish (bir nechta fayl nomini sinab ko'ramiz)
   if (!_bgmAudio) {
     _bgmAudio = new Audio();
@@ -2385,27 +2386,117 @@ function stopQuizMusic() {
 function playCorrectSound() { /* musiqa yo'q — fon davom etadi */ }
 function playWrongSound() { /* musiqa yo'q — fon davom etadi */ }
 
-// 🏆 Yakuniy — g'alaba maqomi (an'anaviy ohang)
+// 👏 Bitta qarsak (filtrlangan shovqin)
+function playClap(volMult = 1) {
+  if (_audioMuted) return;
+  const ctx = getAudioCtx();
+  if (!ctx) return;
+  const t = ctx.currentTime;
+  const dur = 0.045;
+  const bufSize = Math.max(1, Math.floor(ctx.sampleRate * dur));
+  const buf = ctx.createBuffer(1, bufSize, ctx.sampleRate);
+  const data = buf.getChannelData(0);
+  for (let i = 0; i < data.length; i++) data[i] = (Math.random() * 2 - 1);
+  const src = ctx.createBufferSource();
+  src.buffer = buf;
+  // Bandpass filter — qisqa va keskin qarsak ovozi
+  const filter = ctx.createBiquadFilter();
+  filter.type = 'bandpass';
+  filter.frequency.value = 1500 + Math.random() * 2000;
+  filter.Q.value = 1.2;
+  const gain = ctx.createGain();
+  src.connect(filter); filter.connect(gain); gain.connect(ctx.destination);
+  const vol = (0.08 + Math.random() * 0.06) * volMult;
+  gain.gain.setValueAtTime(vol, t);
+  gain.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+  src.start(t);
+  src.stop(t + dur);
+}
+
+// 👏👏👏 Olomon qarsaklari (bir nechta soniyalar davomida)
+function playApplause(duration = 3.5) {
+  if (_audioMuted) return;
+  // 25-30 ta qarsak har soniyada, tasodifiy vaqtda
+  const totalClaps = Math.floor(duration * 28);
+  for (let i = 0; i < totalClaps; i++) {
+    setTimeout(() => playClap(), Math.random() * duration * 1000);
+  }
+  // Boshida zichroq, asta-sekin kamayadi
+  for (let i = 0; i < 20; i++) {
+    setTimeout(() => playClap(1.2), Math.random() * 500);
+  }
+}
+
+// 🎺 Karnay (uzun, baland ohangli)
+function playKarnayFanfare() {
+  if (_audioMuted) return;
+  const ctx = getAudioCtx();
+  if (!ctx) return;
+  // Karnay = baland, uzun, tantanali
+  const playKarnay = (freq, dur, delay) => {
+    setTimeout(() => {
+      if (_audioMuted) return;
+      const t = ctx.currentTime;
+      const osc1 = ctx.createOscillator();
+      osc1.type = 'sawtooth';
+      osc1.frequency.value = freq;
+      const osc2 = ctx.createOscillator();
+      osc2.type = 'square';
+      osc2.frequency.value = freq * 1.5; // 5-chi garmoniya — karnay aksenti
+      const gain = ctx.createGain();
+      const filter = ctx.createBiquadFilter();
+      filter.type = 'lowpass';
+      filter.frequency.value = 2500;
+      osc1.connect(filter);
+      osc2.connect(filter);
+      filter.connect(gain);
+      gain.connect(ctx.destination);
+      gain.gain.setValueAtTime(0, t);
+      gain.gain.linearRampToValueAtTime(0.18, t + 0.05);
+      gain.gain.setValueAtTime(0.18, t + dur - 0.1);
+      gain.gain.exponentialRampToValueAtTime(0.001, t + dur);
+      osc1.start(t); osc2.start(t);
+      osc1.stop(t + dur); osc2.stop(t + dur);
+    }, delay);
+  };
+  // Tantanali fanfar: G - C - E - G (yuksaluvchi)
+  playKarnay(392.00, 0.4, 0);     // G4
+  playKarnay(523.25, 0.4, 200);    // C5
+  playKarnay(659.25, 0.4, 400);    // E5
+  playKarnay(783.99, 0.9, 600);    // G5 (uzun)
+}
+
+// 🏆 YAKUNIY — Tantanali g'alaba (karnay + dutor + doira + qarsaklar)
 function playFinalSound() {
   if (_audioMuted) return;
-  const notes = [
-    [293.66, 0.25], // D4
-    [349.23, 0.25], // F4
-    [392.00, 0.25], // G4
-    [440.00, 0.25], // A4
-    [523.25, 0.35], // C5
-    [587.33, 0.6]   // D5 — qaror
-  ];
-  let delay = 0;
-  notes.forEach((n) => {
-    const [freq, dur] = n;
-    setTimeout(() => playDutorNote(freq, dur, 0.22), delay);
-    delay += dur * 1000 * 0.7;
+
+  // 1. Karnay fanfari (boshida — tantanali e'lon)
+  playKarnayFanfare();
+
+  // 2. Doira ritmlari (g'alaba bayrami)
+  const drumTimes = [0, 150, 300, 600, 750, 900, 1200, 1500, 1800];
+  drumTimes.forEach((delay, i) => {
+    setTimeout(() => {
+      if (i % 3 === 0) playDoiraDum(0.35);
+      else playDoiraTak(0.25);
+    }, delay);
   });
-  // Doira bilan jo'r bo'lish
-  setTimeout(() => playDoiraDum(0.3), 0);
-  setTimeout(() => playDoiraTak(0.2), 250);
-  setTimeout(() => playDoiraDum(0.3), 500);
+
+  // 3. Dutor qarori (karnaydan keyin)
+  const dutorNotes = [
+    [587.33, 0.4], // D5
+    [659.25, 0.4], // E5
+    [783.99, 0.4], // G5
+    [880.00, 0.8]  // A5 — yuqori qaror
+  ];
+  let delay = 1700;
+  dutorNotes.forEach(([f, d]) => {
+    setTimeout(() => playDutorNote(f, d, 0.22), delay);
+    delay += d * 1000 * 0.7;
+  });
+
+  // 4. 👏 Qarsaklar (tantanani yakunlovchi)
+  setTimeout(() => playApplause(4), 2200);
 }
 
 function toggleAudioMute() {
@@ -3857,8 +3948,11 @@ function showQuestion() {
   state.answered = false;
   state.myAnswerIdx = -1;
   // 🎵 Musiqa faqat kviz o'yinlar uchun (kurs/mavzu testlari uchun emas)
+  // Faqat birinchi marta boshlanadi, savollar oralarida to'xtamaydi
   if (state.mode !== 'test') {
-    startQuizMusic();
+    if (!_bgmAudio || _bgmAudio.paused || _bgmAudio.ended) {
+      startQuizMusic();
+    }
   }
 
   document.getElementById('q-counter').textContent = `Savol ${state.currentQ + 1}/${state.currentQuiz.questions.length}`;
@@ -4078,12 +4172,8 @@ function buildHostPlayersList() {
 }
 
 function showResult(isCorrect, points) {
-  // 🎵 Musiqa va effekt ovozlari faqat kviz uchun (test uchun jim)
-  if (state.mode !== 'test') {
-    stopQuizMusic();
-    if (isCorrect) playCorrectSound();
-    else playWrongSound();
-  }
+  // 🎵 Kviz davomida musiqa to'xtatilmaydi — fon davom etaveradi
+  // (faqat kurs testi rejimida hech qanday ovoz yo'q)
 
   const badge = document.getElementById('result-badge');
   if (state.mode === 'test') {
