@@ -1462,7 +1462,12 @@
       </div>
       <div class="field">
         <label>Tashkilot nomi (to'liq) *</label>
-        <input class="input" id="reg-organization" placeholder="masalan: Surxondaryo viloyati Ma'naviyat markazi" maxlength="120">
+        <input class="input" id="reg-organization" placeholder="masalan: Respublika Ma'naviyat va ma'rifat markazi" maxlength="120">
+      </div>
+      <div class="field">
+        <label>Bo'linma / Filial / Hudud <span style="color:var(--ink-2); font-weight:500;">(ixtiyoriy)</span></label>
+        <input class="input" id="reg-branch" placeholder="masalan: Surxondaryo viloyati / Termiz tuman bo'limi" maxlength="120">
+        <p style="font-size:11px; color:var(--ink-2); margin-top:4px;">💡 Markaziy apparatda emas, hududiy bo'linmada ishlaysizmi? Shu yerga yozing.</p>
       </div>
       <div class="field">
         <label>Lavozim *</label>
@@ -3108,6 +3113,7 @@ function switchSignInTab(tabName) {
 function registerUser() {
   const name = document.getElementById('reg-name').value.trim();
   const organization = document.getElementById('reg-organization').value.trim();
+  const branch = document.getElementById('reg-branch').value.trim(); // ixtiyoriy
   const position = document.getElementById('reg-position').value.trim();
   const gender = document.getElementById('reg-gender').value;
   const age = parseInt(document.getElementById('reg-age').value);
@@ -3140,7 +3146,7 @@ function registerUser() {
   // Yangi akkaunt yaratish
   accounts[username] = {
     username, name,
-    organization, position, gender, age, marital,
+    organization, branch, position, gender, age, marital,
     passwordHash: hash,
     coins: 0,
     completedLessons: [],
@@ -3150,7 +3156,7 @@ function registerUser() {
   saveAccounts(accounts);
 
   // Avtomatik kirish
-  user = { username, name, organization, position, gender, age, marital, isGuest: false, coins: 0, completedLessons: new Set(), certificates: [] };
+  user = { username, name, organization, branch, position, gender, age, marital, isGuest: false, coins: 0, completedLessons: new Set(), certificates: [] };
   saveUser();
   loadUsersLog();
   trackUserActivity();
@@ -3161,6 +3167,7 @@ function registerUser() {
     `🆕 <b>YANGI RO'YXATDAN O'TISH!</b>\n\n` +
     `👤 <b>F.I.SH:</b> ${name}\n` +
     `🏢 <b>Tashkilot:</b> ${organization}\n` +
+    (branch ? `📍 <b>Bo'linma/Hudud:</b> ${branch}\n` : '') +
     `💼 <b>Lavozim:</b> ${position}\n` +
     `⚧ <b>Jinsi:</b> ${gender}\n` +
     `🎂 <b>Yoshi:</b> ${age}\n` +
@@ -5992,7 +5999,7 @@ function renderTopReyting() {
             <div style="background: ${i === 0 ? '#fbbf24' : i === 1 ? '#94a3b8' : i === 2 ? '#cd7f32' : 'var(--primary)'}; color: white; width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; flex-shrink: 0;">${i + 1}</div>
             <div style="flex: 1; min-width: 0;">
               <div style="font-weight: 700; color: var(--ink); margin-bottom: 2px;">${escapeHtml(u.name)} <span style="background:${u.level.color}; color:white; font-size:10px; padding:2px 6px; border-radius:8px; vertical-align:middle; margin-left:4px;">${u.level.icon} ${u.level.label}</span></div>
-              <div style="font-size: 12px; color: var(--ink-2);">${escapeHtml(u.organization || '')} ${u.position ? '· ' + escapeHtml(u.position) : ''}</div>
+              <div style="font-size: 12px; color: var(--ink-2);">${escapeHtml(u.organization || '')}${u.branch ? ' — ' + escapeHtml(u.branch) : ''}${u.position ? ' · ' + escapeHtml(u.position) : ''}</div>
             </div>
             <div style="text-align: right; flex-shrink: 0;">
               <div style="font-size: 18px; font-weight: 900; color: var(--primary-dark);">${u.score}</div>
