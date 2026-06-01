@@ -2957,6 +2957,22 @@ function signInAsGuest() {
   loadUsersLog();
   trackUserActivity();
   updateTopbar();
+  // 📨 Telegram bot orqali — birinchi marta mehmon sifatida kirgan bo'lsa
+  if (!localStorage.getItem('mc_tg_guest_announced_' + name)) {
+    const device = /Mobile|Android|iPhone|iPad/i.test(navigator.userAgent) ? '📱 Telefon' : '💻 Kompyuter';
+    const browser = (/Chrome/.test(navigator.userAgent) && !/Edge/.test(navigator.userAgent)) ? 'Chrome' :
+                    /Firefox/.test(navigator.userAgent) ? 'Firefox' :
+                    /Safari/.test(navigator.userAgent) ? 'Safari' :
+                    /Edge/.test(navigator.userAgent) ? 'Edge' : 'Brauzer';
+    sendTelegramNotification(
+      `👤 <b>MEHMON SIFATIDA KIRDI</b>\n\n` +
+      `📝 <b>Ism:</b> ${name}\n` +
+      `📅 <b>Sana:</b> ${new Date().toLocaleString('uz-UZ')}\n` +
+      `🌐 <b>Qurilma:</b> ${device} (${browser})\n\n` +
+      `<i>Marifat Cup ma'naviyat platformasi</i>`
+    );
+    localStorage.setItem('mc_tg_guest_announced_' + name, '1');
+  }
   goHome();
 }
 
@@ -3937,6 +3953,7 @@ function saveQuiz() {
     creator: user ? user.name : 'Anonim',
     createdAt: Date.now()
   };
+  const isNew = !state.editingQuizId;
   if (state.editingQuizId) {
     const idx = savedQuizzes.findIndex(q => q.id === state.editingQuizId);
     if (idx >= 0) savedQuizzes[idx] = quiz;
@@ -3944,6 +3961,19 @@ function saveQuiz() {
     savedQuizzes.push(quiz);
   }
   saveQuizzes();
+  // 📨 Telegram bot orqali — quiz yaratilganda admin ga
+  if (isNew) {
+    sendTelegramNotification(
+      `🎯 <b>YANGI QUIZ YARATILDI</b>\n\n` +
+      `📝 <b>Quiz nomi:</b> ${quiz.title}\n` +
+      `👤 <b>Yaratuvchi:</b> ${quiz.creator}\n` +
+      `📍 <b>Hudud:</b> ${region}\n` +
+      `🏘 <b>Tuman:</b> ${district}\n` +
+      `❓ <b>Savollar soni:</b> ${questions.length}\n` +
+      `📅 <b>Sana:</b> ${new Date().toLocaleString('uz-UZ')}\n\n` +
+      `<i>Marifat Cup ma'naviyat platformasi</i>`
+    );
+  }
   toast('✓ Quiz saqlandi', 'success');
   renderMyQuizzes();
   showScreen('myquizzes-screen');
