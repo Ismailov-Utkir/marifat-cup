@@ -678,12 +678,41 @@ D) Noto'g'ri</pre>
         <h1 id="ebook-editor-title">Yangi e-kitob</h1>
         <button class="btn btn-secondary btn-sm" onclick="showView('ebooks')">← Ortga</button>
       </div>
-      <div class="field"><label>Kitob nomi *</label>
-        <input class="input" id="ebook-title-input" placeholder="Masalan: Ma'naviyat asoslari"></div>
-      <div class="field"><label>Muallif</label>
-        <input class="input" id="ebook-author-input" placeholder="Masalan: Olimjon Davlatov"></div>
-      <div class="field"><label>Qisqa tavsif</label>
-        <textarea class="textarea" id="ebook-desc-input" placeholder="Kitob haqida..."></textarea></div>
+      <div style="background:#eff6ff; border:2px solid #bfdbfe; border-radius:12px; padding:14px; margin-bottom:16px;">
+        <p style="margin:0 0 10px; font-weight:700; color:#1e40af;">🌐 3 ta tilda kiriting (foydalanuvchi tanlagan tilda ko'rinadi)</p>
+        <div style="display:flex; gap:8px; margin-bottom:12px;">
+          <button type="button" class="lang-tab active" data-lang="uz" onclick="switchEbookLang('uz')" style="flex:1; padding:8px 12px; background:#1e40af; color:white; border:none; border-radius:8px; font-weight:700; cursor:pointer;">🇺🇿 O'zbekcha</button>
+          <button type="button" class="lang-tab" data-lang="kaa" onclick="switchEbookLang('kaa')" style="flex:1; padding:8px 12px; background:#e5e7eb; color:#1f2937; border:none; border-radius:8px; font-weight:700; cursor:pointer;">🇺🇿 Qaraqalpaqsha</button>
+          <button type="button" class="lang-tab" data-lang="ru" onclick="switchEbookLang('ru')" style="flex:1; padding:8px 12px; background:#e5e7eb; color:#1f2937; border:none; border-radius:8px; font-weight:700; cursor:pointer;">🇷🇺 Русский</button>
+        </div>
+        <!-- O'zbekcha -->
+        <div class="lang-pane" data-lang="uz">
+          <div class="field"><label>Kitob nomi (O'zbekcha) *</label>
+            <input class="input" id="ebook-title-uz" placeholder="Masalan: Ma'naviyat asoslari"></div>
+          <div class="field"><label>Muallif (O'zbekcha)</label>
+            <input class="input" id="ebook-author-uz" placeholder="Masalan: Olimjon Davlatov"></div>
+          <div class="field"><label>Qisqa tavsif (O'zbekcha)</label>
+            <textarea class="textarea" id="ebook-desc-uz" placeholder="Kitob haqida..."></textarea></div>
+        </div>
+        <!-- Qaraqalpaqsha -->
+        <div class="lang-pane" data-lang="kaa" style="display:none;">
+          <div class="field"><label>Kitap atı (Qaraqalpaqsha)</label>
+            <input class="input" id="ebook-title-kaa" placeholder="Mısalı: Mánawiyat tiykarları"></div>
+          <div class="field"><label>Avtor (Qaraqalpaqsha)</label>
+            <input class="input" id="ebook-author-kaa" placeholder="Mısalı: Olimjon Dawlatov"></div>
+          <div class="field"><label>Qısqa tariypı (Qaraqalpaqsha)</label>
+            <textarea class="textarea" id="ebook-desc-kaa" placeholder="Kitap haqqında..."></textarea></div>
+        </div>
+        <!-- Русский -->
+        <div class="lang-pane" data-lang="ru" style="display:none;">
+          <div class="field"><label>Название книги (Русский)</label>
+            <input class="input" id="ebook-title-ru" placeholder="Например: Основы духовности"></div>
+          <div class="field"><label>Автор (Русский)</label>
+            <input class="input" id="ebook-author-ru" placeholder="Например: Олимжон Давлатов"></div>
+          <div class="field"><label>Краткое описание (Русский)</label>
+            <textarea class="textarea" id="ebook-desc-ru" placeholder="О книге..."></textarea></div>
+        </div>
+      </div>
       <div class="field-row">
         <div class="field"><label>Emoji</label>
           <input class="input" id="ebook-emoji-input" maxlength="3" value="📖"></div>
@@ -2679,18 +2708,36 @@ function renderEbooksList() {
       <button class="btn btn-primary" onclick="openEbookEditor()">+ Birinchi kitobni yuklash</button></div>`;
     return;
   }
-  list.innerHTML = ebooks.map(b => `
+  list.innerHTML = ebooks.map(b => {
+    const title = b.title_uz || b.title || '';
+    const author = b.author_uz || b.author || '';
+    const langs = [];
+    if (b.title_uz) langs.push('🇺🇿');
+    if (b.title_kaa) langs.push('Qrq');
+    if (b.title_ru) langs.push('🇷🇺');
+    return `
     <div class="item-row">
       <div class="ico" style="background: ${COLOR_GRADS[b.color] || COLOR_GRADS[1]};">${esc(b.emoji || '📖')}</div>
       <div class="info">
-        <h3>${esc(b.title)}</h3>
-        <p>👤 ${esc(b.author || "Muallif yo'q")} · ${b.pdfStored ? '📎 Yuklangan' : '🔗 URL'}</p>
+        <h3>${esc(title)} <span style="font-size:11px; color:#6b7280; font-weight:500;">${langs.join(' ')}</span></h3>
+        <p>👤 ${esc(author || "Muallif yo'q")} · ${b.pdfStored ? '📎 Yuklangan' : '🔗 URL'}</p>
       </div>
       <div class="actions">
         <button class="icon-btn edit" onclick="openEbookEditor('${b.id}')">✏️</button>
         <button class="icon-btn del" onclick="deleteEbook('${b.id}')">🗑️</button>
       </div>
-    </div>`).join('');
+    </div>`;}).join('');
+}
+
+function switchEbookLang(lang) {
+  document.querySelectorAll('.lang-tab').forEach(t => {
+    const active = t.dataset.lang === lang;
+    t.style.background = active ? '#1e40af' : '#e5e7eb';
+    t.style.color = active ? 'white' : '#1f2937';
+  });
+  document.querySelectorAll('.lang-pane').forEach(p => {
+    p.style.display = p.dataset.lang === lang ? '' : 'none';
+  });
 }
 
 function openEbookEditor(id = null) {
@@ -2698,13 +2745,21 @@ function openEbookEditor(id = null) {
   currentEbookFile = null;
   const b = id ? ebooks.find(x => x.id === id) : null;
   document.getElementById('ebook-editor-title').textContent = b ? 'Kitobni tahrirlash' : 'Yangi e-kitob';
-  document.getElementById('ebook-title-input').value = b?.title || '';
-  document.getElementById('ebook-author-input').value = b?.author || '';
-  document.getElementById('ebook-desc-input').value = b?.description || '';
+  // 3 ta tilda (eski formatdan ham olib qoldirish)
+  document.getElementById('ebook-title-uz').value = b?.title_uz || b?.title || '';
+  document.getElementById('ebook-title-kaa').value = b?.title_kaa || '';
+  document.getElementById('ebook-title-ru').value = b?.title_ru || '';
+  document.getElementById('ebook-author-uz').value = b?.author_uz || b?.author || '';
+  document.getElementById('ebook-author-kaa').value = b?.author_kaa || '';
+  document.getElementById('ebook-author-ru').value = b?.author_ru || '';
+  document.getElementById('ebook-desc-uz').value = b?.description_uz || b?.description || '';
+  document.getElementById('ebook-desc-kaa').value = b?.description_kaa || '';
+  document.getElementById('ebook-desc-ru').value = b?.description_ru || '';
   document.getElementById('ebook-emoji-input').value = b?.emoji || '📖';
   document.getElementById('ebook-color-input').value = b?.color || 1;
   document.getElementById('ebook-pdf-url').value = b?.pdfUrl || '';
   document.getElementById('ebook-pdf-file').value = '';
+  switchEbookLang('uz');
   if (b?.pdfStored) {
     document.getElementById('ebook-pdf-status').textContent = "✓ Mavjud PDF saqlangan";
   } else {
@@ -2728,8 +2783,10 @@ function handleEbookPdfUpload(e) {
 }
 
 async function saveEbook() {
-  const title = document.getElementById('ebook-title-input').value.trim();
-  if (!title) { toast('Kitob nomini kiriting', 'error'); return; }
+  const titleUz = document.getElementById('ebook-title-uz').value.trim();
+  const titleKaa = document.getElementById('ebook-title-kaa').value.trim();
+  const titleRu = document.getElementById('ebook-title-ru').value.trim();
+  if (!titleUz) { toast("Kitob nomini O'zbekcha kiriting (asosiy til)", 'error'); return; }
   const pdfUrl = document.getElementById('ebook-pdf-url').value.trim();
   const existing = editingEbookId ? ebooks.find(b => b.id === editingEbookId) : null;
   const hasExistingFile = existing && existing.pdfStored;
@@ -2738,9 +2795,18 @@ async function saveEbook() {
   }
   const book = {
     id: editingEbookId || ('b_' + Date.now()),
-    title,
-    author: document.getElementById('ebook-author-input').value.trim(),
-    description: document.getElementById('ebook-desc-input').value.trim(),
+    title: titleUz, // legacy fallback
+    title_uz: titleUz,
+    title_kaa: titleKaa,
+    title_ru: titleRu,
+    author: document.getElementById('ebook-author-uz').value.trim(), // legacy
+    author_uz: document.getElementById('ebook-author-uz').value.trim(),
+    author_kaa: document.getElementById('ebook-author-kaa').value.trim(),
+    author_ru: document.getElementById('ebook-author-ru').value.trim(),
+    description: document.getElementById('ebook-desc-uz').value.trim(), // legacy
+    description_uz: document.getElementById('ebook-desc-uz').value.trim(),
+    description_kaa: document.getElementById('ebook-desc-kaa').value.trim(),
+    description_ru: document.getElementById('ebook-desc-ru').value.trim(),
     emoji: document.getElementById('ebook-emoji-input').value.trim() || '📖',
     color: parseInt(document.getElementById('ebook-color-input').value),
     pdfStored: existing?.pdfStored || false,

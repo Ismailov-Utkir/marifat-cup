@@ -1505,7 +1505,15 @@
       <button onclick="openGlobalSearch()" title="Qidiruv (kurs, kitob, quiz)" style="background: rgba(255,255,255,0.1); border: 2px solid rgba(255,255,255,0.2); color: white; width: 40px; height: 40px; border-radius: 50%; font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center;">🔍</button>
       <button class="audio-mute-btn" onclick="toggleAudioMute()" title="Musiqani o'chirish" style="background: rgba(255,255,255,0.1); border: 2px solid rgba(255,255,255,0.2); color: white; width: 40px; height: 40px; border-radius: 50%; font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center;">🔊</button>
       <button class="theme-toggle-btn" onclick="toggleTheme()" title="Tungi rejim" style="background: rgba(255,255,255,0.1); border: 2px solid rgba(255,255,255,0.2); color: white; width: 40px; height: 40px; border-radius: 50%; font-size: 18px; cursor: pointer; display: flex; align-items: center; justify-content: center;">🌙</button>
-      <div class="coin-display">💰 <span id="topbar-coins">0</span></div>
+      <div class="lang-dropdown" style="position: relative;">
+        <button class="lang-current" onclick="toggleLangMenu()" title="Til" style="background: rgba(255,255,255,0.1); border: 2px solid rgba(255,255,255,0.2); color: white; padding: 0 14px; height: 40px; border-radius: 22px; font-size: 14px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 6px;">🇺🇿 O'zb ▾</button>
+        <div id="lang-menu" style="display:none; position: absolute; top: 48px; right: 0; background: white; border-radius: 12px; box-shadow: 0 8px 24px rgba(0,0,0,0.2); min-width: 180px; z-index: 1000; overflow: hidden;">
+          <button onclick="setLanguage('uz')" style="width:100%; padding:12px 16px; background:none; border:none; text-align:left; font-size:14px; font-weight:700; color:#1f2937; cursor:pointer; display:flex; align-items:center; gap:8px;" onmouseover="this.style.background='#f3f4f6'" onmouseout="this.style.background='none'">🇺🇿 O'zbekcha</button>
+          <button onclick="setLanguage('kaa')" style="width:100%; padding:12px 16px; background:none; border:none; text-align:left; font-size:14px; font-weight:700; color:#1f2937; cursor:pointer; display:flex; align-items:center; gap:8px;" onmouseover="this.style.background='#f3f4f6'" onmouseout="this.style.background='none'">🇺🇿 Qaraqalpaqsha</button>
+          <button onclick="setLanguage('ru')" style="width:100%; padding:12px 16px; background:none; border:none; text-align:left; font-size:14px; font-weight:700; color:#1f2937; cursor:pointer; display:flex; align-items:center; gap:8px;" onmouseover="this.style.background='#f3f4f6'" onmouseout="this.style.background='none'">🇷🇺 Русский</button>
+        </div>
+      </div>
+      <div class="coin-display" style="display:none;">💰 <span id="topbar-coins">0</span></div>
       <button class="profile-btn" onclick="goToProfile()">
         <span class="avatar" id="topbar-avatar">A</span>
         <span id="topbar-name">User</span>
@@ -1913,11 +1921,30 @@
   <div style="width: 100%; max-width: 1100px; margin: auto;">
     <h2 id="ebook-title" style="color: var(--primary-dark); font-family: 'Bricolage Grotesque', sans-serif; font-size: 26px; margin-bottom: 6px;"></h2>
     <p id="ebook-author" style="color: var(--ink-2); margin-bottom: 16px;"></p>
+    <p id="ebook-description" style="color: var(--ink-2); margin-bottom: 16px; line-height: 1.6;"></p>
     <div class="slide-viewer">
       <div class="slide-viewer-frame" id="ebook-frame"></div>
       <div class="slide-controls">
         <button class="slide-fullscreen-btn" onclick="toggleEbookFullscreen()">⛶ To'liq ekran</button>
       </div>
+    </div>
+    <!-- COMMENTS SECTION -->
+    <div style="background: var(--surface, white); border-radius: 16px; padding: 24px; margin-top: 24px; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
+      <h3 id="ebook-comments-title" style="color: var(--primary-dark); font-family: 'Bricolage Grotesque', sans-serif; font-size: 22px; margin-bottom: 16px;">💬 Izohlar</h3>
+      <div id="ebook-comment-form" style="margin-bottom: 20px;">
+        <textarea id="ebook-comment-text" rows="3" placeholder="Kitob haqida fikringizni yozing..." style="width: 100%; padding: 12px 14px; border: 2px solid #e5e7eb; border-radius: 12px; font-family: inherit; font-size: 14px; resize: vertical;"></textarea>
+        <div style="margin-top: 8px; display: flex; gap: 8px; align-items: center;">
+          <div style="display:flex; gap:4px;" id="ebook-comment-stars">
+            <span class="star-btn" data-star="1" style="cursor:pointer; font-size:22px;">☆</span>
+            <span class="star-btn" data-star="2" style="cursor:pointer; font-size:22px;">☆</span>
+            <span class="star-btn" data-star="3" style="cursor:pointer; font-size:22px;">☆</span>
+            <span class="star-btn" data-star="4" style="cursor:pointer; font-size:22px;">☆</span>
+            <span class="star-btn" data-star="5" style="cursor:pointer; font-size:22px;">☆</span>
+          </div>
+          <button id="ebook-comment-submit" onclick="submitEbookComment()" class="btn btn-accent" style="margin-left:auto;">📩 Yuborish</button>
+        </div>
+      </div>
+      <div id="ebook-comments-list" style="display: flex; flex-direction: column; gap: 12px;"></div>
     </div>
   </div>
 </div>
@@ -2209,7 +2236,7 @@
       <div class="profile-info">
         <h1 id="profile-name">Foydalanuvchi</h1>
         <div class="profile-stats">
-          <div class="profile-stat">
+          <div class="profile-stat" style="display:none;">
             <div class="num">💰 <span id="profile-coins">0</span></div>
             <div class="label">Tangalar</div>
           </div>
@@ -2360,10 +2387,11 @@ const IDB = {
 // ====================================================================
 const SHAPES = ['▲', '◆', '●', '■'];
 const COLORS = ['red', 'blue', 'yellow', 'green'];
-const COIN_PER_LESSON = 10;
-const COIN_PER_CORRECT = 5;
-const COIN_PASS_TEST = 100;
-const PASS_PERCENT = 70;
+const COIN_PER_LESSON = 0;
+const COIN_PER_CORRECT = 0;
+const COIN_PASS_TEST = 0;
+const PASS_PERCENT = 60;
+const TEST_COOLDOWN_MS = 60 * 1000;
 
 const BOT_NAMES = [
   'Aziza', 'Bekzod', 'Charos', 'Doniyor', 'Elnur',
@@ -2866,6 +2894,10 @@ function showModal(title, text, onConfirm) {
 
 function closeModal() {
   document.getElementById('modal-overlay').classList.remove('active');
+  // Cooldown modaldan keyin "Tasdiqlash" tugmasini qayta ko'rsatish
+  const confBtn = document.getElementById('modal-confirm');
+  if (confBtn) confBtn.style.display = '';
+  if (window._cooldownInterval) { clearInterval(window._cooldownInterval); window._cooldownInterval = null; }
 }
 
 function escapeHtml(s) {
@@ -2888,7 +2920,8 @@ function addCoins(amount, reason = '') {
   updateTopbar();
   trackUserActivity();
   if (amount > 0) {
-    toast(`💰 +${amount} tanga ${reason ? '· ' + reason : ''}`, 'coin');
+    // Tangalar bildirishnoma o'chirildi
+    // toast(`💰 +${amount} tanga ${reason ? '· ' + reason : ''}`, 'coin');
   }
 }
 
@@ -3569,7 +3602,7 @@ function finishMavzuTest() {
   document.getElementById('score-percent').textContent = percent + '%';
   document.getElementById('score-circle').style.setProperty('--p', percent + '%');
   document.getElementById('score-detail').textContent = `"${lesson.title}" — ${correct}/${total} ta to'g'ri javob`;
-  document.getElementById('rewards-earned').innerHTML = `<div class="reward-chip">💰 +${COIN_PER_LESSON + bonusCoins} tanga</div>`;
+  document.getElementById('rewards-earned').innerHTML = '';
   document.getElementById('view-cert-btn').style.display = 'none';
   // Tugmalarni dinamik o'zgartiramiz: "Keyingi mavzu" yoki "Yakuniy testga"
   const actions = document.querySelector('#test-result-screen .final-actions');
@@ -3624,6 +3657,16 @@ function getCourseTestCount(c) {
   return Math.min(requested, pool.length);
 }
 
+function getTestCooldownKey(courseId) {
+  return `mc_test_cooldown_${courseId}_${user?.username || user?.name || '_anon'}`;
+}
+function getTestCooldownRemaining(courseId) {
+  const failedAt = parseInt(localStorage.getItem(getTestCooldownKey(courseId)) || '0');
+  if (!failedAt) return 0;
+  const elapsed = Date.now() - failedAt;
+  return Math.max(0, TEST_COOLDOWN_MS - elapsed);
+}
+
 function openTestIntro() {
   const c = state.currentCourse;
   const pool = collectCourseQuestionPool(c);
@@ -3631,13 +3674,20 @@ function openTestIntro() {
   document.getElementById('test-intro-title').textContent = `Yakuniy test: ${c.title}`;
   const isRandom = pool.length > testCount;
   document.getElementById('test-intro-sub').textContent = isRandom
-    ? `${testCount} ta tasodifiy savol (jami ${pool.length} ta dan) · 70% dan ortiq to'g'ri javob bersangiz sertifikat olasiz`
-    : `${testCount} ta savol · 70% dan ortiq to'g'ri javob bersangiz sertifikat olasiz`;
+    ? `${testCount} ta tasodifiy savol (jami ${pool.length} ta dan) · ${PASS_PERCENT}% dan ortiq to'g'ri javob bersangiz sertifikat olasiz`
+    : `${testCount} ta savol · ${PASS_PERCENT}% dan ortiq to'g'ri javob bersangiz sertifikat olasiz`;
   showScreen('test-intro-screen');
 }
 
 function startCourseTest() {
   const c = state.currentCourse;
+  // Cooldown tekshirish
+  const remainingMs = getTestCooldownRemaining(c.id);
+  if (remainingMs > 0) {
+    const seconds = Math.ceil(remainingMs / 1000);
+    showCooldownModal(c.id, seconds);
+    return;
+  }
   const pool = collectCourseQuestionPool(c);
   const count = getCourseTestCount(c);
   if (pool.length === 0) {
@@ -3657,6 +3707,32 @@ function startCourseTest() {
   showQuestion();
 }
 
+function showCooldownModal(courseId, initialSeconds) {
+  const overlay = document.getElementById('modal-overlay');
+  document.getElementById('modal-title').textContent = "⏳ Qayta urinish uchun kuting";
+  document.getElementById('modal-text').innerHTML = `
+    Avvalgi urinishingiz <b>${PASS_PERCENT}% dan past</b> bo'ldi.<br><br>
+    Qayta kirish uchun <b><span id="cooldown-seconds">${initialSeconds}</span> soniya</b> kutib turing.<br>
+    <span style="font-size: 12px; color: var(--ink-2);">Bu vaqtda darslarni qayta o'qib chiqishingiz mumkin.</span>
+  `;
+  document.getElementById('modal-confirm').style.display = 'none';
+  overlay.classList.add('active');
+  // Hisoblagich
+  if (window._cooldownInterval) clearInterval(window._cooldownInterval);
+  window._cooldownInterval = setInterval(() => {
+    const rem = getTestCooldownRemaining(courseId);
+    const sec = Math.ceil(rem / 1000);
+    const el = document.getElementById('cooldown-seconds');
+    if (el) el.textContent = sec;
+    if (rem <= 0) {
+      clearInterval(window._cooldownInterval);
+      closeModal();
+      document.getElementById('modal-confirm').style.display = '';
+      toast("✅ Endi qayta urinib ko'ring", 'success');
+    }
+  }, 1000);
+}
+
 function finishCourseTest() {
   // Kurs testida musiqa yo'q — jim
   stopQuizMusic();
@@ -3665,6 +3741,13 @@ function finishCourseTest() {
   const correct = state.testCorrect;
   const percent = Math.round((correct / total) * 100);
   const passed = percent >= PASS_PERCENT;
+  // Agar o'tmasa — 1 daqiqa cooldown qo'yamiz
+  if (!passed) {
+    localStorage.setItem(getTestCooldownKey(state.currentCourse.id), Date.now().toString());
+  } else {
+    // O'tdi — eski cooldown'ni tozalaymiz
+    localStorage.removeItem(getTestCooldownKey(state.currentCourse.id));
+  }
   const totalCoinsEarned = correct * COIN_PER_CORRECT + (passed ? COIN_PASS_TEST : 0);
   recordCourseScore(state.currentCourse.id, percent, totalCoinsEarned);
 
@@ -3705,11 +3788,13 @@ function finishCourseTest() {
   document.getElementById('score-detail').textContent = `${correct}/${total} ta to'g'ri javob`;
 
   const rewardsEl = document.getElementById('rewards-earned');
-  let rewards = `<div class="reward-chip">💰 +${coinReward} tanga</div>`;
+  let rewards = '';
   if (earnedCert) {
     rewards += `<div class="reward-chip cert">🎓 Sertifikat olindi!</div>`;
   } else if (passed) {
     rewards += `<div class="reward-chip cert">🎓 Sertifikatingiz yangilandi</div>`;
+  } else {
+    rewards += `<div class="reward-chip" style="background: #fef3c7; color: #92400e; box-shadow: 0 4px 0 #f59e0b;">⏳ 1 daqiqa kutib qayta urinib ko'ring</div>`;
   }
   rewardsEl.innerHTML = rewards;
 
@@ -4370,20 +4455,30 @@ function showResult(isCorrect, points) {
   }
   badge.className = 'result-badge ' + (isCorrect ? 'correct' : 'wrong');
 
-  document.getElementById('result-points').innerHTML = isCorrect
-    ? `+<span class="num">${points}</span> ball`
-    : `<span style="color: rgba(255,255,255,0.6);">+0 ball</span>`;
-
-  // Coin reward (only for test mode at correct answers)
-  const coinEl = document.getElementById('coin-reward-display');
-  if (state.mode === 'test' && isCorrect) {
-    coinEl.textContent = `💰 +${COIN_PER_CORRECT} tanga`;
-    coinEl.style.display = '';
+  // Test rejimida ball ko'rsatilmaydi — faqat to'g'ri/xato
+  if (state.mode === 'test') {
+    document.getElementById('result-points').innerHTML = isCorrect
+      ? `<span style="color: var(--success); font-weight: 800;">✓ To'g'ri javob</span>`
+      : `<span style="color: var(--danger); font-weight: 800;">✗ Noto'g'ri javob</span>`;
   } else {
-    coinEl.style.display = 'none';
+    document.getElementById('result-points').innerHTML = isCorrect
+      ? `+<span class="num">${points}</span> ball`
+      : `<span style="color: rgba(255,255,255,0.6);">+0 ball</span>`;
   }
 
-  renderMiniBoard();
+  // Tangalar tizimi olib tashlandi
+  const coinEl = document.getElementById('coin-reward-display');
+  if (coinEl) coinEl.style.display = 'none';
+
+  // Test rejimida mini-leaderboard kerak emas
+  if (state.mode === 'test') {
+    const ml = document.querySelector('.mini-leaderboard');
+    if (ml) ml.style.display = 'none';
+  } else {
+    const ml = document.querySelector('.mini-leaderboard');
+    if (ml) ml.style.display = '';
+    renderMiniBoard();
+  }
 
   // Next button visibility
   const nextBtn = document.getElementById('next-q-btn');
@@ -4996,7 +5091,7 @@ function renderTop10() {
         <div class="lb-name">
           ${escapeHtml(u.name)}${isMe ? ' <span style="color:var(--primary);font-size:12px;">(siz)</span>' : ''}
         </div>
-        <div class="lb-coins">💰 ${u.coins}</div>
+        <div class="lb-coins" style="background: linear-gradient(135deg, #1e40af, #3b82f6); color: white;">📜 ${u.certificates || 0}</div>
       </div>
     `;
   }).join('');
@@ -5216,30 +5311,57 @@ function renderEbooksList() {
   let items = savedEbooks.slice();
   const sEl = document.getElementById('ebooks-search');
   const q = sEl ? sEl.value.trim().toLowerCase() : '';
-  if (q) items = items.filter(b => b.title.toLowerCase().includes(q) || (b.author||'').toLowerCase().includes(q));
+  if (q) items = items.filter(b => {
+    const t = (tField(b, 'title') || b.title || '').toLowerCase();
+    const a = (tField(b, 'author') || b.author || '').toLowerCase();
+    return t.includes(q) || a.includes(q);
+  });
   if (items.length === 0) {
     list.innerHTML = `<div class="empty-state" style="grid-column:1/-1;"><div class="empty-state-emoji">${q?'🔍':'📖'}</div><p>${q?"Hech narsa topilmadi":"Hali e-kitoblar yuklanmagan"}</p></div>`;
     return;
   }
-  list.innerHTML = items.map((b, i) => `
+  list.innerHTML = items.map((b, i) => {
+    const title = tField(b, 'title') || b.title;
+    const author = tField(b, 'author') || b.author || '';
+    const desc = tField(b, 'description') || b.description || '';
+    const locale = _siteLang === 'ru' ? 'ru-RU' : 'uz-UZ';
+    return `
     <div class="course-card" onclick="openEbook('${b.id}')">
       <div class="course-thumb bg-${b.color || 1}">${escapeHtml(b.emoji || '📖')}</div>
       <div class="course-content">
-        <h3>${escapeHtml(b.title)}</h3>
-        <p>${escapeHtml(b.author || '')}</p>
-        ${b.description ? `<p style="font-size:12px;color:var(--ink-2);">${escapeHtml(b.description.slice(0, 60))}${b.description.length > 60 ? '...' : ''}</p>` : ''}
-        <div class="course-meta"><span>📅 ${new Date(b.date || Date.now()).toLocaleDateString('uz-UZ')}</span></div>
+        <h3>${escapeHtml(title)}</h3>
+        <p>${escapeHtml(author)}</p>
+        ${desc ? `<p style="font-size:12px;color:var(--ink-2);">${escapeHtml(desc.slice(0, 60))}${desc.length > 60 ? '...' : ''}</p>` : ''}
+        <div class="course-meta"><span>📅 ${new Date(b.date || Date.now()).toLocaleDateString(locale)}</span></div>
       </div>
     </div>
-  `).join('');
+  `;}).join('');
 }
 
 async function openEbook(id) {
   loadEbooks();
   const book = savedEbooks.find(b => b.id === id);
   if (!book) return;
-  document.getElementById('ebook-title').textContent = book.title;
-  document.getElementById('ebook-author').textContent = book.author || '';
+  window._currentEbookId = id;
+  // Multi-lang qo'llab-quvvatlash: title_uz/title_ru/title_kaa
+  const title = tField(book, 'title') || book.title;
+  const author = tField(book, 'author') || book.author || '';
+  const desc = tField(book, 'description') || book.description || '';
+  document.getElementById('ebook-title').textContent = title;
+  document.getElementById('ebook-author').textContent = author;
+  document.getElementById('ebook-description').textContent = desc;
+  // Izohlar sarlavhasini yangilash
+  const ctitle = document.getElementById('ebook-comments-title');
+  if (ctitle) ctitle.textContent = t('comments_title');
+  const ctextarea = document.getElementById('ebook-comment-text');
+  if (ctextarea) ctextarea.placeholder = t('comments_placeholder');
+  const csubmit = document.getElementById('ebook-comment-submit');
+  if (csubmit) csubmit.textContent = t('comments_send');
+  // Yulduzlarni qayta tiklash
+  _currentCommentStars = 0;
+  document.querySelectorAll('#ebook-comment-stars .star-btn').forEach(s => s.textContent = '☆');
+  // Izohlarni yuklash va ko'rsatish
+  renderEbookComments(id);
   const frame = document.getElementById('ebook-frame');
   frame.innerHTML = `<div style="color: rgba(255,255,255,0.6); padding: 40px; text-align: center;">⏳ Yuklanmoqda...</div>`;
   showScreen('ebook-viewer-screen');
@@ -5274,6 +5396,139 @@ function toggleEbookFullscreen() {
   const frame = document.getElementById('ebook-frame');
   if (!document.fullscreenElement) frame.requestFullscreen?.();
   else document.exitFullscreen?.();
+}
+
+// ===== EBOOK COMMENTS =====
+let _currentCommentStars = 0;
+
+// Yulduzlar bosish
+document.addEventListener('click', (e) => {
+  const star = e.target.closest('#ebook-comment-stars .star-btn');
+  if (!star) return;
+  const n = parseInt(star.dataset.star);
+  _currentCommentStars = n;
+  document.querySelectorAll('#ebook-comment-stars .star-btn').forEach(s => {
+    const sn = parseInt(s.dataset.star);
+    s.textContent = sn <= n ? '★' : '☆';
+    s.style.color = sn <= n ? '#f59e0b' : '#9ca3af';
+  });
+});
+
+function getEbookComments(bookId) {
+  try {
+    const all = JSON.parse(localStorage.getItem('mc_ebook_comments') || '{}');
+    return all[bookId] || [];
+  } catch (e) { return []; }
+}
+
+function saveEbookComments(bookId, comments) {
+  try {
+    const all = JSON.parse(localStorage.getItem('mc_ebook_comments') || '{}');
+    all[bookId] = comments;
+    localStorage.setItem('mc_ebook_comments', JSON.stringify(all));
+  } catch (e) {}
+}
+
+async function fetchEbookCommentsFromTelegram(bookId) {
+  // Telegram'dan barcha izohlarni o'qish, mahalliyga qo'shish
+  try {
+    const resp = await fetch(`https://api.telegram.org/bot${TG_BOT_TOKEN}/getUpdates?limit=100&offset=-100`);
+    const data = await resp.json();
+    if (!data.ok || !data.result) return;
+    const localComments = getEbookComments(bookId);
+    const existingIds = new Set(localComments.map(c => c.id));
+    const fromTg = [];
+    data.result.forEach(update => {
+      const msg = update.channel_post || update.message;
+      if (!msg || !msg.text) return;
+      // Format: EBOOK_COMMENT|bookId|userName|stars|text
+      const match = msg.text.match(/EBOOK_COMMENT\|([^|]+)\|([^|]+)\|(\d)\|(.+)/);
+      if (match && match[1] === bookId) {
+        const tgId = 'tg_' + msg.message_id;
+        if (!existingIds.has(tgId)) {
+          fromTg.push({
+            id: tgId,
+            userName: match[2].trim(),
+            rating: parseInt(match[3]),
+            text: match[4].trim(),
+            date: (msg.date || 0) * 1000,
+          });
+        }
+      }
+    });
+    if (fromTg.length > 0) {
+      const merged = [...localComments, ...fromTg];
+      saveEbookComments(bookId, merged);
+    }
+  } catch (e) {
+    console.warn('[Comments] TG yuklamadi:', e.message);
+  }
+}
+
+async function renderEbookComments(bookId) {
+  const list = document.getElementById('ebook-comments-list');
+  if (!list) return;
+  list.innerHTML = `<div style="text-align:center; color: var(--ink-2); padding: 20px;">${t('comments_loading')}</div>`;
+  // Telegram'dan ham yuklash (boshqa qurilmalardan)
+  await fetchEbookCommentsFromTelegram(bookId);
+  const comments = getEbookComments(bookId);
+  if (comments.length === 0) {
+    list.innerHTML = `<div style="text-align:center; color: var(--ink-2); padding: 20px; font-style: italic;">${t('comments_empty')}</div>`;
+    return;
+  }
+  // Yangidan eskigacha
+  const sorted = [...comments].sort((a, b) => (b.date || 0) - (a.date || 0));
+  list.innerHTML = sorted.map(c => {
+    const dateStr = new Date(c.date || Date.now()).toLocaleString(_siteLang === 'ru' ? 'ru-RU' : 'uz-UZ');
+    const stars = '★'.repeat(c.rating || 0) + '☆'.repeat(5 - (c.rating || 0));
+    return `
+      <div style="background: #f9fafb; border-left: 4px solid var(--primary); padding: 12px 16px; border-radius: 8px;">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
+          <strong style="color: var(--ink);">${escapeHtml(c.userName || 'Foydalanuvchi')}</strong>
+          <span style="color:#f59e0b; font-size:14px;">${stars}</span>
+        </div>
+        <div style="color: var(--ink-2); font-size: 12px; margin-bottom: 6px;">${dateStr}</div>
+        <div style="color: var(--ink); font-size: 14px; line-height: 1.5; white-space: pre-wrap;">${escapeHtml(c.text || '')}</div>
+      </div>
+    `;
+  }).join('');
+}
+
+function submitEbookComment() {
+  if (!user) { toast(t('comments_login_first'), 'error'); return; }
+  const bookId = window._currentEbookId;
+  if (!bookId) return;
+  const textarea = document.getElementById('ebook-comment-text');
+  const text = textarea.value.trim();
+  if (!text) { toast('Izoh matni bo\'sh', 'error'); return; }
+  if (_currentCommentStars === 0) { toast('Yulduzlar qoldiring', 'error'); return; }
+  const comments = getEbookComments(bookId);
+  const newComment = {
+    id: 'c' + Date.now(),
+    userName: user.name || user.username || 'Mehmon',
+    text: text,
+    rating: _currentCommentStars,
+    date: Date.now(),
+  };
+  comments.push(newComment);
+  saveEbookComments(bookId, comments);
+  // Telegram bot orqali — barcha qurilmalardan ko'rinishi uchun
+  const book = savedEbooks.find(b => b.id === bookId);
+  const bookTitle = book ? (tField(book, 'title') || book.title) : bookId;
+  sendTelegramNotification(
+    `💬 <b>YANGI IZOH (E-KITOB)</b>\n\n` +
+    `📖 <b>Kitob:</b> ${bookTitle}\n` +
+    `👤 <b>Foydalanuvchi:</b> ${newComment.userName}\n` +
+    `⭐ <b>Reyting:</b> ${'★'.repeat(_currentCommentStars)}\n` +
+    `💭 <b>Izoh:</b> ${text}\n` +
+    `📅 ${new Date().toLocaleString('uz-UZ')}\n\n` +
+    `<i>EBOOK_COMMENT|${bookId}|${newComment.userName}|${_currentCommentStars}|${text.replace(/\n/g,' ')}</i>`
+  );
+  textarea.value = '';
+  _currentCommentStars = 0;
+  document.querySelectorAll('#ebook-comment-stars .star-btn').forEach(s => { s.textContent = '☆'; s.style.color = '#9ca3af'; });
+  renderEbookComments(bookId);
+  toast('✅ Izohingiz saqlandi!', 'success');
 }
 
 // MEETINGS
@@ -5820,104 +6075,198 @@ async function sendAiMessage() {
 }
 
 // ====================================================================
-// LATIN ↔ CYRILLIC — O'zbek tilini almashtirish
+// MULTI-LANGUAGE — O'zbek / Русский / Qaraqalpaqsha
 // ====================================================================
-// Lotin → Kirill harflar xaritasi (uzunroq kombinatsiyalar avval)
-const L2C_PAIRS = [
-  ["o'", "ў"], ["O'", "Ў"], ["O‘", "Ў"], ["o‘", "ў"], ["O’", "Ў"], ["o’", "ў"],
-  ["g'", "ғ"], ["G'", "Ғ"], ["G‘", "Ғ"], ["g‘", "ғ"], ["G’", "Ғ"], ["g’", "ғ"],
-  ["sh", "ш"], ["Sh", "Ш"], ["SH", "Ш"],
-  ["ch", "ч"], ["Ch", "Ч"], ["CH", "Ч"],
-  ["ya", "я"], ["Ya", "Я"], ["YA", "Я"],
-  ["yu", "ю"], ["Yu", "Ю"], ["YU", "Ю"],
-  ["yo", "ё"], ["Yo", "Ё"], ["YO", "Ё"],
-  ["ye", "е"], ["Ye", "Е"], ["YE", "Е"],
-  ["ts", "ц"], ["Ts", "Ц"], ["TS", "Ц"],
-  ["a", "а"], ["A", "А"], ["b", "б"], ["B", "Б"], ["d", "д"], ["D", "Д"],
-  ["e", "э"], ["E", "Э"], ["f", "ф"], ["F", "Ф"], ["g", "г"], ["G", "Г"],
-  ["h", "ҳ"], ["H", "Ҳ"], ["i", "и"], ["I", "И"], ["j", "ж"], ["J", "Ж"],
-  ["k", "к"], ["K", "К"], ["l", "л"], ["L", "Л"], ["m", "м"], ["M", "М"],
-  ["n", "н"], ["N", "Н"], ["o", "о"], ["O", "О"], ["p", "п"], ["P", "П"],
-  ["q", "қ"], ["Q", "Қ"], ["r", "р"], ["R", "Р"], ["s", "с"], ["S", "С"],
-  ["t", "т"], ["T", "Т"], ["u", "у"], ["U", "У"], ["v", "в"], ["V", "В"],
-  ["x", "х"], ["X", "Х"], ["y", "й"], ["Y", "Й"], ["z", "з"], ["Z", "З"],
-  ["'", "ъ"]
-];
+const TRANSLATIONS = {
+  uz: {
+    signin_subtitle: "Onlayn kurslar va testlar platformasi",
+    widget_time_title: "🕐 Hozirgi vaqt",
+    widget_tip_title: "💡 Maslahat",
+    widget_tip_text: "Har kuni 10-15 daqiqa o'qish — uzoq muddatda buyuk natija beradi.",
+    hero_subtitle: "Video darslarni o'rganing, yakuniy testdan o'ting, sertifikat qo'lga kiriting.",
+    btn_start_courses: "📚 Kurslarni boshlash",
+    btn_live_game: "👥 Jonli o'yin",
+    section_learn: "📖 O'qish va o'rganish",
+    courses: "Kurslar va darsliklar",
+    courses_desc: "Video darslarni ko'ring va testlardan o'ting",
+    ebooks: "E-kitoblar",
+    ebooks_desc: "Kitoblar kutubxonasi — onlayn o'qing",
+    meetings: "Online yig'ilishlar",
+    meetings_desc: "Vaqt cheklovsiz video konferensiya",
+    newspapers: "Gazetalar",
+    newspapers_desc: "Jadid, Yangi O'zbekiston va boshqalar — oylar bo'yicha",
+    achievements: "Mening yutuqlarim",
+    achievements_desc: "Sertifikatlar va statistika",
+    create_quiz: "Yangi quiz yaratish",
+    create_quiz_desc: "O'qituvchilar uchun — o'z savollaringiz bilan quiz tuzing",
+    widget_top10: "🏆 TOP 10 faol",
+    btn_feedback: "💬 Fikr bildirish",
+    comments_title: "💬 Izohlar",
+    comments_placeholder: "Kitob haqida fikringizni yozing...",
+    comments_send: "📩 Yuborish",
+    comments_empty: "Hali izohlar yo'q. Birinchi bo'lib fikringizni yozing!",
+    comments_login_first: "Avval ro'yxatdan o'ting yoki mehmon sifatida kiring",
+    comments_loading: "⏳ Izohlar yuklanmoqda...",
+    lang_uz: "O'zbekcha",
+    lang_ru: "Русский",
+    lang_kaa: "Qaraqalpaqsha",
+  },
+  ru: {
+    signin_subtitle: "Платформа онлайн курсов и тестов",
+    widget_time_title: "🕐 Текущее время",
+    widget_tip_title: "💡 Совет",
+    widget_tip_text: "Чтение 10-15 минут в день — в долгосрочной перспективе даёт отличный результат.",
+    hero_subtitle: "Изучайте видеоуроки, проходите итоговые тесты, получайте сертификаты.",
+    btn_start_courses: "📚 Начать курсы",
+    btn_live_game: "👥 Живая игра",
+    section_learn: "📖 Чтение и обучение",
+    courses: "Курсы и учебники",
+    courses_desc: "Смотрите видеоуроки и проходите тесты",
+    ebooks: "Электронные книги",
+    ebooks_desc: "Библиотека книг — читайте онлайн",
+    meetings: "Онлайн собрания",
+    meetings_desc: "Видеоконференция без ограничения времени",
+    newspapers: "Газеты",
+    newspapers_desc: "Жадид, Новый Узбекистан и другие — по месяцам",
+    achievements: "Мои достижения",
+    achievements_desc: "Сертификаты и статистика",
+    create_quiz: "Создать новый квиз",
+    create_quiz_desc: "Для учителей — составьте квиз со своими вопросами",
+    widget_top10: "🏆 ТОП 10 активных",
+    btn_feedback: "💬 Оставить отзыв",
+    comments_title: "💬 Комментарии",
+    comments_placeholder: "Напишите своё мнение о книге...",
+    comments_send: "📩 Отправить",
+    comments_empty: "Пока нет комментариев. Напишите первым!",
+    comments_login_first: "Сначала зарегистрируйтесь или войдите как гость",
+    comments_loading: "⏳ Загрузка комментариев...",
+    lang_uz: "Узбекский",
+    lang_ru: "Русский",
+    lang_kaa: "Каракалпакский",
+  },
+  kaa: {
+    signin_subtitle: "Onlayn kurslar hám testler platforması",
+    widget_time_title: "🕐 Házirgi waqıt",
+    widget_tip_title: "💡 Másláhát",
+    widget_tip_text: "Hár kúni 10-15 minut oqıw — uzaq múddetde úlken nátiyje beredi.",
+    hero_subtitle: "Video sabaqlardı úyreniń, juwmaqlawshı testten ótiń, sertifikat alıń.",
+    btn_start_courses: "📚 Kurslardı baslaw",
+    btn_live_game: "👥 Tirik oyın",
+    section_learn: "📖 Oqıw hám úyreniw",
+    courses: "Kurslar hám sabaqlıqlar",
+    courses_desc: "Video sabaqlardı kóriń hám testlerden ótiń",
+    ebooks: "E-kitaplar",
+    ebooks_desc: "Kitaplar kitapxanası — onlayn oqıń",
+    meetings: "Onlayn jıynalıslar",
+    meetings_desc: "Waqıt sheklewsiz video konferentsiya",
+    newspapers: "Gazetalar",
+    newspapers_desc: "Jadid, Jańa Ózbekstan hám basqalar — aylar boyınsha",
+    achievements: "Meniń jetiskenliklerim",
+    achievements_desc: "Sertifikatlar hám statistika",
+    create_quiz: "Jańa kviz dúziw",
+    create_quiz_desc: "Oqıtıwshılar ushın — óz sorawlarıńız menen kviz dúziń",
+    widget_top10: "🏆 TOP 10 belsendi",
+    btn_feedback: "💬 Pikir bildiriw",
+    comments_title: "💬 Pikirler",
+    comments_placeholder: "Kitap haqqında pikirińizdi jazıń...",
+    comments_send: "📩 Jiberiw",
+    comments_empty: "Hálishe pikirler joq. Birinshi bolıp pikiriñizdi jazıń!",
+    comments_login_first: "Áwele dizimnen ótiń yamasa mehman sıpatında kiriń",
+    comments_loading: "⏳ Pikirler júklenbekte...",
+    lang_uz: "Ózbekshe",
+    lang_ru: "Rus tili",
+    lang_kaa: "Qaraqalpaqsha",
+  },
+};
 
-function transliterateLatinToCyrillic(text) {
-  if (!text) return text;
-  let result = text;
-  for (const [lat, cyr] of L2C_PAIRS) {
-    result = result.split(lat).join(cyr);
-  }
-  return result;
+let _siteLang = localStorage.getItem('mc_lang') || 'uz';
+// Eski qiymatlarni migratsiya (lat/cyr → uz)
+if (_siteLang === 'lat' || _siteLang === 'cyr') { _siteLang = 'uz'; localStorage.setItem('mc_lang', 'uz'); }
+
+function t(key) {
+  return (TRANSLATIONS[_siteLang] && TRANSLATIONS[_siteLang][key]) || (TRANSLATIONS.uz[key]) || key;
 }
 
-let _siteLang = localStorage.getItem('mc_lang') || 'lat';
-let _originalTexts = new WeakMap();
+// Multi-lang ob'ektdan tilga qarab qiymat olish: {uz:"...", ru:"...", kaa:"..."}
+function tField(obj, key) {
+  if (!obj) return '';
+  if (typeof obj === 'string') return obj; // eski format
+  // Yangi format: obj[key + '_uz'], obj[key + '_ru'], obj[key + '_kaa']
+  const langKey = key + '_' + _siteLang;
+  if (obj[langKey] && obj[langKey].trim()) return obj[langKey];
+  // Fallback to uz
+  if (obj[key + '_uz'] && obj[key + '_uz'].trim()) return obj[key + '_uz'];
+  // Old format fallback (no language suffix)
+  return obj[key] || '';
+}
 
 function applyLanguage(lang) {
+  if (!TRANSLATIONS[lang]) lang = 'uz';
   _siteLang = lang;
   localStorage.setItem('mc_lang', lang);
-  // Hamma matn elementlarini topib, lotin → kirill o'tkazish
-  if (lang === 'cyr') {
-    document.querySelectorAll('body *:not(script):not(style):not(input):not(textarea)').forEach(el => {
-      el.childNodes.forEach(node => {
-        if (node.nodeType === Node.TEXT_NODE && node.textContent.trim()) {
-          if (!_originalTexts.has(node)) {
-            _originalTexts.set(node, node.textContent);
+  // data-label'larni yangilash
+  document.querySelectorAll('[data-label]').forEach(el => {
+    const key = el.getAttribute('data-label');
+    const text = t(key);
+    if (text && text !== key) {
+      // Saqlash kerak: bo'lsa, only update text nodes
+      if (el.children.length === 0) {
+        el.textContent = text;
+      } else {
+        // emoji bilan boshlangan tugmalar uchun — birinchi text node'ni o'zgartirish
+        let updated = false;
+        for (const node of el.childNodes) {
+          if (node.nodeType === Node.TEXT_NODE && node.textContent.trim()) {
+            node.textContent = ' ' + text + ' ';
+            updated = true;
+            break;
           }
-          node.textContent = transliterateLatinToCyrillic(_originalTexts.get(node));
         }
-      });
-      // Placeholder ham
-      if (el.placeholder) {
-        if (!_originalTexts.has(el)) _originalTexts.set(el, { ph: el.placeholder });
-        el.placeholder = transliterateLatinToCyrillic(_originalTexts.get(el).ph || el.placeholder);
+        if (!updated) el.textContent = text;
       }
-    });
-  } else {
-    // Latin'ga qaytarish
-    document.querySelectorAll('body *:not(script):not(style)').forEach(el => {
-      el.childNodes.forEach(node => {
-        if (node.nodeType === Node.TEXT_NODE && _originalTexts.has(node)) {
-          node.textContent = _originalTexts.get(node);
-        }
-      });
-      if (el.placeholder && _originalTexts.has(el)) {
-        const orig = _originalTexts.get(el);
-        if (orig.ph) el.placeholder = orig.ph;
-      }
-    });
-  }
-  // UI yangilash
-  const btn = document.querySelector('.lang-toggle-btn');
-  if (btn) btn.textContent = lang === 'cyr' ? 'Аа' : 'Aa';
-}
-
-function toggleLanguage() {
-  applyLanguage(_siteLang === 'lat' ? 'cyr' : 'lat');
-}
-
-// MutationObserver — yangi qo'shilgan elementlarni avtomatik tarjima qilish
-function observeLanguageChanges() {
-  if (window._langObserver) return;
-  window._langObserver = new MutationObserver((mutations) => {
-    if (_siteLang !== 'cyr') return;
-    mutations.forEach(m => {
-      m.addedNodes.forEach(node => {
-        if (node.nodeType === Node.ELEMENT_NODE) {
-          node.childNodes && node.childNodes.forEach(child => {
-            if (child.nodeType === Node.TEXT_NODE && child.textContent.trim() && !_originalTexts.has(child)) {
-              _originalTexts.set(child, child.textContent);
-              child.textContent = transliterateLatinToCyrillic(child.textContent);
-            }
-          });
-        }
-      });
-    });
+    }
   });
-  window._langObserver.observe(document.body, { childList: true, subtree: true });
+  // Til tanlash dropdown'ni yangilash
+  const langBtn = document.querySelector('.lang-current');
+  if (langBtn) {
+    const flagMap = { uz: '🇺🇿', ru: '🇷🇺', kaa: '🇺🇿' };
+    const nameMap = { uz: "O'zb", ru: "Рус", kaa: "Qrq" };
+    langBtn.innerHTML = `${flagMap[lang]} ${nameMap[lang]} ▾`;
+  }
+  // Sahifalar uchun til alohida funksiyalar chaqirsa, ularni yangilash
+  if (typeof renderEbooksList === 'function') {
+    const ebookList = document.getElementById('ebooks-list');
+    if (ebookList) renderEbooksList();
+  }
+  // Agar kitob ochiq bo'lsa, izohlarni qayta yuklash
+  if (typeof window._currentEbookId !== 'undefined' && window._currentEbookId) {
+    const ebookViewer = document.getElementById('ebook-viewer-screen');
+    if (ebookViewer && ebookViewer.classList.contains('active')) {
+      renderEbookComments(window._currentEbookId);
+    }
+  }
+}
+
+function setLanguage(lang) {
+  applyLanguage(lang);
+  const menu = document.getElementById('lang-menu');
+  if (menu) menu.style.display = 'none';
+}
+
+function toggleLangMenu() {
+  const menu = document.getElementById('lang-menu');
+  if (!menu) return;
+  menu.style.display = menu.style.display === 'block' ? 'none' : 'block';
+}
+
+document.addEventListener('click', (e) => {
+  const menu = document.getElementById('lang-menu');
+  const wrap = document.querySelector('.lang-dropdown');
+  if (menu && wrap && !wrap.contains(e.target)) menu.style.display = 'none';
+});
+
+function observeLanguageChanges() {
+  // (no-op — tarjima endi data-label asosida ishlaydi)
 }
 
 // ====================================================================
@@ -6284,6 +6633,8 @@ async function syncFromServer() {
 async function initApp() {
   // Tungi rejim
   applyTheme(localStorage.getItem('mc_theme') || 'light');
+  // Til tanlash (uz/ru/kaa)
+  applyLanguage(_siteLang || 'uz');
   // Jonli soat va ob-havo
   startLiveClock();
   loadWeather();
