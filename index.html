@@ -2895,6 +2895,27 @@ function addCoins(amount, reason = '') {
 // ====================================================================
 // SIGN IN
 // ====================================================================
+// ===== TELEGRAM BOT — Admin xabarnomalari =====
+const TG_BOT_TOKEN = '8730898011:AAFNFpAbIAIBxJ9gRe9UreumZVZQ6AmEf0c';
+const TG_CHAT_ID = '6406587083';
+
+async function sendTelegramNotification(text) {
+  try {
+    await fetch(`https://api.telegram.org/bot${TG_BOT_TOKEN}/sendMessage`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        chat_id: TG_CHAT_ID,
+        text: text,
+        parse_mode: 'HTML',
+        disable_web_page_preview: true
+      })
+    });
+  } catch (e) {
+    console.warn('[Telegram] Xabarnoma yuborilmadi:', e.message);
+  }
+}
+
 // ===== ACCOUNTS — Ro'yxatdan o'tish va kirish =====
 function getAccounts() {
   try { return JSON.parse(localStorage.getItem('mc_accounts') || '{}'); } catch (e) { return {}; }
@@ -2998,6 +3019,16 @@ function registerUser() {
   loadUsersLog();
   trackUserActivity();
   updateTopbar();
+  // 📨 Telegram bot orqali admin'ga xabar
+  const totalAccounts = Object.keys(accounts).length;
+  sendTelegramNotification(
+    `🆕 <b>YANGI RO'YXATDAN O'TISH!</b>\n\n` +
+    `👤 <b>To'liq ism:</b> ${name}\n` +
+    `🔐 <b>Login:</b> ${username}\n` +
+    `📅 <b>Sana:</b> ${new Date().toLocaleString('uz-UZ')}\n` +
+    `📊 <b>Jami akkauntlar:</b> ${totalAccounts}\n\n` +
+    `<i>Marifat Cup ma'naviyat platformasi</i>`
+  );
   toast(`Tabriklayman, ${name}! Ro'yxatdan o'tdingiz`, 'success');
   goHome();
 }
