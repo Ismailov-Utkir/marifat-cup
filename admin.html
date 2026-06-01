@@ -1015,16 +1015,22 @@ D) Noto'g'ri</pre>
     <div class="view" id="view-tg_users">
       <div class="view-header">
         <h1>📨 Ro'yxatdan o'tgan foydalanuvchilar</h1>
-        <button class="btn btn-primary btn-sm" onclick="loadTgUsers()">🔄 Yangilash</button>
+        <div style="display:flex; gap:8px;">
+          <button class="btn btn-secondary btn-sm" onclick="exportRegisteredUsers()">📥 Excel'ga eksport</button>
+          <button class="btn btn-primary btn-sm" onclick="loadTgUsers()">🔄 Yangilash</button>
+        </div>
       </div>
-      <p class="sub">Telegram bot orqali kelgan ro'yxatdan o'tish xabarlari. Real vaqtda dunyoning istalgan joyidan kirgan foydalanuvchilar.</p>
-      <div style="background: linear-gradient(135deg, #f0fdfa, #ccfbf1); border: 2px solid var(--primary); border-radius: 12px; padding: 14px; margin-bottom: 16px;">
-        <p style="font-size: 13px; line-height: 1.6;">
-          📱 <b>Telegram bot:</b> <code>@marifat_cup_admin_bot</code><br>
-          🔔 Yangi ro'yxatdan o'tilganda <b>Telegram'ga avtomatik xabar</b> keladi.
-          Bu yerda barcha qabul qilingan ma'lumotlarni ko'rasiz.
-        </p>
+      <p class="sub">🔍 F.I.SH, login, tashkilot, lavozim yoki boshqa ma'lumotlar bo'yicha qidirish mumkin</p>
+
+      <div style="display:flex; gap:12px; align-items:center; margin-bottom: 16px; flex-wrap:wrap;">
+        <div style="flex:1; min-width:280px; position:relative;">
+          <input type="text" id="tg-search" placeholder="🔍 F.I.SH, login, tashkilot bo'yicha qidirish..."
+            oninput="loadTgUsers()"
+            style="width:100%; padding:12px 16px; border:2px solid #e5e7eb; border-radius:12px; font-family:inherit; font-size:14px;">
+        </div>
+        <div id="tg-stats" style="font-size:13px; color:var(--ink-2); font-weight:700;"></div>
       </div>
+
       <div id="tg-users-list" class="item-list"></div>
     </div>
 
@@ -3735,7 +3741,13 @@ function parseTgMessage(msg) {
   };
   if (text.includes("YANGI RO'YXATDAN O'TISH")) {
     return { ...baseInfo, type: 'registration',
-      name: getField("To'liq ism") || 'Noma\'lum',
+      name: getField('F\\.I\\.SH') || getField("To'liq ism") || 'Noma\'lum',
+      organization: getField('Tashkilot') || '',
+      branch: getField("Bo'linma/Hudud") || getField("Bo'linma") || '',
+      position: getField('Lavozim') || '',
+      gender: getField('Jinsi') || '',
+      age: getField('Yoshi') || '',
+      marital: getField('Oilaviy holati') || '',
       login: getField('Login') || '-',
       date: getField('Sana') || new Date(baseInfo.timestamp).toLocaleString('uz-UZ')
     };
@@ -3760,12 +3772,36 @@ function parseTgMessage(msg) {
   return null;
 }
 
+// Mahalliy akkauntlarni (admin qurilmasidagilarni) yuklash
+function getLocalAccounts() {
+  try {
+    const accounts = JSON.parse(localStorage.getItem('mc_accounts') || '{}');
+    return Object.values(accounts).map(a => ({
+      id: 'local_' + a.username,
+      type: 'registration',
+      source: 'local', // shu qurilmada ro'yxatdan o'tgan
+      name: a.name || '',
+      login: a.username || '',
+      organization: a.organization || '',
+      branch: a.branch || '',
+      position: a.position || '',
+      gender: a.gender || '',
+      age: a.age || '',
+      marital: a.marital || '',
+      timestamp: a.createdAt || 0,
+      date: a.createdAt ? new Date(a.createdAt).toLocaleString('uz-UZ') : '-'
+    }));
+  } catch (e) { return []; }
+}
+
 async function loadTgUsers() {
   const list = document.getElementById('tg-users-list');
-  list.innerHTML = '<p style="color: var(--ink-2); text-align: center; padding: 20px;">⏳ Telegram\'dan ma\'lumot olinmoqda...</p>';
+  const statsEl = document.getElementById('tg-stats');
+  list.innerHTML = '<p style="color: var(--ink-2); text-align: center; padding: 20px;">⏳ Yuklanmoqda...</p>';
   let cached = [];
   try { cached = JSON.parse(localStorage.getItem('mc_tg_registrations') || '[]'); } catch (e) {}
   const logChatId = getTgLogChatId();
+  // Telegram'dan yangilarni olish
   try {
     const resp = await fetch(`https://api.telegram.org/bot${TG_BOT_TOKEN}/getUpdates?limit=100`);
     if (resp.ok) {
@@ -3775,7 +3811,6 @@ async function loadTgUsers() {
         data.result.forEach(upd => {
           const msg = upd.channel_post || upd.message;
           if (!msg) return;
-          // Faqat sozlangan kanaldan xabarlarni filtrlaymiz (agar sozlangan bo'lsa)
           if (logChatId) {
             const msgChatId = msg.chat?.id?.toString() || '';
             const msgChatUsername = msg.chat?.username ? '@' + msg.chat.username : '';
@@ -3784,6 +3819,7 @@ async function loadTgUsers() {
           }
           const parsed = parseTgMessage(msg);
           if (parsed && !seenIds.has(parsed.id)) {
+            parsed.source = 'telegram';
             cached.push(parsed);
             seenIds.add(parsed.id);
           }
@@ -3794,8 +3830,58 @@ async function loadTgUsers() {
   } catch (e) {
     console.warn('Telegram fetch error:', e.message);
   }
-  if (cached.length === 0) {
-    list.innerHTML = `<div class="empty-msg"><div class="ico">📨</div>Hozircha hech kim kirmagan.<br><br>
+
+  // Mahalliy akkauntlarni qo'shamiz (TG dan dublikatlarni olib tashlaymiz login bo'yicha)
+  const localUsers = getLocalAccounts();
+  const tgLogins = new Set(cached.filter(c => c.type === 'registration').map(c => (c.login || '').toLowerCase()));
+  const onlyLocalUsers = localUsers.filter(u => !tgLogins.has((u.login || '').toLowerCase()));
+  const allUsers = [...cached, ...onlyLocalUsers];
+
+  // Statistika
+  const totalReg = allUsers.filter(u => u.type === 'registration').length;
+  const totalGuest = allUsers.filter(u => u.type === 'guest').length;
+  const totalQuiz = allUsers.filter(u => u.type === 'quiz').length;
+  if (statsEl) statsEl.innerHTML = `📝 ${totalReg} ro'yxatdan o'tgan · 👤 ${totalGuest} mehmon · 🎯 ${totalQuiz} quiz`;
+
+  // Qidiruv
+  const searchInput = document.getElementById('tg-search');
+  const q = searchInput ? searchInput.value.trim().toLowerCase() : '';
+  let displayUsers = allUsers;
+  if (q) {
+    displayUsers = allUsers.filter(u => {
+      const blob = [u.name, u.login, u.organization, u.branch, u.position, u.creator, u.title, u.region, u.district]
+        .filter(Boolean).join(' ').toLowerCase();
+      return blob.includes(q);
+    });
+  }
+  // Filtr
+  if (_tgFilter !== 'all') displayUsers = displayUsers.filter(u => u.type === _tgFilter);
+  const sorted = [...displayUsers].sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
+
+  const TYPE_INFO = {
+    registration: { icon: '📝', color: 'linear-gradient(135deg, #1e40af, #3b82f6)', label: "Ro'yxatdan o'tgan" },
+    guest: { icon: '👤', color: 'linear-gradient(135deg, #f59e0b, #d97706)', label: 'Mehmon' },
+    quiz: { icon: '🎯', color: 'linear-gradient(135deg, #7c3aed, #ec4899)', label: 'Quiz yaratdi' }
+  };
+
+  // Filter tugmalar
+  const filterButtons = `
+    <div style="display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap;">
+      <button class="btn ${_tgFilter==='all'?'btn-primary':'btn-secondary'} btn-sm" onclick="_tgFilter='all'; loadTgUsers()">
+        Hammasi (${allUsers.length})
+      </button>
+      <button class="btn ${_tgFilter==='registration'?'btn-primary':'btn-secondary'} btn-sm" onclick="_tgFilter='registration'; loadTgUsers()">
+        📝 Ro'yxat (${totalReg})
+      </button>
+      <button class="btn ${_tgFilter==='quiz'?'btn-primary':'btn-secondary'} btn-sm" onclick="_tgFilter='quiz'; loadTgUsers()">
+        🎯 Quiz (${totalQuiz})
+      </button>
+    </div>
+  `;
+
+  // Agar hech kim yo'q bo'lsa
+  if (allUsers.length === 0) {
+    list.innerHTML = filterButtons + `<div class="empty-msg"><div class="ico">📨</div>Hozircha hech kim ro'yxatdan o'tmagan.<br><br>
       ${!logChatId ? `
         <div style="background:#fef3c7; border:2px solid #fbbf24; padding:14px; border-radius:10px; margin: 14px auto; max-width:500px; text-align:left;">
           <p style="color:#92400e; font-weight:700; margin-bottom:6px;">⚠️ Telegram kanal sozlanmagan!</p>
@@ -3806,59 +3892,83 @@ async function loadTgUsers() {
           </p>
         </div>
       ` : ''}
-      <p style="font-size: 13px; color: var(--ink-2); margin-top: 10px;">
-        Foydalanuvchilar saytga kirgan zahoti shu yerda ko'rinadi.
-      </p></div>`;
+    </div>`;
     return;
   }
-  // Filtr bo'yicha tanlash
-  const filtered = _tgFilter === 'all' ? cached : cached.filter(c => c.type === _tgFilter);
-  const sorted = [...filtered].sort((a, b) => (b.timestamp || 0) - (a.timestamp || 0));
-  // Statistika
-  const stats = {
-    registration: cached.filter(c => c.type === 'registration').length,
-    guest: cached.filter(c => c.type === 'guest').length,
-    quiz: cached.filter(c => c.type === 'quiz').length
-  };
-  const TYPE_INFO = {
-    registration: { icon: '📝', color: 'linear-gradient(135deg, #1e40af, #3b82f6)', label: "Ro'yxatdan o'tgan" },
-    guest: { icon: '👤', color: 'linear-gradient(135deg, #f59e0b, #d97706)', label: 'Mehmon' },
-    quiz: { icon: '🎯', color: 'linear-gradient(135deg, #7c3aed, #ec4899)', label: 'Quiz yaratdi' }
-  };
-  list.innerHTML = `
-    <div style="display: flex; gap: 10px; margin-bottom: 16px; flex-wrap: wrap;">
-      <button class="btn ${_tgFilter==='all'?'btn-primary':'btn-secondary'} btn-sm" onclick="_tgFilter='all'; loadTgUsers()">
-        Hammasi (${cached.length})
-      </button>
-      <button class="btn ${_tgFilter==='registration'?'btn-primary':'btn-secondary'} btn-sm" onclick="_tgFilter='registration'; loadTgUsers()">
-        📝 Ro'yxatdan o'tgan (${stats.registration})
-      </button>
-      <button class="btn ${_tgFilter==='guest'?'btn-primary':'btn-secondary'} btn-sm" onclick="_tgFilter='guest'; loadTgUsers()">
-        👤 Mehmon (${stats.guest})
-      </button>
-      <button class="btn ${_tgFilter==='quiz'?'btn-primary':'btn-secondary'} btn-sm" onclick="_tgFilter='quiz'; loadTgUsers()">
-        🎯 Quiz yaratuvchi (${stats.quiz})
-      </button>
-    </div>
-    ${sorted.length === 0 ? '<p style="color:var(--ink-2); text-align:center; padding:20px;">Bu kategoriya bo\'yicha yozuvlar yo\'q</p>' :
-    sorted.map((u) => {
-      const info = TYPE_INFO[u.type] || TYPE_INFO.registration;
-      let detailLine = '';
-      if (u.type === 'registration') detailLine = `🔐 Login: <b>${esc(u.login)}</b> · 📅 ${esc(u.date)}`;
-      else if (u.type === 'guest') detailLine = `${esc(u.device)} · 📅 ${esc(u.date)}`;
-      else if (u.type === 'quiz') detailLine = `📍 <b>${esc(u.region)}</b> · 🏘 ${esc(u.district)} · ❓ ${esc(u.questions)} savol · 📅 ${esc(u.date)}`;
-      const titleLine = u.type === 'quiz' ? `${esc(u.title)} <span style="font-size:12px; font-weight:600; color:var(--ink-2);">— ${esc(u.creator)}</span>` : esc(u.name);
+
+  // Qidiruv natijasi bo'sh bo'lsa
+  if (sorted.length === 0) {
+    list.innerHTML = filterButtons + `<div class="empty-msg"><div class="ico">🔍</div>Hech narsa topilmadi.<br><small style="color:var(--ink-2);">Boshqa kalit so'z bilan qidiring</small></div>`;
+    return;
+  }
+
+  list.innerHTML = filterButtons + sorted.map((u) => {
+    const info = TYPE_INFO[u.type] || TYPE_INFO.registration;
+    const sourceBadge = u.source === 'local'
+      ? `<span style="background:#10b981; color:white; padding:1px 7px; border-radius:8px; font-size:10px; margin-left:4px; vertical-align:middle;">💾 Mahalliy</span>`
+      : (u.source === 'telegram' ? `<span style="background:#0088cc; color:white; padding:1px 7px; border-radius:8px; font-size:10px; margin-left:4px; vertical-align:middle;">📨 Telegram</span>` : '');
+    if (u.type === 'registration') {
+      // Batafsil registratsiya kartasi
+      const details = [];
+      if (u.organization) details.push(`🏢 ${esc(u.organization)}`);
+      if (u.branch) details.push(`📍 ${esc(u.branch)}`);
+      if (u.position) details.push(`💼 ${esc(u.position)}`);
+      if (u.gender) details.push(`⚧ ${esc(u.gender)}`);
+      if (u.age) details.push(`🎂 ${esc(u.age)} yosh`);
+      if (u.marital) details.push(`💍 ${esc(u.marital)}`);
       return `
-        <div class="item-row">
+        <div class="item-row" style="align-items: flex-start; padding: 14px;">
           <div class="ico" style="background: ${info.color}; color: white; font-size: 22px;">${info.icon}</div>
-          <div class="info">
-            <h3>${titleLine}</h3>
-            <p>${detailLine}</p>
+          <div class="info" style="flex:1;">
+            <h3>${esc(u.name)} ${sourceBadge}</h3>
+            <p style="margin-bottom:6px;">🔐 <b>Login:</b> ${esc(u.login)} · 📅 ${esc(u.date)}</p>
+            ${details.length ? `<div style="background:#f9fafb; padding:8px 12px; border-radius:8px; font-size:12px; color:var(--ink-2); line-height:1.8;">${details.join(' · ')}</div>` : ''}
           </div>
         </div>
       `;
-    }).join('')}
-  `;
+    }
+    // boshqa turlar uchun
+    let detailLine = '';
+    if (u.type === 'guest') detailLine = `${esc(u.device || '')} · 📅 ${esc(u.date)}`;
+    else if (u.type === 'quiz') detailLine = `📍 <b>${esc(u.region)}</b> · 🏘 ${esc(u.district)} · ❓ ${esc(u.questions)} savol · 📅 ${esc(u.date)}`;
+    const titleLine = u.type === 'quiz' ? `${esc(u.title)} <span style="font-size:12px; font-weight:600; color:var(--ink-2);">— ${esc(u.creator)}</span>` : esc(u.name);
+    return `
+      <div class="item-row">
+        <div class="ico" style="background: ${info.color}; color: white; font-size: 22px;">${info.icon}</div>
+        <div class="info">
+          <h3>${titleLine} ${sourceBadge}</h3>
+          <p>${detailLine}</p>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+// CSV / Excel'ga eksport (Excel ham CSV'ni qabul qiladi)
+function exportRegisteredUsers() {
+  let cached = [];
+  try { cached = JSON.parse(localStorage.getItem('mc_tg_registrations') || '[]'); } catch (e) {}
+  const localUsers = getLocalAccounts();
+  const tgLogins = new Set(cached.filter(c => c.type === 'registration').map(c => (c.login || '').toLowerCase()));
+  const allUsers = [...cached, ...localUsers.filter(u => !tgLogins.has((u.login || '').toLowerCase()))]
+    .filter(u => u.type === 'registration');
+  if (allUsers.length === 0) { toast("Eksport qilish uchun ma'lumot yo'q", 'error'); return; }
+  // CSV (sep=; — Excel uchun)
+  const headers = ['F.I.SH', 'Login', 'Tashkilot', 'Bo\'linma/Hudud', 'Lavozim', 'Jinsi', 'Yoshi', 'Oilaviy holati', 'Sana', 'Manba'];
+  const escCsv = (v) => '"' + String(v || '').replace(/"/g, '""') + '"';
+  const rows = allUsers.map(u => [
+    u.name, u.login, u.organization, u.branch, u.position, u.gender, u.age, u.marital, u.date,
+    u.source === 'local' ? 'Mahalliy' : 'Telegram'
+  ].map(escCsv).join(';'));
+  const csvContent = '﻿' + headers.map(escCsv).join(';') + '\n' + rows.join('\n');
+  const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `marifat-cup-foydalanuvchilar-${new Date().toISOString().slice(0,10)}.csv`;
+  a.click();
+  URL.revokeObjectURL(url);
+  toast('Eksport qilindi! Excel\'da oching.', 'success');
 }
 
 // Bo'lim nomlari (labels)
