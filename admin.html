@@ -2038,24 +2038,29 @@ function addLessonBlock(initial = null) {
     <div class="field"><label>Qisqa izoh</label>
       <input class="input lesson-context" value="${esc(initial?.context || '')}" placeholder="10 daqiqali video"></div>
 
-    <div class="field">
-      <label>📺 Video manzili (URL)</label>
-      <input class="input lesson-video" value="${esc(initial?.videoUrl || '')}" placeholder="YouTube / Telegram / Google Drive havolasi yoki .mp4">
-      <p style="font-size:11px; color:var(--ink-2); margin-top:6px; line-height:1.5;">
-        ✓ <b>YouTube:</b> https://youtube.com/watch?v=XXX<br>
-        ✓ <b>Telegram</b> (ommaviy kanal): https://t.me/kanal_nomi/123<br>
-        ✓ <b>Google Drive:</b> https://drive.google.com/file/d/FILE_ID/view
+    <div class="field" style="background:#dcfce7; padding:14px; border-radius:10px; border:2px solid #22c55e;">
+      <label style="color:#15803d; font-weight:800;">🎬 Video faylni to'g'ridan-to'g'ri yuklash (TAVSIYA ETILADI)</label>
+      <input type="file" class="lesson-video-file" accept="video/*,.mp4,.webm,.mov,.mkv" onchange="handleLessonVideoUpload(event, this)" style="padding:8px; width:100%; background:white; border-radius:6px;">
+      <p class="lesson-video-status" style="font-size:13px; color:var(--ink-2); margin-top:8px; line-height:1.5;">${existingStatus}</p>
+      <p style="font-size:11px; color:#15803d; margin-top:8px; line-height:1.5;">
+        ✅ <b>Eng yaxshi variant:</b> Fayl GitHub'ga yuklanadi va sayt ichida HTML5 pleer'da ochiladi (Telegram'ga o'tmasdan, YouTube'siz).<br>
+        ✅ <b>Maksimal 95 MB</b> (GitHub cheklovi). Katta video bo'lsa, sifatini pasaytiring.<br>
+        ✅ <b>Hammaga ko'rinadi</b> — boshqa kompyuter va telefondan ham.
       </p>
     </div>
 
-    <div class="field" style="background:#fef3c7; padding:12px; border-radius:10px; border:2px solid #fbbf24;">
-      <label>📁 Yoki video faylni yuklash (cheklov yo'q)</label>
-      <input type="file" class="lesson-video-file" accept="video/*" onchange="handleLessonVideoUpload(event, this)" style="padding:8px; width:100%;">
-      <p class="lesson-video-status" style="font-size:12px; color:var(--ink-2); margin-top:6px;">${existingStatus}</p>
-      <p style="font-size:11px; color:#92400e; margin-top:6px;">
-        ⚠️ Yuklangan fayllar faqat shu qurilmada ko'rinadi. Hammaga ko'rinishi uchun YouTube/Telegram URL ishlating.
-      </p>
-    </div>
+    <details style="margin-top:10px;">
+      <summary style="cursor:pointer; font-size:13px; color:var(--ink-2); padding:8px;">🔗 Yoki tashqi video URL (YouTube / Telegram / Google Drive)</summary>
+      <div class="field" style="margin-top:8px;">
+        <input class="input lesson-video" value="${esc(initial?.videoUrl || '')}" placeholder="YouTube / Telegram / Google Drive havolasi yoki .mp4 URL">
+        <p style="font-size:11px; color:var(--ink-2); margin-top:6px; line-height:1.5;">
+          ✓ <b>YouTube:</b> https://youtube.com/watch?v=XXX<br>
+          ✓ <b>Telegram</b> (ommaviy kanal): https://t.me/kanal_nomi/123<br>
+          ✓ <b>Google Drive:</b> https://drive.google.com/file/d/FILE_ID/view<br>
+          <b>Eslatma:</b> Yuqorida fayl yuklasangiz, bu maydon avtomatik to'ldiriladi.
+        </p>
+      </div>
+    </details>
 
     <div class="field" style="background:#f0fdfa; padding:14px; border-radius:10px; border:2px solid #5eead4;">
       <label>📊 Mavzu uchun taqdimot (PDF / PPT / PPTX) — ixtiyoriy</label>
@@ -2173,23 +2178,57 @@ async function handleLessonVideoUpload(e, fileInput) {
   const file = e.target.files[0];
   if (!file) return;
   const sizeMB = file.size / 1024 / 1024;
+  const block = fileInput.closest('.lesson-block');
+  const lessonId = block.dataset.lessonId;
+  const statusEl = block.querySelector('.lesson-video-status');
+  const urlInput = block.querySelector('.lesson-video');
+  const hasToken = !!localStorage.getItem(STORAGE.GH_TOKEN);
+
+  // GitHub'ga yuklash (asosiy variant — barcha qurilmalarda ko'rinadi)
+  if (hasToken && sizeMB < 95) {
+    statusEl.innerHTML = `🔄 GitHub'ga yuklanmoqda (${sizeMB.toFixed(1)} MB)... <br><small>Iltimos kuting, video katta bo'lsa biroz vaqt oladi</small>`;
+    statusEl.style.color = 'var(--ink-2)';
+    try {
+      const ext = getFileExt(file.name) || '.mp4';
+      const githubPath = `files/videos/${lessonId}_${safeFileName(file.name)}`;
+      const url = await ghUploadBinaryFile(file, githubPath);
+      // URL maydoniga yozish — sayt bu URL'ni o'qib HTML5 video pleer'da ochadi
+      urlInput.value = url;
+      // Eski IDB blob bo'lsa, tozalash
+      const oldKey = block.dataset.videoBlobKey;
+      if (oldKey) {
+        try { await IDB.del(oldKey); } catch (e) {}
+      }
+      block.dataset.videoBlobKey = '';
+      statusEl.innerHTML = `✅ <b>GitHub'ga yuklandi!</b> Barcha foydalanuvchilar ko'radi.<br><small>${file.name} (${sizeMB.toFixed(1)} MB)</small><br><a href="${url}" target="_blank" style="font-size:11px; color:#1e40af;">🔗 ${url}</a>`;
+      statusEl.style.color = 'var(--success)';
+      return;
+    } catch (err) {
+      statusEl.innerHTML = `⚠️ GitHub'ga yuklanmadi: ${err.message}<br>Mahalliy saqlanmoqda...`;
+      statusEl.style.color = 'var(--danger)';
+      // GitHub xato bo'lsa, IndexedDB'ga (faqat shu qurilmada)
+    }
+  } else if (!hasToken) {
+    statusEl.innerHTML = `⚠️ <b>GitHub token sozlanmagan!</b> Video faqat shu qurilmada ko'rinadi.<br>Boshqalar ko'rishi uchun sozlamalardan GitHub token kiriting.`;
+    statusEl.style.color = '#92400e';
+  } else if (sizeMB >= 95) {
+    statusEl.innerHTML = `⚠️ <b>Fayl 95 MB dan katta (${sizeMB.toFixed(1)} MB).</b><br>GitHub bunday katta faylni qabul qilmaydi. Faqat shu qurilmada saqlanadi.<br><small>Maslahat: Video sifatini pasaytirib, hajmini kichraytiring.</small>`;
+    statusEl.style.color = '#92400e';
+  }
+
+  // Fallback — IndexedDB (faqat shu qurilmada)
   if (sizeMB > 1000) {
     if (!confirm(`Fayl juda katta (${sizeMB.toFixed(0)} MB). Brauzer sekinlashishi mumkin. Davom etamizmi?`)) {
       e.target.value = '';
       return;
     }
   }
-  const block = fileInput.closest('.lesson-block');
-  const lessonId = block.dataset.lessonId;
   const key = 'lvid_' + lessonId;
-  const statusEl = block.querySelector('.lesson-video-status');
-  statusEl.textContent = '🔄 Saqlanmoqda...';
-  statusEl.style.color = 'var(--ink-2)';
   try {
     await IDB.put(key, file);
     block.dataset.videoBlobKey = key;
-    statusEl.textContent = `✓ Saqlandi: ${file.name} (${sizeMB.toFixed(1)} MB)`;
-    statusEl.style.color = 'var(--success)';
+    const prev = statusEl.innerHTML;
+    statusEl.innerHTML = prev + `<br>📁 Mahalliy saqlandi: ${file.name} (${sizeMB.toFixed(1)} MB)`;
   } catch (err) {
     statusEl.textContent = '❌ Xato: ' + err.message;
     statusEl.style.color = 'var(--danger)';
