@@ -2992,22 +2992,39 @@ function addCoins(amount, reason = '') {
 // ====================================================================
 // ===== TELEGRAM BOT — Admin xabarnomalari =====
 const TG_BOT_TOKEN = '8730898011:AAFNFpAbIAIBxJ9gRe9UreumZVZQ6AmEf0c';
-const TG_CHAT_ID = '6406587083';
+const TG_CHAT_ID = '6406587083'; // shaxsiy chat (eski)
+// Kanal ID — admin panelda foydalanuvchilarni ko'rsatish uchun (sinxron sozlamalardan keladi)
+// Default: marifat_cup_loglar — agar boshqa kanal ishlatmoqchi bo'lsangiz, admin sozlamalardan o'zgartiring
+const TG_LOG_CHANNEL_DEFAULT = '@marifat_cup_loglar';
+
+function getTgLogChannel() {
+  // 1-navbat: localStorage (admin sozlamalardan GitHub orqali sinxronlangan)
+  const fromLocal = localStorage.getItem('mc_tg_log_chat_id');
+  if (fromLocal) return fromLocal;
+  return TG_LOG_CHANNEL_DEFAULT;
+}
 
 async function sendTelegramNotification(text) {
-  try {
-    await fetch(`https://api.telegram.org/bot${TG_BOT_TOKEN}/sendMessage`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        chat_id: TG_CHAT_ID,
-        text: text,
-        parse_mode: 'HTML',
-        disable_web_page_preview: true
-      })
-    });
-  } catch (e) {
-    console.warn('[Telegram] Xabarnoma yuborilmadi:', e.message);
+  const logChannel = getTgLogChannel();
+  const targets = [TG_CHAT_ID]; // shaxsiy chat — har doim
+  if (logChannel && logChannel !== TG_CHAT_ID) {
+    targets.push(logChannel); // qo'shimcha — kanal (admin panel uchun)
+  }
+  for (const target of targets) {
+    try {
+      await fetch(`https://api.telegram.org/bot${TG_BOT_TOKEN}/sendMessage`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          chat_id: target,
+          text: text,
+          parse_mode: 'HTML',
+          disable_web_page_preview: true
+        })
+      });
+    } catch (e) {
+      console.warn('[Telegram] Xabarnoma yuborilmadi (' + target + '):', e.message);
+    }
   }
 }
 
@@ -7104,6 +7121,9 @@ async function syncFromServer() {
     }
     if (Array.isArray(data.tournaments)) {
       localStorage.setItem('mc_tournaments', JSON.stringify(data.tournaments));
+    }
+    if (data.tgLogChatId && typeof data.tgLogChatId === 'string') {
+      localStorage.setItem('mc_tg_log_chat_id', data.tgLogChatId);
     }
     if (data.labels && typeof data.labels === 'object') {
       localStorage.setItem('mc_labels', JSON.stringify(data.labels));

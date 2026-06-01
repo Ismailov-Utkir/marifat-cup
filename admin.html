@@ -1003,6 +1003,54 @@ D) Noto'g'ri</pre>
         </div>
       </div>
 
+      <div class="settings-block" style="border-color: #fbbf24; background: #fffbeb;">
+        <h3>📨 Telegram kanal ID — admin paneliga foydalanuvchilarni ko'rsatish uchun</h3>
+        <p>
+          Foydalanuvchilar boshqa kompyuterdan kirsa, admin panelda ko'rinishi uchun
+          <b>Telegram kanal</b> orqali sinxronlash ishlatiladi.
+        </p>
+        <p id="tg-channel-status" style="font-weight: 700; margin-bottom: 12px;">⚠️ Kanal sozlanmagan.</p>
+
+        <details style="margin-bottom: 14px;" open>
+          <summary style="cursor: pointer; font-weight: 700; color: #92400e; font-size:15px;">📖 3 ta sodda qadamda sozlash:</summary>
+          <ol style="margin-top: 12px; padding-left: 22px; font-size: 14px; line-height: 1.9; color: #78350f;">
+            <li>
+              <b>Telegram'da yangi kanal yarating:</b><br>
+              📱 Telefonda: yuqori o'ng burchakdagi ✏️ (qalam) → <b>"New Channel"</b><br>
+              💻 Komp'da: chap menyu → <b>"New Channel"</b><br>
+              ➤ Nomi: <code>Ma'rifat Cup Loglar</code> (yoki istalgan)<br>
+              ➤ Turi: <b>Public</b> (ommaviy) tanlang — bu MUHIM!<br>
+              ➤ Manzil (username): <code>marifat_cup_loglar</code> (yoki @ bilan boshlanmagan istalgan ism)
+            </li>
+            <li>
+              <b>Botni admin qiling:</b><br>
+              ➤ Kanal sozlamalari → <b>Administrators</b> → <b>Add Administrator</b><br>
+              ➤ Qidiruvga yozing: <code>@</code> bilan boshlab botingiz nomini<br>
+              ➤ Yoki <a href="https://t.me/getidsbot" target="_blank" style="color:#1e40af;">@getidsbot</a> orqali bot username'ini topish mumkin<br>
+              ➤ Tanlang → "Post Messages" ruxsatini bering → ✓ Saqlash
+            </li>
+            <li>
+              <b>Kanal username'ini quyiga yozing:</b><br>
+              ➤ <code>@marifat_cup_loglar</code> ko'rinishida (yuqorida belgilagan username) yoki<br>
+              ➤ <code>-100xxxxxxxxxx</code> raqamli ID (agar yopiq kanal)
+            </li>
+          </ol>
+        </details>
+
+        <div class="field">
+          <label>Telegram kanal username yoki ID</label>
+          <input class="input" id="tg-channel-input" placeholder="@marifat_cup_loglar yoki -1001234567890">
+        </div>
+        <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+          <button class="btn btn-primary" onclick="saveTgChannel()">💾 Saqlash</button>
+          <button class="btn btn-accent" onclick="testTgChannel()">🧪 Tekshirish (test xabar yuborish)</button>
+          <button class="btn btn-secondary btn-sm" onclick="removeTgChannel()">🗑️ O'chirish</button>
+        </div>
+        <p style="font-size: 12px; color: #92400e; margin-top: 10px;">
+          ✨ <b>Saqlangach:</b> avtomatik ravishda saytdagi sayt.html ham yangilanadi va barcha yangi ro'yxatdan o'tganlar admin paneliga keladi.
+        </p>
+      </div>
+
       <div class="settings-block">
         <h3>🔑 Parolni o'zgartirish</h3>
         <p>Yangi parol o'rnating. Eski parolni bilishingiz kerak.</p>
@@ -1344,7 +1392,9 @@ async function syncToGitHub(silent) {
     exportedAt: new Date().toISOString(),
     source: 'marifat-cup-admin-auto',
     courses, quizzes, slides,
-    announcements: anns, ebooks, meetings, newspapers, tournaments, labels: (function(){ try { return JSON.parse(localStorage.getItem('mc_labels')||'{}'); } catch(e){ return {}; } })()
+    announcements: anns, ebooks, meetings, newspapers, tournaments,
+    tgLogChatId: localStorage.getItem('mc_tg_log_chat_id') || '',
+    labels: (function(){ try { return JSON.parse(localStorage.getItem('mc_labels')||'{}'); } catch(e){ return {}; } })()
   };
   const json = JSON.stringify(payload, null, 2);
   const contentBase64 = btoa(unescape(encodeURIComponent(json)));
@@ -1439,6 +1489,22 @@ function updateGhTokenStatus() {
     el.style.color = 'var(--success)';
   } else {
     el.textContent = "⚠️ Token sozlanmagan. Avtomatik sinxron ishlamaydi.";
+    el.style.color = 'var(--danger)';
+  }
+}
+
+function updateTgChannelStatus() {
+  const el = document.getElementById('tg-channel-status');
+  if (!el) return;
+  const chatId = localStorage.getItem('mc_tg_log_chat_id');
+  if (chatId) {
+    el.textContent = `✅ Kanal saqlangan: ${chatId}`;
+    el.style.color = 'var(--success)';
+    // Input maydoniga ham ko'rsatish (placeholder)
+    const inp = document.getElementById('tg-channel-input');
+    if (inp && !inp.value) inp.value = chatId;
+  } else {
+    el.textContent = "⚠️ Kanal sozlanmagan. Boshqa qurilmalardan kirgan foydalanuvchilar admin panelda ko'rinmaydi.";
     el.style.color = 'var(--danger)';
   }
 }
@@ -1703,7 +1769,7 @@ function showView(name) {
   else if (name === 'newspapers') renderNewspapersList();
   else if (name === 'feedback') renderFeedbackList();
   else if (name === 'tg_users') loadTgUsers();
-  else if (name === 'settings') { updateGhTokenStatus(); loadLabelsToForm(); }
+  else if (name === 'settings') { updateGhTokenStatus(); updateTgChannelStatus(); loadLabelsToForm(); }
 }
 
 // =============================================================
@@ -3415,7 +3481,54 @@ function deleteAnn(id) {
 
 // Telegram bot orqali ro'yxatdan o'tganlarni olish
 const TG_BOT_TOKEN = '8730898011:AAFNFpAbIAIBxJ9gRe9UreumZVZQ6AmEf0c';
-const TG_CHAT_ID = '6406587083';
+const TG_CHAT_ID = '6406587083'; // shaxsiy chat (default)
+// Foydalanuvchilar admin paneliga ko'rinishi uchun kanal ID (sozlamalardan)
+function getTgLogChatId() {
+  return localStorage.getItem('mc_tg_log_chat_id') || '';
+}
+
+function saveTgChannel() {
+  const val = document.getElementById('tg-channel-input').value.trim();
+  if (!val) { toast('Kanal ID kiriting', 'error'); return; }
+  localStorage.setItem('mc_tg_log_chat_id', val);
+  document.getElementById('tg-channel-status').textContent = `✅ Kanal saqlangan: ${val}`;
+  document.getElementById('tg-channel-status').style.color = 'var(--success)';
+  toast("Kanal ID saqlandi. Endi testdan o'tkazing.", 'success');
+}
+
+function removeTgChannel() {
+  localStorage.removeItem('mc_tg_log_chat_id');
+  document.getElementById('tg-channel-input').value = '';
+  document.getElementById('tg-channel-status').textContent = '⚠️ Kanal sozlanmagan.';
+  document.getElementById('tg-channel-status').style.color = 'var(--danger)';
+  toast("Kanal o'chirildi", 'success');
+}
+
+async function testTgChannel() {
+  const chatId = getTgLogChatId();
+  if (!chatId) { toast('Avval kanal ID kiriting va saqlang', 'error'); return; }
+  toast("⏳ Test xabar yuborilmoqda...", '');
+  try {
+    const resp = await fetch(`https://api.telegram.org/bot${TG_BOT_TOKEN}/sendMessage`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        chat_id: chatId,
+        text: `🧪 <b>TEST XABAR</b>\n\nMa'rifat Cup admin panelidan yuborildi.\n\nAgar bu xabarni ko'rsangiz — kanal to'g'ri sozlangan! ✅\n\n📅 ${new Date().toLocaleString('uz-UZ')}`,
+        parse_mode: 'HTML'
+      })
+    });
+    const data = await resp.json();
+    if (data.ok) {
+      toast("✅ Test xabar yuborildi! Telegram kanalingizni tekshiring.", 'success');
+    } else {
+      toast("❌ Xato: " + (data.description || "Noma'lum"), 'error');
+      console.error('Telegram error:', data);
+    }
+  } catch (e) {
+    toast("❌ Tarmoq xatosi: " + e.message, 'error');
+  }
+}
 
 let _tgFilter = 'all';
 
@@ -3460,6 +3573,7 @@ async function loadTgUsers() {
   list.innerHTML = '<p style="color: var(--ink-2); text-align: center; padding: 20px;">⏳ Telegram\'dan ma\'lumot olinmoqda...</p>';
   let cached = [];
   try { cached = JSON.parse(localStorage.getItem('mc_tg_registrations') || '[]'); } catch (e) {}
+  const logChatId = getTgLogChatId();
   try {
     const resp = await fetch(`https://api.telegram.org/bot${TG_BOT_TOKEN}/getUpdates?limit=100`);
     if (resp.ok) {
@@ -3468,6 +3582,14 @@ async function loadTgUsers() {
         const seenIds = new Set(cached.map(c => c.id));
         data.result.forEach(upd => {
           const msg = upd.channel_post || upd.message;
+          if (!msg) return;
+          // Faqat sozlangan kanaldan xabarlarni filtrlaymiz (agar sozlangan bo'lsa)
+          if (logChatId) {
+            const msgChatId = msg.chat?.id?.toString() || '';
+            const msgChatUsername = msg.chat?.username ? '@' + msg.chat.username : '';
+            const matches = msgChatId === logChatId.replace(/^@/, '') || msgChatUsername === logChatId || msgChatId === logChatId;
+            if (!matches) return;
+          }
           const parsed = parseTgMessage(msg);
           if (parsed && !seenIds.has(parsed.id)) {
             cached.push(parsed);
@@ -3482,6 +3604,16 @@ async function loadTgUsers() {
   }
   if (cached.length === 0) {
     list.innerHTML = `<div class="empty-msg"><div class="ico">📨</div>Hozircha hech kim kirmagan.<br><br>
+      ${!logChatId ? `
+        <div style="background:#fef3c7; border:2px solid #fbbf24; padding:14px; border-radius:10px; margin: 14px auto; max-width:500px; text-align:left;">
+          <p style="color:#92400e; font-weight:700; margin-bottom:6px;">⚠️ Telegram kanal sozlanmagan!</p>
+          <p style="color:#78350f; font-size:13px; line-height:1.6;">
+            Boshqa qurilmadan kirgan foydalanuvchilarni ko'rish uchun
+            <a href="#" onclick="showView('settings'); return false;" style="color:#1e40af; font-weight:700;">⚙️ Sozlamalar</a>'ga o'tib,
+            <b>Telegram kanal ID</b>'sini kiriting.
+          </p>
+        </div>
+      ` : ''}
       <p style="font-size: 13px; color: var(--ink-2); margin-top: 10px;">
         Foydalanuvchilar saytga kirgan zahoti shu yerda ko'rinadi.
       </p></div>`;
@@ -3815,7 +3947,9 @@ function exportData() {
   const data = {
     version: 1, exportedAt: new Date().toISOString(),
     source: 'marifat-cup-admin', courses, quizzes, slides,
-    announcements: anns, ebooks, meetings, newspapers, tournaments, labels: (function(){ try { return JSON.parse(localStorage.getItem('mc_labels')||'{}'); } catch(e){ return {}; } })()
+    announcements: anns, ebooks, meetings, newspapers, tournaments,
+    tgLogChatId: localStorage.getItem('mc_tg_log_chat_id') || '',
+    labels: (function(){ try { return JSON.parse(localStorage.getItem('mc_labels')||'{}'); } catch(e){ return {}; } })()
   };
   const json = JSON.stringify(data, null, 2);
   const blob = new Blob([json], { type: 'application/json' });
