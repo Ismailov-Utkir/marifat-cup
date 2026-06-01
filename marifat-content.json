@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "exportedAt": "2026-06-01T11:16:47.428Z",
+  "exportedAt": "2026-06-01T12:37:13.583Z",
   "source": "marifat-cup-admin-auto",
   "courses": [
     {
@@ -1339,7 +1339,236 @@
       "updatedAt": 1780312607423
     }
   ],
-  "quizzes": [],
+  "quizzes": [
+    {
+      "id": "q_1780317433578",
+      "title": "Ma’naviy-ma’rifiy bilimlarni aniqlash",
+      "questions": [
+        {
+          "text": "Ma’naviyat nima?",
+          "answers": [
+            "Insonning moddiy boyligi",
+            "Insonning axloqiy, ruhiy va ma’rifiy dunyosi",
+            "Kasbiy malaka darajasi",
+            "Faqat diniy bilimlar majmui"
+          ],
+          "correct": 1,
+          "time": 20
+        },
+        {
+          "text": "“Ma’rifat” so‘zining ma’nosi nima?",
+          "answers": [
+            "Jismoniy kuch",
+            "Bilim va tafakkur",
+            "Hokimiyat",
+            "Boylik"
+          ],
+          "correct": 1,
+          "time": 20
+        },
+        {
+          "text": "Vatanparvarlik deganda nima tushuniladi?",
+          "answers": [
+            "Sayohat qilish",
+            "O‘z manfaatini ustun qo‘yish",
+            "Faqat harbiy xizmat",
+            "Vatanni sevish va unga sadoqat"
+          ],
+          "correct": 3,
+          "time": 20
+        },
+        {
+          "text": "Milliy qadriyatlar nima?",
+          "answers": [
+            "Xalqning tarixiy va madaniy merosi",
+            "Bir kunlik urf-odatlar",
+            "Faqat kiyim-kechak",
+            "Faqat bayramlar"
+          ],
+          "correct": 0,
+          "time": 20
+        },
+        {
+          "text": "Bag‘rikenglik nima?",
+          "answers": [
+            "Befarqlik",
+            "Qattiqqo‘llik",
+            "Boshqalarni hurmat qilish va tushunish",
+            "Raqobat"
+          ],
+          "correct": 2,
+          "time": 20
+        },
+        {
+          "text": "Odobning asosi nima?",
+          "answers": [
+            "Mashhurlik",
+            "Lavozim",
+            "Boylik",
+            "Hurmat va xushmuomalalik"
+          ],
+          "correct": 3,
+          "time": 20
+        },
+        {
+          "text": "Ma’naviy barkamol inson qanday bo‘ladi?",
+          "answers": [
+            "Faqat boy",
+            "Faqat kuchli",
+            "Bilimli va axloqli",
+            "Faqat mashhur"
+          ],
+          "correct": 2,
+          "time": 20
+        },
+        {
+          "text": "Ajdodlar merosini asrashning ahamiyati nimada?",
+          "answers": [
+            "Vaqtni o‘tkazish",
+            "Tarixiy xotirani saqlash",
+            "Daromad olish uchun",
+            "Faqat turizm uchun"
+          ],
+          "correct": 1,
+          "time": 20
+        },
+        {
+          "text": "Halollik qanday fazilat?",
+          "answers": [
+            "Neytral",
+            "Ijobiy",
+            "Keraksiz",
+            "Salbiy"
+          ],
+          "correct": 1,
+          "time": 20
+        },
+        {
+          "text": "Yoshlar tarbiyasida oilaning o‘rni qanday?",
+          "answers": [
+            "Faqat maktab muhim",
+            "Faqat do‘stlar muhim",
+            "Muhim emas",
+            "Asosiy omillardan biri"
+          ],
+          "correct": 3,
+          "time": 20
+        },
+        {
+          "text": "Ma’naviy tahdid nima?",
+          "answers": [
+            "Jamiyat ma’naviyatiga zarar yetkazuvchi omil",
+            "Ilmiy konferensiya",
+            "Yangi texnologiya",
+            "Sport musobaqasi"
+          ],
+          "correct": 0,
+          "time": 20
+        },
+        {
+          "text": "Kitobxonlikning foydasi nimada?",
+          "answers": [
+            "Vaqtni bekor sarflaydi",
+            "Faqat baho olish uchun",
+            "Dunyoqarashni kengaytiradi",
+            "Foydasi yo‘q"
+          ],
+          "correct": 2,
+          "time": 20
+        },
+        {
+          "text": "O‘zbek xalqiga xos fazilatlardan biri qaysi?",
+          "answers": [
+            "Qo‘pollik",
+            "Yolg‘onchilik",
+            "Befarqlik",
+            "Mehmondo‘stlik"
+          ],
+          "correct": 3,
+          "time": 20
+        },
+        {
+          "text": "Ma’naviyat va ma’rifat markazlarining vazifasi nima?",
+          "answers": [
+            "Transport xizmatlari",
+            "Ma’naviy-ma’rifiy ishlarni rivojlantirish",
+            "Savdo qilish",
+            "Faqat sport tadbirlari o‘tkazish"
+          ],
+          "correct": 1,
+          "time": 20
+        },
+        {
+          "text": "Milliy g‘oya nimaga xizmat qiladi?",
+          "answers": [
+            "Nizolarni kuchaytirishga",
+            "Faqat iqtisodiyotga",
+            "Jamiyatni birlashtirishga",
+            "Faqat siyosatga"
+          ],
+          "correct": 2,
+          "time": 20
+        },
+        {
+          "text": "Insoniylik fazilatiga qaysi tushuncha kiradi?",
+          "answers": [
+            "Hasad",
+            "Mehr-shafqat",
+            "Qo‘pollik",
+            "Manmanlik"
+          ],
+          "correct": 1,
+          "time": 20
+        },
+        {
+          "text": "Mahalla institutining asosiy vazifalaridan biri nima?",
+          "answers": [
+            "Qurilish olib borish",
+            "Faqat soliq yig‘ish",
+            "Savdo qilish",
+            "Jamiyat birdamligini mustahkamlash"
+          ],
+          "correct": 3,
+          "time": 20
+        },
+        {
+          "text": "Ma’naviy merosga nimalar kiradi?",
+          "answers": [
+            "Faqat hujjatlar",
+            "Faqat binolar",
+            "Faqat muzeylar",
+            "Adabiyot, san’at va tarixiy obidalar"
+          ],
+          "correct": 3,
+          "time": 20
+        },
+        {
+          "text": "Alisher Navoiy kim sifatida tanilgan?",
+          "answers": [
+            "Me’mor",
+            "Astronom",
+            "Buyuk shoir va mutafakkir",
+            "Sarkarda"
+          ],
+          "correct": 2,
+          "time": 20
+        },
+        {
+          "text": "Ezgulik tushunchasi nimani anglatadi?",
+          "answers": [
+            "Zarar yetkazish",
+            "Adolatsizlik",
+            "Yaxshilik qilish va foyda keltirish",
+            "Befarqlik"
+          ],
+          "correct": 2,
+          "time": 20
+        }
+      ],
+      "createdAt": 1780317433578,
+      "updatedAt": 1780317433578
+    }
+  ],
   "slides": [
     {
       "id": "s_1779117721078",
@@ -1489,6 +1718,8 @@
       "createdAt": 1779169171329
     }
   ],
+  "tournaments": [],
+  "tgLogChatId": "https://t.me/MarifatCupLoglar",
   "labels": {
     "courses_desc": "Video darslar, testlar va amaliy mashg‘ulotlar orqali bilim oling",
     "ebooks": "Elektron kutubxona",
