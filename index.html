@@ -1519,7 +1519,7 @@
             O'zbekcha
           </button>
           <button onclick="setLanguage('kaa')" style="width:100%; padding:12px 16px; background:none; border:none; text-align:left; font-size:14px; font-weight:700; color:#1f2937; cursor:pointer; display:flex; align-items:center; gap:10px;" onmouseover="this.style.background='#f3f4f6'" onmouseout="this.style.background='none'">
-            <svg width="24" height="16" viewBox="0 0 30 20" style="border-radius:3px; flex-shrink:0;"><rect width="30" height="6.67" fill="#0099B5"/><rect y="6.67" width="30" height="6.67" fill="#fff"/><rect y="13.33" width="30" height="6.67" fill="#1EB53A"/><rect y="6.17" width="30" height="0.5" fill="#CE1126"/><rect y="13.33" width="30" height="0.5" fill="#CE1126"/></svg>
+            <svg width="24" height="16" viewBox="0 0 30 20" style="border-radius:3px; flex-shrink:0;"><rect width="30" height="6" fill="#0099B5"/><rect y="6" width="30" height="1" fill="#fff"/><rect y="7" width="30" height="6" fill="#FCD116"/><rect y="13" width="30" height="1" fill="#fff"/><rect y="14" width="30" height="6" fill="#1EB53A"/><circle cx="4" cy="3" r="1.5" fill="#fff"/><circle cx="4.7" cy="2.8" r="1.3" fill="#0099B5"/><text x="6.8" y="4" font-size="1.8" fill="#fff" font-family="Arial">★★★★★</text></svg>
             Qaraqalpaqsha
           </button>
           <button onclick="setLanguage('ru')" style="width:100%; padding:12px 16px; background:none; border:none; text-align:left; font-size:14px; font-weight:700; color:#1f2937; cursor:pointer; display:flex; align-items:center; gap:10px;" onmouseover="this.style.background='#f3f4f6'" onmouseout="this.style.background='none'">
@@ -6244,7 +6244,7 @@ function applyLanguage(lang) {
   // Til tanlash dropdown'ni yangilash (SVG bayroqlar)
   const flagSvg = {
     uz:  `<svg width="22" height="15" viewBox="0 0 30 20" style="border-radius:3px; vertical-align:middle;"><rect width="30" height="6.67" fill="#0099B5"/><rect y="6.67" width="30" height="6.67" fill="#fff"/><rect y="13.33" width="30" height="6.67" fill="#1EB53A"/><rect y="6.17" width="30" height="0.5" fill="#CE1126"/><rect y="13.33" width="30" height="0.5" fill="#CE1126"/></svg>`,
-    kaa: `<svg width="22" height="15" viewBox="0 0 30 20" style="border-radius:3px; vertical-align:middle;"><rect width="30" height="6.67" fill="#0099B5"/><rect y="6.67" width="30" height="6.67" fill="#fff"/><rect y="13.33" width="30" height="6.67" fill="#1EB53A"/><rect y="6.17" width="30" height="0.5" fill="#CE1126"/><rect y="13.33" width="30" height="0.5" fill="#CE1126"/></svg>`,
+    kaa: `<svg width="22" height="15" viewBox="0 0 30 20" style="border-radius:3px; vertical-align:middle;"><rect width="30" height="6" fill="#0099B5"/><rect y="6" width="30" height="1" fill="#fff"/><rect y="7" width="30" height="6" fill="#FCD116"/><rect y="13" width="30" height="1" fill="#fff"/><rect y="14" width="30" height="6" fill="#1EB53A"/><circle cx="4" cy="3" r="1.5" fill="#fff"/><circle cx="4.7" cy="2.8" r="1.3" fill="#0099B5"/><text x="6.8" y="4" font-size="1.8" fill="#fff" font-family="Arial">★★★★★</text></svg>`,
     ru:  `<svg width="22" height="15" viewBox="0 0 30 20" style="border-radius:3px; vertical-align:middle;"><rect width="30" height="6.67" fill="#fff"/><rect y="6.67" width="30" height="6.67" fill="#0039A6"/><rect y="13.33" width="30" height="6.67" fill="#D52B1E"/></svg>`,
   };
   const nameMap = { uz: "O'zb", ru: "Рус", kaa: "Qrq" };
