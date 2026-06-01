@@ -1609,6 +1609,11 @@
         <h3 data-label="ebooks">Elektron kutubxona</h3>
         <p data-label="ebooks_desc">Kitoblar kutubxonasi — onlayn o'qing</p>
       </button>
+      <button class="action-card" onclick="showScreen('host-quiz-select-screen'); renderHostQuizSelect();" style="background: linear-gradient(135deg, #dbeafe, #93c5fd);">
+        <span class="ac-icon">🎮</span>
+        <h3 data-label="start_quiz">Quiz o'yinni boshlash</h3>
+        <p data-label="start_quiz_desc">Quizlardan birini tanlab yakka yoki jonli o'yin boshlang</p>
+      </button>
       <button class="action-card" onclick="goToCreateQuiz()">
         <span class="ac-icon">➕</span>
         <h3 data-label="create_quiz">Quiz o'yin yaratish</h3>
@@ -5067,11 +5072,18 @@ function renderHostQuizSelect() {
       <span class="quiz-badge">${q.questions.length} ta savol</span>
       <h3>${escapeHtml(q.title)}</h3>
       <div class="quiz-meta">${q.id === DEMO_QUIZ.id ? 'Demo quiz' : new Date(q.createdAt).toLocaleDateString('uz-UZ')}</div>
-      <div class="quiz-card-actions">
-        <button class="play-btn-multi" style="width:100%;" onclick="hostQuizById('${q.id}')">🚀 Host bo'lish</button>
+      <div class="quiz-card-actions" style="display:flex; flex-direction:column; gap:6px;">
+        <button class="play-btn-solo" style="width:100%; background:#10b981; color:white; border:none; padding:10px; border-radius:10px; font-weight:700; cursor:pointer;" onclick="playQuizSoloById('${q.id}')">🎯 Yakka o'ynash</button>
+        <button class="play-btn-multi" style="width:100%;" onclick="hostQuizById('${q.id}')">🌐 Jonli o'yin (PIN bilan)</button>
       </div>
     </div>
   `).join('');
+}
+
+function playQuizSoloById(id) {
+  const all = getAllQuizzes();
+  const quiz = all.find(q => q.id === id);
+  if (quiz) startQuizSession(quiz, 'solo');
 }
 
 function hostQuizById(id) {
@@ -6804,6 +6816,8 @@ const TRANSLATIONS = {
     newspapers_desc: "Jadid, Yangi O'zbekiston va boshqalar — oylar bo'yicha",
     achievements: "Mening yutuqlarim",
     achievements_desc: "Sertifikatlar va statistika",
+    start_quiz: "Quiz o'yinni boshlash",
+    start_quiz_desc: "Quizlardan birini tanlab yakka yoki jonli o'yin boshlang",
     create_quiz: "Yangi quiz yaratish",
     create_quiz_desc: "O'qituvchilar uchun — o'z savollaringiz bilan quiz tuzing",
     legal_title: "Huquqiy savodxonlik",
@@ -6845,6 +6859,8 @@ const TRANSLATIONS = {
     newspapers_desc: "Жадид, Новый Узбекистан и другие — по месяцам",
     achievements: "Мои достижения",
     achievements_desc: "Сертификаты и статистика",
+    start_quiz: "Начать игру квиз",
+    start_quiz_desc: "Выберите квиз и играйте соло или вживую",
     create_quiz: "Создать новый квиз",
     create_quiz_desc: "Для учителей — составьте квиз со своими вопросами",
     legal_title: "Правовая грамотность",
@@ -6886,6 +6902,8 @@ const TRANSLATIONS = {
     newspapers_desc: "Jadid, Jańa Ózbekstan hám basqalar — aylar boyınsha",
     achievements: "Meniń jetiskenliklerim",
     achievements_desc: "Sertifikatlar hám statistika",
+    start_quiz: "Kviz oyının baslaw",
+    start_quiz_desc: "Kvizlerden birewin tańlap yakka yamasa jıvoy oyın baslań",
     create_quiz: "Jańa kviz dúziw",
     create_quiz_desc: "Oqıtıwshılar ushın — óz sorawlarıńız menen kviz dúziń",
     legal_title: "Huqıqıy sawatlılıq",

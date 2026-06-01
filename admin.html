@@ -2260,7 +2260,11 @@ function addLessonBlock(initial = null) {
   const lessonId = initial?.id || ('l_' + Date.now() + '_' + Math.random().toString(36).slice(2, 7));
   block.dataset.lessonId = lessonId;
   block.dataset.videoBlobKey = initial?.videoBlobKey || '';
-  const existingStatus = initial?.videoBlobKey ? '✓ Mavjud video saqlangan (yangi yuklasangiz almashtiriladi)' : '';
+  const hasExistingVideo = !!(initial?.videoBlobKey || (initial?.videoUrl && initial.videoUrl.startsWith('./files/videos/')));
+  const existingStatus = hasExistingVideo
+    ? `✓ Mavjud video saqlangan
+       <button type="button" onclick="clearLessonVideo(this)" style="background:#ef4444; color:white; border:none; padding:6px 12px; border-radius:8px; font-weight:700; cursor:pointer; margin-left:8px; font-size:12px;">🗑️ Saqlangan videoni o'chirish</button>`
+    : '';
   const qContainerId = 'mavzu-q-' + lessonId;
   const initialQCount = initial?.questions?.length || 0;
   block.innerHTML = `
@@ -2417,6 +2421,29 @@ async function handleLessonSlideUpload(e, fileInput) {
     statusEl.textContent = '❌ Xato: ' + err.message;
     statusEl.style.color = 'var(--danger)';
   }
+}
+
+// Saqlangan video referensini o'chirish (URL maydoni qoladi — admin tashqi URL kiritishi mumkin)
+async function clearLessonVideo(btn) {
+  if (!confirm("Saqlangan videoni o'chirmoqchimisiz? Tashqi URL (Telegram/YouTube) qoladi.")) return;
+  const block = btn.closest('.lesson-block');
+  if (!block) return;
+  const oldKey = block.dataset.videoBlobKey;
+  if (oldKey) {
+    try { await IDB.del(oldKey); } catch (e) {}
+  }
+  block.dataset.videoBlobKey = '';
+  // URL maydonini ham tozalash AGAR u GitHub'dagi fayl bo'lsa (./files/videos/...)
+  const urlInput = block.querySelector('.lesson-video');
+  if (urlInput && urlInput.value.startsWith('./files/videos/')) {
+    urlInput.value = '';
+  }
+  const statusEl = block.querySelector('.lesson-video-status');
+  if (statusEl) {
+    statusEl.innerHTML = '✅ Saqlangan video o\'chirildi. Endi tashqi URL kiritishingiz mumkin.';
+    statusEl.style.color = 'var(--success)';
+  }
+  toast("Saqlangan video o'chirildi. Endi mavzuni saqlang ✓", 'success');
 }
 
 // Video brauzerda ochilishini test qilish (kodek tekshiruvi)
