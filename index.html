@@ -1568,6 +1568,7 @@
       </div>
     </div>
 
+    <div id="tournament-banner"></div>
     <div id="announcements-area"></div>
 
     <div class="section-header">
@@ -1603,6 +1604,16 @@
         <span class="ac-icon">➕</span>
         <h3 data-label="create_quiz">Yangi quiz yaratish</h3>
         <p data-label="create_quiz_desc">O'qituvchilar uchun — o'z savollaringiz bilan quiz tuzing</p>
+      </button>
+      <button class="action-card" onclick="goToLegalCourses()" style="background: linear-gradient(135deg, #fef3c7, #fde68a);">
+        <span class="ac-icon">⚖️</span>
+        <h3 data-label="legal_title">Huquqiy savodxonlik</h3>
+        <p data-label="legal_desc">Soliq, mehnat, oila qonunlari — yoshlar uchun zarur ma'lumot</p>
+      </button>
+      <button class="action-card" onclick="goToTournament()" style="background: linear-gradient(135deg, #fce7f3, #f9a8d4);">
+        <span class="ac-icon">🏆</span>
+        <h3 data-label="tournament_title">Onlayn musobaqa</h3>
+        <p data-label="tournament_desc">Oyiga 1 marta — sovrinlar bilan jonli turnir</p>
       </button>
     </div>
    </div>
@@ -1910,6 +1921,20 @@
 </div>
 
 <!-- ====== EBOOKS LIST ====== -->
+<!-- ====== TOURNAMENT (MUSOBAQA) ====== -->
+<div id="tournament-screen" class="screen">
+  <div class="topbar">
+    <div class="logo-mini" onclick="goHome()"><span class="logo-mark"></span> Ma'rifat <span class="badge">Cup</span></div>
+    <button class="btn-back" onclick="goHome()">← Bosh sahifa</button>
+  </div>
+  <div class="home-wrap">
+    <div class="section-header">
+      <h2>🏆 Onlayn musobaqa</h2>
+    </div>
+    <div id="tournament-content"></div>
+  </div>
+</div>
+
 <div id="ebooks-screen" class="screen">
   <div class="topbar">
     <div class="logo-mini" onclick="goHome()"><span class="logo-mark"></span> Ma'rifat <span class="badge">Cup</span></div>
@@ -1941,7 +1966,29 @@
       <div class="slide-viewer-frame" id="ebook-frame"></div>
       <div class="slide-controls">
         <button class="slide-fullscreen-btn" onclick="toggleEbookFullscreen()">⛶ To'liq ekran</button>
+        <button class="slide-fullscreen-btn" id="ebook-audio-btn" onclick="toggleEbookAudio()" style="display:none;">🎧 Eshitish</button>
       </div>
+    </div>
+    <!-- AUDIO PLAYER -->
+    <div id="ebook-audio-player" style="display:none; margin-top: 16px; background: linear-gradient(135deg, #1e40af, #3b82f6); border-radius: 16px; padding: 18px; color: white;">
+      <div style="display:flex; align-items:center; gap:12px; margin-bottom:12px;">
+        <div style="font-size:32px;">🎧</div>
+        <div style="flex:1;">
+          <h4 style="margin:0; font-size:16px;">Audio rejimi</h4>
+          <p style="margin:2px 0 0; font-size:12px; opacity:0.85;" id="ebook-audio-status">To'xtatilgan</p>
+        </div>
+        <button id="ebook-audio-close" onclick="stopEbookAudio()" style="background:rgba(255,255,255,0.2); border:none; color:white; width:36px; height:36px; border-radius:50%; cursor:pointer; font-size:18px;">✕</button>
+      </div>
+      <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
+        <button id="ebook-audio-play" onclick="playPauseEbookAudio()" style="background:white; color:#1e40af; border:none; padding:10px 20px; border-radius:24px; font-weight:800; cursor:pointer; font-size:14px;">▶️ Ijro etish</button>
+        <div style="display:flex; gap:4px; align-items:center; background:rgba(255,255,255,0.15); border-radius:20px; padding:4px;">
+          <span style="font-size:12px; padding:0 8px;">Tezlik:</span>
+          <button onclick="setAudioSpeed(1)" class="audio-speed-btn" data-speed="1" style="background:rgba(255,255,255,0.3); color:white; border:none; padding:4px 10px; border-radius:14px; font-weight:700; cursor:pointer; font-size:12px;">1x</button>
+          <button onclick="setAudioSpeed(1.5)" class="audio-speed-btn" data-speed="1.5" style="background:transparent; color:white; border:none; padding:4px 10px; border-radius:14px; font-weight:700; cursor:pointer; font-size:12px;">1.5x</button>
+          <button onclick="setAudioSpeed(2)" class="audio-speed-btn" data-speed="2" style="background:transparent; color:white; border:none; padding:4px 10px; border-radius:14px; font-weight:700; cursor:pointer; font-size:12px;">2x</button>
+        </div>
+      </div>
+      <p style="font-size:11px; opacity:0.7; margin-top:10px;">💡 Telefon yoki naushnik orqali eshiting. Brauzer ovozi (TTS) — tilingizga qarab o'zgaradi.</p>
     </div>
     <!-- COMMENTS SECTION -->
     <div style="background: var(--surface, white); border-radius: 16px; padding: 24px; margin-top: 24px; box-shadow: 0 2px 8px rgba(0,0,0,0.05);">
@@ -3264,6 +3311,10 @@ function renderCoursesList() {
   const q = searchEl ? searchEl.value.trim().toLowerCase() : '';
   if (q) courses = courses.filter(c => c.title.toLowerCase().includes(q) || (c.description||'').toLowerCase().includes(q));
   if (favFilterOn) courses = courses.filter(c => isFavorite(c.id));
+  // Kategoriya filtri (huquqiy savodxonlik kabi)
+  if (window._activeCategoryFilter) {
+    courses = courses.filter(c => c.category === window._activeCategoryFilter);
+  }
   if (courses.length === 0) {
     list.innerHTML = `<div class="empty-state" style="grid-column:1/-1;"><div class="empty-state-emoji">${q?'🔍':favFilterOn?'⭐':'📭'}</div><p>${q?'Hech narsa topilmadi':favFilterOn?"Sevimli kurslar yo'q":'Kurslar mavjud emas'}</p></div>`;
     return;
@@ -3301,8 +3352,51 @@ function goToCourses() {
     showRegisterPrompt();
     return;
   }
+  window._activeCategoryFilter = null;
+  // Sarlavhani umumiy holatga qaytarish
+  const h2 = document.querySelector('#courses-screen .section-header h2');
+  if (h2) h2.innerHTML = '📚 Kurslar va darsliklar';
   showScreen('courses-screen');
   renderCoursesList();
+}
+
+function goToLegalCourses() {
+  if (user && user.isGuest) {
+    showRegisterPrompt();
+    return;
+  }
+  window._activeCategoryFilter = 'legal';
+  // Sarlavha
+  const h2 = document.querySelector('#courses-screen .section-header h2');
+  if (h2) h2.innerHTML = '⚖️ Huquqiy savodxonlik';
+  showScreen('courses-screen');
+  renderCoursesList();
+  // Agar kurs yo'q bo'lsa, foydalanuvchiga maslahat
+  setTimeout(() => {
+    const list = document.getElementById('courses-list');
+    if (list && list.querySelector('.empty-state')) {
+      list.innerHTML = `
+        <div class="empty-state" style="grid-column:1/-1;">
+          <div class="empty-state-emoji">⚖️</div>
+          <h3 style="margin: 10px 0; color: var(--ink);">Huquqiy kurslar tez orada qo'shiladi</h3>
+          <p style="line-height: 1.6;">
+            📌 <b>Mavzular:</b><br>
+            • Mehnat huquqi (ish berish va olish)<br>
+            • Oila kodeksi (nikoh, ajralish, voyaga yetganlik)<br>
+            • Soliq tushunchasi<br>
+            • Yoshlar uchun fuqarolik huquqlari<br>
+            • Tadbirkorlik faoliyati huquqi<br><br>
+            <small style="color: var(--ink-2);">Admin paneldan "Huquqiy savodxonlik" kategoriyali kurs qo'shing.</small>
+          </p>
+        </div>
+      `;
+    }
+  }, 100);
+}
+
+function goToTournament() {
+  showScreen('tournament-screen');
+  renderTournament();
 }
 
 function openCourse(id) {
@@ -3524,7 +3618,39 @@ async function renderLessonVideo(frame, lesson, videoUrl) {
 
   // 5-navbat: To'g'ridan-to'g'ri video URL
   if (videoUrl) {
-    frame.innerHTML = `<video controls style="width:100%;height:100%;background:black;"><source src="${escapeHtml(videoUrl)}"></video>`;
+    const safeUrl = escapeHtml(videoUrl);
+    // Fayl kengaytmasiga qarab MIME type
+    let mimeType = 'video/mp4';
+    if (/\.webm/i.test(videoUrl)) mimeType = 'video/webm';
+    else if (/\.ogg|\.ogv/i.test(videoUrl)) mimeType = 'video/ogg';
+    frame.innerHTML = `
+      <video controls playsinline preload="metadata" style="width:100%;height:100%;background:black;" id="lesson-video-player">
+        <source src="${safeUrl}" type="${mimeType}">
+        Brauzeringiz video formatini qo'llab-quvvatlamaydi.
+      </video>
+      <div id="lesson-video-error" style="display:none; position:absolute; inset:0; background:rgba(0,0,0,0.9); color:white; padding:30px; flex-direction:column; align-items:center; justify-content:center; text-align:center;">
+        <div style="font-size:60px; margin-bottom:16px;">⚠️</div>
+        <h3 style="color:#fbbf24; margin-bottom:12px;">Video ochilmadi</h3>
+        <p style="max-width:500px; line-height:1.6; margin-bottom:12px;">
+          Brauzer bu video formatini qo'llab-quvvatlamaydi.<br>
+          Ehtimol H.265 (HEVC) kodek bilan yozilgan.<br>
+          <small style="opacity:0.7;">Admin H.264 kodek bilan qayta yuklashi kerak.</small>
+        </p>
+        <a href="${safeUrl}" target="_blank" download style="background:white; color:black; padding:10px 20px; border-radius:8px; text-decoration:none; font-weight:700; margin-top:10px;">⬇️ Faylni yuklab olish</a>
+      </div>
+    `;
+    // Xato yoki video o'lchamsiz bo'lsa, xato xabarini ko'rsatish
+    const v = frame.querySelector('#lesson-video-player');
+    const errDiv = frame.querySelector('#lesson-video-error');
+    v.addEventListener('error', () => { errDiv.style.display = 'flex'; v.style.display = 'none'; });
+    v.addEventListener('loadedmetadata', () => {
+      // Agar audio bor lekin video o'lcham yo'q bo'lsa, kodek noto'g'ri
+      setTimeout(() => {
+        if (v.videoWidth === 0 || v.videoHeight === 0) {
+          errDiv.style.display = 'flex';
+        }
+      }, 1500);
+    });
     return;
   }
 
@@ -5365,6 +5491,12 @@ async function openEbook(id) {
   document.getElementById('ebook-title').textContent = title;
   document.getElementById('ebook-author').textContent = author;
   document.getElementById('ebook-description').textContent = desc;
+  // Audio tugmasi — faqat audio matn bo'lsa ko'rinadi
+  const audioBtn = document.getElementById('ebook-audio-btn');
+  const hasAudio = !!(book.audioText_uz || book.audioText_ru || book.audioText_kaa);
+  if (audioBtn) audioBtn.style.display = hasAudio ? '' : 'none';
+  // Avval ochilgan audio bo'lsa to'xtatish
+  stopEbookAudio();
   // Izohlar sarlavhasini yangilash
   const ctitle = document.getElementById('ebook-comments-title');
   if (ctitle) ctitle.textContent = t('comments_title');
@@ -5411,6 +5543,117 @@ function toggleEbookFullscreen() {
   const frame = document.getElementById('ebook-frame');
   if (!document.fullscreenElement) frame.requestFullscreen?.();
   else document.exitFullscreen?.();
+}
+
+// ============================================================
+// AUDIO KITOB — Text-to-Speech (TTS) brauzer ichida
+// ============================================================
+let _ebookUtterance = null;
+let _ebookAudioSpeed = 1;
+let _ebookAudioText = '';
+let _ebookAudioPosition = 0; // matnda hozirgi joy
+
+function getEbookAudioText() {
+  if (!window._currentEbookId) return '';
+  const book = savedEbooks.find(b => b.id === window._currentEbookId);
+  if (!book) return '';
+  // Tilga qarab audio matn
+  const langKey = 'audioText_' + _siteLang;
+  return book[langKey] || book.audioText_uz || '';
+}
+
+function toggleEbookAudio() {
+  const player = document.getElementById('ebook-audio-player');
+  if (player.style.display === 'none' || !player.style.display) {
+    _ebookAudioText = getEbookAudioText();
+    if (!_ebookAudioText) {
+      toast('Bu kitob uchun audio matn qo\'shilmagan', 'error');
+      return;
+    }
+    _ebookAudioPosition = 0;
+    player.style.display = 'block';
+    document.getElementById('ebook-audio-status').textContent = `📝 ${_ebookAudioText.length} ta belgi tayyor`;
+  } else {
+    stopEbookAudio();
+  }
+}
+
+function playPauseEbookAudio() {
+  if (!('speechSynthesis' in window)) {
+    toast("Brauzeringiz audio o'qishni qo'llab-quvvatlamaydi", 'error');
+    return;
+  }
+  const synth = window.speechSynthesis;
+  const btn = document.getElementById('ebook-audio-play');
+  const statusEl = document.getElementById('ebook-audio-status');
+
+  // Pauza yoki davom etish
+  if (synth.speaking && !synth.paused) {
+    synth.pause();
+    btn.innerHTML = '▶️ Davom etish';
+    statusEl.textContent = '⏸️ To\'xtatildi';
+    return;
+  }
+  if (synth.paused) {
+    synth.resume();
+    btn.innerHTML = '⏸️ To\'xtatish';
+    statusEl.textContent = '🔊 Ijro etilmoqda...';
+    return;
+  }
+
+  // Yangi boshlash
+  if (!_ebookAudioText) {
+    _ebookAudioText = getEbookAudioText();
+    if (!_ebookAudioText) { toast('Audio matn yo\'q', 'error'); return; }
+  }
+  synth.cancel(); // eski navbatni tozalash
+  _ebookUtterance = new SpeechSynthesisUtterance(_ebookAudioText);
+  _ebookUtterance.rate = _ebookAudioSpeed;
+  _ebookUtterance.pitch = 1;
+  _ebookUtterance.volume = 1;
+  // Tilga qarab ovoz
+  const langMap = { uz: 'uz-UZ', ru: 'ru-RU', kaa: 'uz-UZ' };
+  _ebookUtterance.lang = langMap[_siteLang] || 'uz-UZ';
+  // Ovozni topishga harakat
+  const voices = synth.getVoices();
+  const voice = voices.find(v => v.lang === _ebookUtterance.lang) || voices.find(v => v.lang.startsWith(_siteLang));
+  if (voice) _ebookUtterance.voice = voice;
+
+  _ebookUtterance.onstart = () => {
+    btn.innerHTML = '⏸️ To\'xtatish';
+    statusEl.textContent = '🔊 Ijro etilmoqda...';
+  };
+  _ebookUtterance.onend = () => {
+    btn.innerHTML = '▶️ Boshidan';
+    statusEl.textContent = '✅ Tugadi';
+  };
+  _ebookUtterance.onerror = (e) => {
+    btn.innerHTML = '▶️ Qayta urinib ko\'rish';
+    statusEl.textContent = '❌ Xato: ' + (e.error || 'noma\'lum');
+  };
+  synth.speak(_ebookUtterance);
+}
+
+function setAudioSpeed(speed) {
+  _ebookAudioSpeed = speed;
+  document.querySelectorAll('.audio-speed-btn').forEach(b => {
+    const active = parseFloat(b.dataset.speed) === speed;
+    b.style.background = active ? 'rgba(255,255,255,0.3)' : 'transparent';
+  });
+  // Agar hozir o'qiyotgan bo'lsa, qayta boshlash (rate o'rta ish davom ettirib bo'lmaydi)
+  const synth = window.speechSynthesis;
+  if (synth.speaking) {
+    synth.cancel();
+    setTimeout(() => playPauseEbookAudio(), 100);
+  }
+}
+
+function stopEbookAudio() {
+  if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+  const player = document.getElementById('ebook-audio-player');
+  if (player) player.style.display = 'none';
+  const btn = document.getElementById('ebook-audio-play');
+  if (btn) btn.innerHTML = '▶️ Ijro etish';
 }
 
 // ===== EBOOK COMMENTS =====
@@ -5544,6 +5787,226 @@ function submitEbookComment() {
   document.querySelectorAll('#ebook-comment-stars .star-btn').forEach(s => { s.textContent = '☆'; s.style.color = '#9ca3af'; });
   renderEbookComments(bookId);
   toast('✅ Izohingiz saqlandi!', 'success');
+}
+
+// ============================================================
+// TOURNAMENT (MUSOBAQA) — saytda
+// ============================================================
+let savedTournaments = [];
+let _tournamentCountdownInterval = null;
+
+function loadTournaments() {
+  try { savedTournaments = JSON.parse(localStorage.getItem('mc_tournaments') || '[]'); } catch(e) { savedTournaments = []; }
+}
+
+function getActiveTournament() {
+  loadTournaments();
+  const now = Date.now();
+  // Hozir jonli yoki kelajakdagi musobaqa
+  const sorted = [...savedTournaments].sort((a, b) => new Date(a.startAt).getTime() - new Date(b.startAt).getTime());
+  for (const t of sorted) {
+    const startMs = new Date(t.startAt).getTime();
+    const endMs = startMs + (t.duration || 60) * 60 * 1000;
+    if (now <= endMs) return t; // hali tugamagan
+  }
+  return null;
+}
+
+function renderTournament() {
+  loadTournaments();
+  const container = document.getElementById('tournament-content');
+  if (!container) return;
+  if (_tournamentCountdownInterval) { clearInterval(_tournamentCountdownInterval); _tournamentCountdownInterval = null; }
+
+  const active = getActiveTournament();
+  if (!active) {
+    container.innerHTML = `
+      <div class="empty-state">
+        <div class="empty-state-emoji">🏆</div>
+        <h3 style="color: var(--ink); margin: 12px 0;">Hozircha rejalashtirilgan musobaqa yo'q</h3>
+        <p style="line-height: 1.6;">
+          ⏰ Yangi musobaqalar haqida bildirishnoma olish uchun bot'imizga ulaning:<br>
+          <a href="https://t.me/marifat_cup" target="_blank" style="color: var(--primary); font-weight:700;">📢 t.me/marifat_cup</a>
+        </p>
+      </div>
+    `;
+    return;
+  }
+
+  const now = Date.now();
+  const startMs = new Date(active.startAt).getTime();
+  const endMs = startMs + (active.duration || 60) * 60 * 1000;
+  const isLive = now >= startMs && now <= endMs;
+  const isPast = now > endMs;
+
+  const renderState = () => {
+    const nowInner = Date.now();
+    const liveNow = nowInner >= startMs && nowInner <= endMs;
+    const upcoming = nowInner < startMs;
+    let countdownHtml = '';
+    if (upcoming) {
+      const diff = startMs - nowInner;
+      const d = Math.floor(diff / (1000*60*60*24));
+      const h = Math.floor((diff % (1000*60*60*24)) / (1000*60*60));
+      const m = Math.floor((diff % (1000*60*60)) / (1000*60));
+      const s = Math.floor((diff % (1000*60)) / 1000);
+      countdownHtml = `
+        <div style="display:grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin: 20px 0;">
+          <div style="background:white; padding:14px 8px; border-radius:12px; text-align:center;">
+            <div style="font-size:36px; font-weight:900; color:var(--primary-dark); font-family:'Bricolage Grotesque', sans-serif;">${d}</div>
+            <div style="font-size:11px; color:var(--ink-2); text-transform:uppercase; letter-spacing:0.05em;">Kun</div>
+          </div>
+          <div style="background:white; padding:14px 8px; border-radius:12px; text-align:center;">
+            <div style="font-size:36px; font-weight:900; color:var(--primary-dark); font-family:'Bricolage Grotesque', sans-serif;">${h}</div>
+            <div style="font-size:11px; color:var(--ink-2); text-transform:uppercase; letter-spacing:0.05em;">Soat</div>
+          </div>
+          <div style="background:white; padding:14px 8px; border-radius:12px; text-align:center;">
+            <div style="font-size:36px; font-weight:900; color:var(--primary-dark); font-family:'Bricolage Grotesque', sans-serif;">${m}</div>
+            <div style="font-size:11px; color:var(--ink-2); text-transform:uppercase; letter-spacing:0.05em;">Daqiqa</div>
+          </div>
+          <div style="background:white; padding:14px 8px; border-radius:12px; text-align:center;">
+            <div style="font-size:36px; font-weight:900; color:#dc2626; font-family:'Bricolage Grotesque', sans-serif;">${s}</div>
+            <div style="font-size:11px; color:var(--ink-2); text-transform:uppercase; letter-spacing:0.05em;">Soniya</div>
+          </div>
+        </div>
+      `;
+    }
+    return `
+      <div style="background: linear-gradient(135deg, #fce7f3 0%, #fbcfe8 100%); border-radius: 20px; padding: 24px; margin-bottom: 20px;">
+        <div style="text-align:center; margin-bottom: 12px;">
+          ${liveNow ? '<span style="background:#dc2626; color:white; padding:6px 16px; border-radius:20px; font-weight:800; font-size:13px; display:inline-block; animation:pulse 1.5s infinite;">🔴 JONLI</span>' : ''}
+          ${upcoming ? '<span style="background:#1e40af; color:white; padding:6px 16px; border-radius:20px; font-weight:800; font-size:13px;">⏳ TEZ KUNDA</span>' : ''}
+        </div>
+        <h2 style="text-align:center; color:#831843; font-family:'Bricolage Grotesque',sans-serif; font-size:28px; margin-bottom:8px;">${escapeHtml(active.title)}</h2>
+        <p style="text-align:center; color:#9d174d; font-size:14px; margin-bottom: 16px;">
+          📅 ${new Date(active.startAt).toLocaleString('uz-UZ')} · ⏱️ ${active.duration} daqiqa · ❓ ${active.randomCount} ta savol
+        </p>
+        ${countdownHtml}
+        ${active.prize ? `
+          <div style="background:white; border-radius:12px; padding:14px; margin-top:10px;">
+            <h4 style="color:#831843; font-size:15px; margin-bottom:6px;">🎁 Sovrinlar:</h4>
+            <p style="color:var(--ink); font-size:13px; line-height:1.5; white-space:pre-wrap;">${escapeHtml(active.prize)}</p>
+          </div>
+        ` : ''}
+        <div style="text-align:center; margin-top:18px;">
+          ${liveNow
+            ? `<button class="btn btn-accent" onclick="startTournament('${active.id}')" style="font-size:16px; padding:14px 28px;">🚀 MUSOBAQAGA KIRISH</button>`
+            : upcoming
+              ? `<button class="btn btn-secondary" disabled style="opacity:0.6;">⏳ Boshlanishini kuting</button>`
+              : `<p>Tugagan</p>`
+          }
+        </div>
+      </div>
+      <div style="background:white; border-radius:12px; padding:18px;">
+        <h4 style="color:var(--primary-dark); margin-bottom:10px;">📋 Qoidalar:</h4>
+        <ul style="color:var(--ink-2); font-size:13px; line-height:1.8; padding-left:20px;">
+          <li>Belgilangan vaqtda hammasi bir vaqtda boshlanadi</li>
+          <li>Har savolga ${active.timePerQ || 30} soniya vaqt</li>
+          <li>To'g'ri javoblar uchun ball + tezlik bonusi</li>
+          <li>TOP 10 g'olib — sovrin oladi</li>
+          <li>Faqat bir marta qatnashish mumkin</li>
+        </ul>
+      </div>
+    `;
+  };
+
+  container.innerHTML = renderState();
+  if (now < startMs) {
+    // Countdown taymer
+    _tournamentCountdownInterval = setInterval(() => {
+      container.innerHTML = renderState();
+      if (Date.now() >= startMs) {
+        clearInterval(_tournamentCountdownInterval);
+        _tournamentCountdownInterval = null;
+      }
+    }, 1000);
+  }
+}
+
+function renderTournamentBanner() {
+  const banner = document.getElementById('tournament-banner');
+  if (!banner) return;
+  const t = getActiveTournament();
+  if (!t) { banner.innerHTML = ''; return; }
+  const now = Date.now();
+  const startMs = new Date(t.startAt).getTime();
+  const endMs = startMs + (t.duration || 60) * 60 * 1000;
+  const isLive = now >= startMs && now <= endMs;
+  const diff = startMs - now;
+  let timeStr = '';
+  if (isLive) timeStr = '🔴 HOZIR JONLI';
+  else if (diff < 60*60*1000) {
+    const m = Math.floor(diff/60000);
+    timeStr = `⏰ ${m} daqiqadan keyin boshlanadi!`;
+  } else if (diff < 24*60*60*1000) {
+    const h = Math.floor(diff/(60*60*1000));
+    timeStr = `⏰ ${h} soatdan keyin boshlanadi`;
+  } else {
+    const d = Math.floor(diff/(24*60*60*1000));
+    timeStr = `📅 ${d} kundan keyin boshlanadi`;
+  }
+  banner.innerHTML = `
+    <div onclick="goToTournament()" style="background: linear-gradient(135deg, #fce7f3, #f9a8d4); border-radius: 16px; padding: 16px 20px; margin-bottom: 16px; cursor: pointer; display: flex; align-items: center; gap: 14px; box-shadow: 0 4px 12px rgba(244,114,182,0.3);">
+      <div style="font-size: 40px;">${isLive ? '🔴' : '🏆'}</div>
+      <div style="flex: 1;">
+        <h4 style="color: #831843; margin: 0 0 4px; font-size: 16px;">${escapeHtml(t.title)}</h4>
+        <p style="color: #9d174d; margin: 0; font-size: 13px; font-weight: 700;">${timeStr}</p>
+      </div>
+      <div style="background: white; padding: 8px 14px; border-radius: 20px; color: #831843; font-weight: 800; font-size: 13px;">${isLive ? "KIRISH →" : "BATAFSIL →"}</div>
+    </div>
+  `;
+}
+
+function startTournament(tournamentId) {
+  loadTournaments();
+  const t = savedTournaments.find(x => x.id === tournamentId);
+  if (!t) { toast('Musobaqa topilmadi', 'error'); return; }
+  // Avval qatnashganmi?
+  const partKey = 'mc_tournament_done_' + tournamentId;
+  if (localStorage.getItem(partKey)) {
+    toast('Siz bu musobaqada qatnashgansiz', 'error');
+    return;
+  }
+  // Savollarni tayyorlash
+  let allQuestions = [];
+  if (t.source === 'custom') {
+    allQuestions = (t.questions || []).slice();
+  } else {
+    // Kurslardan to'plash
+    const allCourses = JSON.parse(localStorage.getItem('mc_courses_v2') || '[]');
+    for (const c of allCourses) {
+      if (t.source === 'category' && c.category !== t.category) continue;
+      // Mavzulardagi savollar + qo'shimcha test savollari
+      (c.lessons || []).forEach(l => {
+        (l.questions || []).forEach(q => allQuestions.push(q));
+      });
+      (c.test?.questions || []).forEach(q => allQuestions.push(q));
+    }
+  }
+  if (allQuestions.length === 0) {
+    toast('Bu musobaqa uchun savollar topilmadi', 'error');
+    return;
+  }
+  // Tasodifiy aralashtirish va kerakli sonni olish
+  const shuffled = allQuestions.sort(() => Math.random() - 0.5);
+  const picked = shuffled.slice(0, t.randomCount || 30);
+  // Quiz formatiga aylantirish va boshlash
+  state.currentQuiz = { questions: picked };
+  state.currentCourse = { id: 'tournament_' + t.id, title: t.title };
+  state.currentLessonIdx = 0;
+  state.mode = 'tournament';
+  state.score = 0;
+  state.testCorrect = 0;
+  state.testWrong = 0;
+  state.currentQIdx = 0;
+  state.isMavzuTest = false;
+  // Tournament natijani kuzatish uchun
+  state.tournamentId = tournamentId;
+  state.tournamentTimePerQ = t.timePerQ || 30;
+  localStorage.setItem(partKey, Date.now().toString());
+  // Quiz screen'iga o'tish
+  showScreen('quiz-screen');
+  if (typeof showQuestion === 'function') showQuestion();
 }
 
 // MEETINGS
@@ -6114,6 +6577,10 @@ const TRANSLATIONS = {
     achievements_desc: "Sertifikatlar va statistika",
     create_quiz: "Yangi quiz yaratish",
     create_quiz_desc: "O'qituvchilar uchun — o'z savollaringiz bilan quiz tuzing",
+    legal_title: "Huquqiy savodxonlik",
+    legal_desc: "Soliq, mehnat, oila qonunlari — yoshlar uchun zarur ma'lumot",
+    tournament_title: "Onlayn musobaqa",
+    tournament_desc: "Oyiga 1 marta — sovrinlar bilan jonli turnir",
     widget_top10: "🏆 TOP 10 faol",
     btn_feedback: "💬 Fikr bildirish",
     comments_title: "💬 Izohlar",
@@ -6147,6 +6614,10 @@ const TRANSLATIONS = {
     achievements_desc: "Сертификаты и статистика",
     create_quiz: "Создать новый квиз",
     create_quiz_desc: "Для учителей — составьте квиз со своими вопросами",
+    legal_title: "Правовая грамотность",
+    legal_desc: "Налоги, трудовое право, семейный кодекс — необходимая информация для молодёжи",
+    tournament_title: "Онлайн турнир",
+    tournament_desc: "Раз в месяц — живой турнир с призами",
     widget_top10: "🏆 ТОП 10 активных",
     btn_feedback: "💬 Оставить отзыв",
     comments_title: "💬 Комментарии",
@@ -6180,6 +6651,10 @@ const TRANSLATIONS = {
     achievements_desc: "Sertifikatlar hám statistika",
     create_quiz: "Jańa kviz dúziw",
     create_quiz_desc: "Oqıtıwshılar ushın — óz sorawlarıńız menen kviz dúziń",
+    legal_title: "Huqıqıy sawatlılıq",
+    legal_desc: "Salıq, miynet, shańaraq nızamları — jaslar ushın zárúr maǵlıwmat",
+    tournament_title: "Onlayn músábaqa",
+    tournament_desc: "Ayına 1 márte — sıylıqlar menen jıvoy turnir",
     widget_top10: "🏆 TOP 10 belsendi",
     btn_feedback: "💬 Pikir bildiriw",
     comments_title: "💬 Pikirler",
@@ -6627,6 +7102,9 @@ async function syncFromServer() {
     if (Array.isArray(data.newspapers)) {
       localStorage.setItem('mc_newspapers', JSON.stringify(data.newspapers));
     }
+    if (Array.isArray(data.tournaments)) {
+      localStorage.setItem('mc_tournaments', JSON.stringify(data.tournaments));
+    }
     if (data.labels && typeof data.labels === 'object') {
       localStorage.setItem('mc_labels', JSON.stringify(data.labels));
     }
@@ -6686,6 +7164,9 @@ async function initApp() {
     showScreen('home-screen');
     renderTop10();
     renderAnnouncementsHome();
+    renderTournamentBanner();
+    // Har daqiqada bannerni yangilash (sanoq pasayishi uchun)
+    setInterval(renderTournamentBanner, 60 * 1000);
     // 🔔 Yangi e'lonlar haqida bildirishnoma
     setTimeout(() => {
       checkNewAnnouncements();

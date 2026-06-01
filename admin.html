@@ -368,6 +368,7 @@
     <button class="nav-tab" data-tab="ebooks" onclick="showView('ebooks')">📖 E-kitoblar</button>
     <button class="nav-tab" data-tab="meetings" onclick="showView('meetings')">📹 Yig'ilishlar</button>
     <button class="nav-tab" data-tab="newspapers" onclick="showView('newspapers')">📰 Gazetalar</button>
+    <button class="nav-tab" data-tab="tournaments" onclick="showView('tournaments'); renderTournamentsList();">🏆 Musobaqalar</button>
     <button class="nav-tab" data-tab="tg_users" onclick="showView('tg_users')">📨 Ro'yxatdan o'tganlar</button>
     <button class="nav-tab" data-tab="announcements" onclick="showView('announcements')">📢 E'lonlar</button>
     <button class="nav-tab" data-tab="feedback" onclick="showView('feedback')">✉️ Murojaatlar <span id="feedback-count-badge" style="display:none; background:#ef4444; color:white; padding:1px 7px; border-radius:100px; font-size:10px; margin-left:4px;"></span></button>
@@ -465,6 +466,19 @@
             <option value="3">🔵 Moviy</option><option value="4">🟢 Yashil</option>
             <option value="5">🩷 Pushti</option><option value="6">🟡 Sariq</option>
           </select></div>
+      </div>
+      <div class="field"><label>📂 Kurs kategoriyasi</label>
+        <select class="select" id="course-category">
+          <option value="general">📚 Umumiy (asosiy)</option>
+          <option value="spiritual">🕌 Ma'naviyat va e'tiqod</option>
+          <option value="legal">⚖️ Huquqiy savodxonlik</option>
+          <option value="literature">📖 Adabiyot va madaniyat</option>
+          <option value="history">🏛️ Tarix va meros</option>
+          <option value="science">🔬 Ilm-fan</option>
+          <option value="health">🏥 Salomatlik va sport</option>
+          <option value="business">💼 Tadbirkorlik va karyera</option>
+        </select>
+        <p style="font-size:11px; color:var(--ink-2); margin-top:4px;">⚖️ "Huquqiy" tanlasangiz, kurs maxsus huquqiy savodxonlik bo'limida ham ko'rinadi.</p>
       </div>
       <h3 class="section-divider">📚 Mavzular (darslar)</h3>
       <p class="sub" style="margin-top: -4px; margin-bottom: 12px;">
@@ -702,6 +716,10 @@ D) Noto'g'ri</pre>
             <input class="input" id="ebook-author-uz" placeholder="Masalan: Olimjon Davlatov"></div>
           <div class="field"><label>Qisqa tavsif (O'zbekcha)</label>
             <textarea class="textarea" id="ebook-desc-uz" placeholder="Kitob haqida..."></textarea></div>
+          <div class="field"><label>🎧 Audio uchun matn (O'zbekcha) — ixtiyoriy</label>
+            <textarea class="textarea" id="ebook-audio-uz" placeholder="Kitobning to'liq matni yoki qism — saytda 🎧 tugma bossa, ovozli o'qib beradi" style="min-height:120px;"></textarea>
+            <p style="font-size:11px; color:var(--ink-2); margin-top:4px;">💡 PDF'dan matnni nusxalab qo'ying. Brauzer TTS uni o'zbekcha ovoz bilan o'qib beradi.</p>
+          </div>
         </div>
         <!-- Qaraqalpaqsha -->
         <div class="lang-pane" data-lang="kaa" style="display:none;">
@@ -711,6 +729,9 @@ D) Noto'g'ri</pre>
             <input class="input" id="ebook-author-kaa" placeholder="Mısalı: Olimjon Dawlatov"></div>
           <div class="field"><label>Qısqa tariypı (Qaraqalpaqsha)</label>
             <textarea class="textarea" id="ebook-desc-kaa" placeholder="Kitap haqqında..."></textarea></div>
+          <div class="field"><label>🎧 Audio matn (Qaraqalpaqsha) — ixtiyoriy</label>
+            <textarea class="textarea" id="ebook-audio-kaa" placeholder="Kitap teksti..." style="min-height:120px;"></textarea>
+          </div>
         </div>
         <!-- Русский -->
         <div class="lang-pane" data-lang="ru" style="display:none;">
@@ -720,6 +741,9 @@ D) Noto'g'ri</pre>
             <input class="input" id="ebook-author-ru" placeholder="Например: Олимжон Давлатов"></div>
           <div class="field"><label>Краткое описание (Русский)</label>
             <textarea class="textarea" id="ebook-desc-ru" placeholder="О книге..."></textarea></div>
+          <div class="field"><label>🎧 Аудио текст (Русский) — необязательно</label>
+            <textarea class="textarea" id="ebook-audio-ru" placeholder="Полный текст книги..." style="min-height:120px;"></textarea>
+          </div>
         </div>
       </div>
       <div class="field-row">
@@ -849,6 +873,67 @@ D) Noto'g'ri</pre>
       <div class="actions-bar">
         <button class="btn btn-secondary" onclick="showView('newspaper-editor')">Bekor qilish</button>
         <button class="btn btn-primary" onclick="saveIssue()">💾 Saqlash</button>
+      </div>
+    </div>
+
+    <!-- ====== TOURNAMENTS ====== -->
+    <div class="view" id="view-tournaments">
+      <div class="view-header">
+        <h1>🏆 Onlayn musobaqalar</h1>
+        <button class="btn btn-primary" onclick="openTournamentEditor()">+ Yangi musobaqa</button>
+      </div>
+      <p class="sub">⏰ Belgilangan vaqtda hammasi bir vaqtda boshlanadi. TOP 10 — sovrinlar oladi.</p>
+      <div id="tournaments-list" class="item-list"></div>
+    </div>
+
+    <div class="view" id="view-tournament-editor">
+      <div class="view-header">
+        <h1 id="tournament-editor-title">Yangi musobaqa</h1>
+        <button class="btn btn-secondary btn-sm" onclick="showView('tournaments')">← Ortga</button>
+      </div>
+      <div class="field"><label>Musobaqa nomi *</label>
+        <input class="input" id="tournament-title" placeholder="Masalan: Ma'rifat CUP — Iyul oyi turnir"></div>
+      <div class="field"><label>Sovrin tavsifi</label>
+        <textarea class="textarea" id="tournament-prize" placeholder="1-o'rin: Noutbuk, 2-o'rin: Smartfon, 3-10: Kitob to'plamlari va sertifikat..."></textarea></div>
+      <div class="field-row">
+        <div class="field"><label>Boshlanish sanasi va vaqti *</label>
+          <input class="input" type="datetime-local" id="tournament-start"></div>
+        <div class="field"><label>Davomiyligi (daqiqa)</label>
+          <input class="input" type="number" id="tournament-duration" value="60" min="5" max="180"></div>
+      </div>
+      <div class="field-row">
+        <div class="field"><label>Tasodifiy savollar soni</label>
+          <input class="input" type="number" id="tournament-random-count" value="30" min="5" max="100"></div>
+        <div class="field"><label>Bir savol uchun vaqt (soniya)</label>
+          <input class="input" type="number" id="tournament-time-per-q" value="30" min="5" max="120"></div>
+      </div>
+      <h3 class="section-divider">📝 Savollar</h3>
+      <p class="sub" style="margin-top:-4px; margin-bottom:12px;">
+        💡 Mavjud kurslarning savollaridan tasodifiy tanlash <b>YOKI</b> alohida savollar yozish mumkin.
+      </p>
+      <div class="field">
+        <label>Manbasi</label>
+        <select class="select" id="tournament-source" onchange="toggleTournamentSource()">
+          <option value="custom">📝 Maxsus savollar (quyida yozing)</option>
+          <option value="all_courses">📚 Barcha kurslar savollaridan</option>
+          <option value="category">📂 Kategoriya bo'yicha</option>
+        </select>
+      </div>
+      <div class="field" id="tournament-category-field" style="display:none;">
+        <label>Qaysi kategoriyadan?</label>
+        <select class="select" id="tournament-category">
+          <option value="spiritual">🕌 Ma'naviyat</option>
+          <option value="legal">⚖️ Huquqiy</option>
+          <option value="literature">📖 Adabiyot</option>
+          <option value="history">🏛️ Tarix</option>
+          <option value="science">🔬 Ilm-fan</option>
+        </select>
+      </div>
+      <div id="tournament-questions-container" class="block-list"></div>
+      <button class="btn btn-secondary btn-sm" onclick="addQuestionBlock('tournament-questions-container')">+ Savol qo'shish</button>
+      <div class="actions-bar">
+        <button class="btn btn-secondary" onclick="showView('tournaments')">Bekor qilish</button>
+        <button class="btn btn-primary" onclick="saveTournament()">💾 Saqlash</button>
       </div>
     </div>
 
@@ -1259,7 +1344,7 @@ async function syncToGitHub(silent) {
     exportedAt: new Date().toISOString(),
     source: 'marifat-cup-admin-auto',
     courses, quizzes, slides,
-    announcements: anns, ebooks, meetings, newspapers, labels: (function(){ try { return JSON.parse(localStorage.getItem('mc_labels')||'{}'); } catch(e){ return {}; } })()
+    announcements: anns, ebooks, meetings, newspapers, tournaments, labels: (function(){ try { return JSON.parse(localStorage.getItem('mc_labels')||'{}'); } catch(e){ return {}; } })()
   };
   const json = JSON.stringify(payload, null, 2);
   const contentBase64 = btoa(unescape(encodeURIComponent(json)));
@@ -1365,6 +1450,8 @@ let anns = [];
 let ebooks = [];
 let meetings = [];
 let newspapers = [];
+let tournaments = [];
+let editingTournamentId = null;
 let editingNewspaperId = null;
 let currentNewspaperIdForIssue = null;
 let editingIssueIdx = null;
@@ -1579,7 +1666,8 @@ function loadData() {
     ebooks = JSON.parse(localStorage.getItem(STORAGE.EBOOKS) || '[]');
     meetings = JSON.parse(localStorage.getItem(STORAGE.MEETINGS) || '[]');
     newspapers = JSON.parse(localStorage.getItem(STORAGE.NEWSPAPERS) || '[]');
-  } catch (e) { courses = []; quizzes = []; slides = []; anns = []; ebooks = []; meetings = []; newspapers = []; }
+    tournaments = JSON.parse(localStorage.getItem('mc_tournaments') || '[]');
+  } catch (e) { courses = []; quizzes = []; slides = []; anns = []; ebooks = []; meetings = []; newspapers = []; tournaments = []; }
 }
 function saveData() {
   localStorage.setItem(STORAGE.COURSES, JSON.stringify(courses));
@@ -1587,6 +1675,7 @@ function saveData() {
   localStorage.setItem(STORAGE.ANN, JSON.stringify(anns));
   localStorage.setItem(STORAGE.MEETINGS, JSON.stringify(meetings));
   localStorage.setItem(STORAGE.NEWSPAPERS, JSON.stringify(newspapers));
+  localStorage.setItem('mc_tournaments', JSON.stringify(tournaments));
   try {
     localStorage.setItem(STORAGE.SLIDES, JSON.stringify(slides));
     localStorage.setItem(STORAGE.EBOOKS, JSON.stringify(ebooks));
@@ -2003,6 +2092,7 @@ function openCourseEditor(id = null) {
   document.getElementById('course-desc').value = c?.description || '';
   document.getElementById('course-emoji').value = c?.emoji || '📖';
   document.getElementById('course-color').value = c?.color || 1;
+  document.getElementById('course-category').value = c?.category || 'general';
   // Tasodifiy savollar soni
   document.getElementById('course-random-count').value = c?.test?.randomCount || 30;
   // Mavzularni yuklash
@@ -2040,11 +2130,23 @@ function addLessonBlock(initial = null) {
 
     <div class="field" style="background:#dcfce7; padding:14px; border-radius:10px; border:2px solid #22c55e;">
       <label style="color:#15803d; font-weight:800;">🎬 Video faylni to'g'ridan-to'g'ri yuklash (TAVSIYA ETILADI)</label>
-      <input type="file" class="lesson-video-file" accept="video/*,.mp4,.webm,.mov,.mkv" onchange="handleLessonVideoUpload(event, this)" style="padding:8px; width:100%; background:white; border-radius:6px;">
+      <input type="file" class="lesson-video-file" accept="video/mp4,video/webm,.mp4,.webm" onchange="handleLessonVideoUpload(event, this)" style="padding:8px; width:100%; background:white; border-radius:6px;">
       <p class="lesson-video-status" style="font-size:13px; color:var(--ink-2); margin-top:8px; line-height:1.5;">${existingStatus}</p>
+      <div style="background:#fef3c7; border:1px solid #fbbf24; border-radius:8px; padding:10px; margin-top:10px; font-size:12px; line-height:1.6;">
+        <p style="color:#92400e; font-weight:700; margin-bottom:6px;">⚠️ MUHIM — Video formati:</p>
+        <p style="color:#78350f;">
+          ✅ <b>Faqat .mp4 (H.264 kodek)</b> qabul qilinadi<br>
+          ❌ <b>.mkv, .mov, .avi</b> — brauzer ochmaydi<br>
+          ❌ <b>.mp4 H.265/HEVC</b> (yangi telefonlar) — qora ekran chiqadi, faqat ovoz<br>
+          ❌ <b>Faqat ovoz chiqyapdi?</b> — Demak video kodek noto'g'ri
+        </p>
+        <p style="color:#15803d; margin-top:8px; font-weight:600;">
+          💡 Konverter (bepul): <a href="https://www.veed.io/tools/video-compressor" target="_blank" style="color:#1e40af;">veed.io</a> yoki <a href="https://handbrake.fr/" target="_blank" style="color:#1e40af;">HandBrake</a><br>
+          Eksport sozlamalari: <b>Format: MP4, Codec: H.264, Audio: AAC</b>
+        </p>
+      </div>
       <p style="font-size:11px; color:#15803d; margin-top:8px; line-height:1.5;">
-        ✅ <b>Eng yaxshi variant:</b> Fayl GitHub'ga yuklanadi va sayt ichida HTML5 pleer'da ochiladi (Telegram'ga o'tmasdan, YouTube'siz).<br>
-        ✅ <b>Maksimal 95 MB</b> (GitHub cheklovi). Katta video bo'lsa, sifatini pasaytiring.<br>
+        ✅ <b>Maksimal 95 MB</b> (GitHub cheklovi). Katta video bo'lsa, sifatini pasaytiring (720p tavsiya).<br>
         ✅ <b>Hammaga ko'rinadi</b> — boshqa kompyuter va telefondan ham.
       </p>
     </div>
@@ -2174,6 +2276,34 @@ async function handleLessonSlideUpload(e, fileInput) {
   }
 }
 
+// Video brauzerda ochilishini test qilish (kodek tekshiruvi)
+async function checkVideoPlayability(file) {
+  return new Promise((resolve) => {
+    const url = URL.createObjectURL(file);
+    const video = document.createElement('video');
+    video.muted = true;
+    video.preload = 'metadata';
+    let resolved = false;
+    const cleanup = (result) => {
+      if (resolved) return;
+      resolved = true;
+      URL.revokeObjectURL(url);
+      video.remove();
+      resolve(result);
+    };
+    video.addEventListener('loadedmetadata', () => {
+      // Video o'lchamlari bormi? (kodek ochilgan bo'lsa videoWidth > 0)
+      setTimeout(() => {
+        cleanup(video.videoWidth > 0 && video.videoHeight > 0);
+      }, 500);
+    });
+    video.addEventListener('error', () => cleanup(false));
+    // 5 soniya kutamiz
+    setTimeout(() => cleanup(true), 5000); // Timeout — ruxsat berib qo'yamiz
+    video.src = url;
+  });
+}
+
 async function handleLessonVideoUpload(e, fileInput) {
   const file = e.target.files[0];
   if (!file) return;
@@ -2183,6 +2313,34 @@ async function handleLessonVideoUpload(e, fileInput) {
   const statusEl = block.querySelector('.lesson-video-status');
   const urlInput = block.querySelector('.lesson-video');
   const hasToken = !!localStorage.getItem(STORAGE.GH_TOKEN);
+
+  // Format tekshirish
+  const ext = (file.name.split('.').pop() || '').toLowerCase();
+  const badFormats = ['mkv', 'mov', 'avi', 'wmv', 'flv', '3gp'];
+  if (badFormats.includes(ext)) {
+    statusEl.innerHTML = `❌ <b>${ext.toUpperCase()} formati qo'llab-quvvatlanmaydi!</b><br>
+      Brauzer faqat <b>.mp4</b> (H.264 kodek) yoki <b>.webm</b> formatini ochadi.<br>
+      <a href="https://www.veed.io/tools/video-compressor" target="_blank" style="color:#1e40af;">veed.io</a> orqali MP4'ga aylantirib qaytadan yuklang.`;
+    statusEl.style.color = 'var(--danger)';
+    fileInput.value = '';
+    return;
+  }
+  // .mp4 bo'lsa, kodek tekshirish — videoni preview qilib ko'ramiz
+  if (ext === 'mp4') {
+    const canPlay = await checkVideoPlayability(file);
+    if (!canPlay) {
+      statusEl.innerHTML = `⚠️ <b>Bu MP4 fayl brauzerda ochilmaydi!</b><br>
+        Ehtimol H.265/HEVC kodek (yangi telefon yozuvi) bo'lishi mumkin — brauzer faqat <b>H.264</b>ni ochadi.<br>
+        <a href="https://www.veed.io/tools/video-compressor" target="_blank" style="color:#1e40af;">veed.io</a> orqali H.264'ga qayta kodlang.<br>
+        <small>Sozlamalar: Format MP4, Video Codec H.264, Audio AAC</small>`;
+      statusEl.style.color = 'var(--danger)';
+      // Foydalanuvchi davom etishni xohlasa, ruxsat berib qoladi
+      if (!confirm('⚠️ Bu video brauzerda ochilmasligi mumkin (faqat ovoz chiqishi mumkin).\n\nBaribir yuklasinmi?')) {
+        fileInput.value = '';
+        return;
+      }
+    }
+  }
 
   // GitHub'ga yuklash (asosiy variant — barcha qurilmalarda ko'rinadi)
   if (hasToken && sizeMB < 95) {
@@ -2540,6 +2698,7 @@ function saveCourse() {
     description: document.getElementById('course-desc').value.trim(),
     emoji: document.getElementById('course-emoji').value.trim() || '📖',
     color: parseInt(document.getElementById('course-color').value),
+    category: document.getElementById('course-category').value || 'general',
     lessons,
     test: { questions: extraQuestions, randomCount },
     createdAt: editingCourseId ? (courses.find(c => c.id === editingCourseId)?.createdAt || Date.now()) : Date.now(),
@@ -2803,6 +2962,9 @@ function openEbookEditor(id = null) {
   document.getElementById('ebook-desc-uz').value = b?.description_uz || b?.description || '';
   document.getElementById('ebook-desc-kaa').value = b?.description_kaa || '';
   document.getElementById('ebook-desc-ru').value = b?.description_ru || '';
+  document.getElementById('ebook-audio-uz').value = b?.audioText_uz || '';
+  document.getElementById('ebook-audio-kaa').value = b?.audioText_kaa || '';
+  document.getElementById('ebook-audio-ru').value = b?.audioText_ru || '';
   document.getElementById('ebook-emoji-input').value = b?.emoji || '📖';
   document.getElementById('ebook-color-input').value = b?.color || 1;
   document.getElementById('ebook-pdf-url').value = b?.pdfUrl || '';
@@ -2855,6 +3017,9 @@ async function saveEbook() {
     description_uz: document.getElementById('ebook-desc-uz').value.trim(),
     description_kaa: document.getElementById('ebook-desc-kaa').value.trim(),
     description_ru: document.getElementById('ebook-desc-ru').value.trim(),
+    audioText_uz: document.getElementById('ebook-audio-uz').value.trim(),
+    audioText_kaa: document.getElementById('ebook-audio-kaa').value.trim(),
+    audioText_ru: document.getElementById('ebook-audio-ru').value.trim(),
     emoji: document.getElementById('ebook-emoji-input').value.trim() || '📖',
     color: parseInt(document.getElementById('ebook-color-input').value),
     pdfStored: existing?.pdfStored || false,
@@ -3004,6 +3169,127 @@ function deleteMeeting(id) {
     meetings = meetings.filter(x => x.id !== id);
     saveData();
     renderMeetingsList();
+    toast("O'chirildi", 'success');
+  });
+}
+
+// ============================================================
+// TOURNAMENTS — Onlayn musobaqa
+// ============================================================
+function renderTournamentsList() {
+  const list = document.getElementById('tournaments-list');
+  if (!tournaments || tournaments.length === 0) {
+    list.innerHTML = `<div class="empty-msg"><div class="ico">🏆</div>Hali musobaqa yo'q.<br><br>
+      <button class="btn btn-primary" onclick="openTournamentEditor()">+ Birinchi musobaqani yaratish</button></div>`;
+    return;
+  }
+  const now = Date.now();
+  list.innerHTML = tournaments.map(t => {
+    const startMs = new Date(t.startAt).getTime();
+    const endMs = startMs + (t.duration || 60) * 60 * 1000;
+    let status = '⏳ Kutilmoqda';
+    let statusColor = '#6b7280';
+    if (now > endMs) { status = '✅ Tugagan'; statusColor = '#15803d'; }
+    else if (now >= startMs) { status = '🔴 JONLI'; statusColor = '#dc2626'; }
+    return `
+      <div class="item-row">
+        <div class="ico" style="background: linear-gradient(135deg, #f59e0b, #ea580c);">🏆</div>
+        <div class="info">
+          <h3>${esc(t.title)} <span style="background:${statusColor}; color:white; font-size:10px; padding:2px 8px; border-radius:10px; vertical-align:middle;">${status}</span></h3>
+          <p>📅 ${new Date(t.startAt).toLocaleString('uz-UZ')} · ⏱️ ${t.duration} daqiqa · ❓ ${t.questions?.length || 0} ta savol</p>
+        </div>
+        <div class="actions">
+          <button class="icon-btn edit" onclick="openTournamentEditor('${t.id}')">✏️</button>
+          <button class="icon-btn del" onclick="deleteTournament('${t.id}')">🗑️</button>
+        </div>
+      </div>`;
+  }).join('');
+}
+
+function toggleTournamentSource() {
+  const source = document.getElementById('tournament-source').value;
+  document.getElementById('tournament-category-field').style.display = source === 'category' ? '' : 'none';
+  document.getElementById('tournament-questions-container').style.display = source === 'custom' ? '' : 'none';
+}
+
+function openTournamentEditor(id = null) {
+  editingTournamentId = id;
+  const t = id ? tournaments.find(x => x.id === id) : null;
+  document.getElementById('tournament-editor-title').textContent = t ? 'Musobaqani tahrirlash' : 'Yangi musobaqa';
+  document.getElementById('tournament-title').value = t?.title || '';
+  document.getElementById('tournament-prize').value = t?.prize || '';
+  // Default sana: ertaga 18:00
+  if (t?.startAt) {
+    const d = new Date(t.startAt);
+    const localISO = new Date(d.getTime() - d.getTimezoneOffset()*60000).toISOString().slice(0,16);
+    document.getElementById('tournament-start').value = localISO;
+  } else {
+    const tomorrow = new Date();
+    tomorrow.setDate(tomorrow.getDate() + 1);
+    tomorrow.setHours(18, 0, 0, 0);
+    document.getElementById('tournament-start').value = new Date(tomorrow.getTime() - tomorrow.getTimezoneOffset()*60000).toISOString().slice(0,16);
+  }
+  document.getElementById('tournament-duration').value = t?.duration || 60;
+  document.getElementById('tournament-random-count').value = t?.randomCount || 30;
+  document.getElementById('tournament-time-per-q').value = t?.timePerQ || 30;
+  document.getElementById('tournament-source').value = t?.source || 'custom';
+  document.getElementById('tournament-category').value = t?.category || 'spiritual';
+  toggleTournamentSource();
+  const qc = document.getElementById('tournament-questions-container');
+  qc.innerHTML = '';
+  (t?.questions || []).forEach(q => addQuestionBlock('tournament-questions-container', q));
+  showView('tournament-editor');
+}
+
+function saveTournament() {
+  const title = document.getElementById('tournament-title').value.trim();
+  if (!title) { toast('Musobaqa nomini kiriting', 'error'); return; }
+  const startVal = document.getElementById('tournament-start').value;
+  if (!startVal) { toast('Boshlanish vaqtini tanlang', 'error'); return; }
+  const source = document.getElementById('tournament-source').value;
+  let questions = [];
+  if (source === 'custom') {
+    const qBlocks = document.querySelectorAll('#tournament-questions-container .question-block');
+    for (let i = 0; i < qBlocks.length; i++) {
+      const q = readQuestionBlock(qBlocks[i], i);
+      if (!q) return;
+      questions.push(q);
+    }
+    if (questions.length === 0) { toast('Kamida bitta savol kiriting yoki kurs savollaridan tanlang', 'error'); return; }
+  }
+  const tournament = {
+    id: editingTournamentId || ('t_' + Date.now()),
+    title,
+    prize: document.getElementById('tournament-prize').value.trim(),
+    startAt: new Date(startVal).toISOString(),
+    duration: parseInt(document.getElementById('tournament-duration').value) || 60,
+    randomCount: parseInt(document.getElementById('tournament-random-count').value) || 30,
+    timePerQ: parseInt(document.getElementById('tournament-time-per-q').value) || 30,
+    source,
+    category: document.getElementById('tournament-category').value,
+    questions, // bo'sh bo'lishi mumkin agar source !== custom
+    createdAt: editingTournamentId ? (tournaments.find(t => t.id === editingTournamentId)?.createdAt || Date.now()) : Date.now()
+  };
+  if (editingTournamentId) {
+    const idx = tournaments.findIndex(t => t.id === editingTournamentId);
+    if (idx >= 0) tournaments[idx] = tournament;
+  } else {
+    tournaments.push(tournament);
+  }
+  saveData();
+  toast('Musobaqa saqlandi ✓', 'success');
+  editingTournamentId = null;
+  showView('tournaments');
+  renderTournamentsList();
+}
+
+function deleteTournament(id) {
+  const t = tournaments.find(x => x.id === id);
+  if (!t) return;
+  showModal("O'chirishni tasdiqlang", `"${t.title}" musobaqasini o'chirmoqchimisiz?`, () => {
+    tournaments = tournaments.filter(x => x.id !== id);
+    saveData();
+    renderTournamentsList();
     toast("O'chirildi", 'success');
   });
 }
@@ -3529,7 +3815,7 @@ function exportData() {
   const data = {
     version: 1, exportedAt: new Date().toISOString(),
     source: 'marifat-cup-admin', courses, quizzes, slides,
-    announcements: anns, ebooks, meetings, newspapers, labels: (function(){ try { return JSON.parse(localStorage.getItem('mc_labels')||'{}'); } catch(e){ return {}; } })()
+    announcements: anns, ebooks, meetings, newspapers, tournaments, labels: (function(){ try { return JSON.parse(localStorage.getItem('mc_labels')||'{}'); } catch(e){ return {}; } })()
   };
   const json = JSON.stringify(data, null, 2);
   const blob = new Blob([json], { type: 'application/json' });
