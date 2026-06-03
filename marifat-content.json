@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "exportedAt": "2026-06-01T15:15:45.467Z",
+  "exportedAt": "2026-06-03T04:26:32.663Z",
   "source": "marifat-cup-admin-auto",
   "courses": [
     {
@@ -1721,6 +1721,2391 @@
   ],
   "tournaments": [],
   "films": [],
+  "demoUsers": [
+    {
+      "username": "demo__1",
+      "name": "Абдуфаттох Абдусаматов",
+      "organization": "Turizm qo'mitasi",
+      "branch": "Andijon viloyati bo'limi",
+      "position": "Bo'lim mudiri",
+      "gender": "erkak",
+      "age": 56,
+      "marital": "uylangan",
+      "isDemo": true,
+      "coins": 0,
+      "completedLessons": [
+        "demo_course_3::Mavzu 1",
+        "demo_course_2::Mavzu 8",
+        "demo_course_4::Mavzu 10",
+        "demo_course_4::Mavzu 5",
+        "demo_course_1::Mavzu 3",
+        "demo_course_5::Mavzu 8",
+        "demo_course_1::Mavzu 2",
+        "demo_course_4::Mavzu 2",
+        "demo_course_2::Mavzu 7",
+        "demo_course_3::Mavzu 1",
+        "demo_course_3::Mavzu 2",
+        "demo_course_2::Mavzu 3",
+        "demo_course_3::Mavzu 9",
+        "demo_course_1::Mavzu 9"
+      ],
+      "certificates": [
+        {
+          "courseId": "demo_course_4",
+          "courseTitle": "Hayot tarzi va madaniyat",
+          "date": "2026 M05 10",
+          "score": 75
+        }
+      ],
+      "createdAt": 1780287992658
+    },
+    {
+      "username": "demo__2",
+      "name": "Абдураззоқ Шаймарданов",
+      "organization": "Turizm qo'mitasi",
+      "branch": "Andijon viloyati bo'limi",
+      "position": "Bo'lim mudiri",
+      "gender": "erkak",
+      "age": 30,
+      "marital": "uylangan",
+      "isDemo": true,
+      "coins": 0,
+      "completedLessons": [
+        "demo_course_1::Mavzu 9",
+        "demo_course_2::Mavzu 4",
+        "demo_course_3::Mavzu 10",
+        "demo_course_1::Mavzu 6",
+        "demo_course_1::Mavzu 3",
+        "demo_course_3::Mavzu 9",
+        "demo_course_5::Mavzu 4",
+        "demo_course_1::Mavzu 6"
+      ],
+      "certificates": [
+        {
+          "courseId": "demo_course_5",
+          "courseTitle": "O'zbek adabiyoti",
+          "date": "2026 M06 1",
+          "score": 86
+        }
+      ],
+      "createdAt": 1774153592658
+    },
+    {
+      "username": "demo__3",
+      "name": "Тўхтасин Арслонов",
+      "organization": "Turizm qo'mitasi",
+      "branch": "Andijon viloyati bo'limi",
+      "position": "Hujjatlar bo'yicha mutaxassis",
+      "gender": "erkak",
+      "age": 35,
+      "marital": "ajrashgan",
+      "isDemo": true,
+      "coins": 0,
+      "completedLessons": [
+        "demo_course_3::Mavzu 4",
+        "demo_course_2::Mavzu 4",
+        "demo_course_3::Mavzu 9",
+        "demo_course_1::Mavzu 1",
+        "demo_course_5::Mavzu 9",
+        "demo_course_4::Mavzu 4",
+        "demo_course_5::Mavzu 5",
+        "demo_course_5::Mavzu 5",
+        "demo_course_4::Mavzu 6",
+        "demo_course_4::Mavzu 4",
+        "demo_course_3::Mavzu 4",
+        "demo_course_2::Mavzu 9",
+        "demo_course_1::Mavzu 7",
+        "demo_course_5::Mavzu 6",
+        "demo_course_3::Mavzu 8"
+      ],
+      "certificates": [
+        {
+          "courseId": "demo_course_2",
+          "courseTitle": "Vatanparvarlik tarbiyasi",
+          "date": "2026 M05 28",
+          "score": 80
+        }
+      ],
+      "createdAt": 1778905592658
+    },
+    {
+      "username": "demo__4",
+      "name": "Бахора Ахмедова",
+      "organization": "Turizm qo'mitasi",
+      "branch": "Buxoro viloyati bo'limi",
+      "position": "Bo'lim mudiri o'rinbosari",
+      "gender": "erkak",
+      "age": 57,
+      "marital": "uylangan",
+      "isDemo": true,
+      "coins": 0,
+      "completedLessons": [
+        "demo_course_5::Mavzu 6",
+        "demo_course_4::Mavzu 7",
+        "demo_course_3::Mavzu 7",
+        "demo_course_3::Mavzu 10",
+        "demo_course_5::Mavzu 6",
+        "demo_course_4::Mavzu 8",
+        "demo_course_3::Mavzu 7",
+        "demo_course_3::Mavzu 7",
+        "demo_course_5::Mavzu 4",
+        "demo_course_3::Mavzu 4",
+        "demo_course_1::Mavzu 8",
+        "demo_course_2::Mavzu 10",
+        "demo_course_4::Mavzu 5",
+        "demo_course_3::Mavzu 10",
+        "demo_course_5::Mavzu 7",
+        "demo_course_4::Mavzu 8",
+        "demo_course_3::Mavzu 1"
+      ],
+      "certificates": [
+        {
+          "courseId": "demo_course_2",
+          "courseTitle": "Hayot tarzi va madaniyat",
+          "date": "2026 M04 7",
+          "score": 88
+        }
+      ],
+      "createdAt": 1777004792658
+    },
+    {
+      "username": "demo__5",
+      "name": "Шохиста Юнусалиева",
+      "organization": "Turizm qo'mitasi",
+      "branch": "",
+      "position": "Hujjatlar bo'yicha mutaxassis",
+      "gender": "erkak",
+      "age": 28,
+      "marital": "uylangan",
+      "isDemo": true,
+      "coins": 0,
+      "completedLessons": [
+        "demo_course_1::Mavzu 8",
+        "demo_course_2::Mavzu 2",
+        "demo_course_5::Mavzu 4",
+        "demo_course_4::Mavzu 4",
+        "demo_course_4::Mavzu 5",
+        "demo_course_1::Mavzu 5",
+        "demo_course_3::Mavzu 2",
+        "demo_course_5::Mavzu 8",
+        "demo_course_1::Mavzu 8",
+        "demo_course_1::Mavzu 1",
+        "demo_course_2::Mavzu 3",
+        "demo_course_5::Mavzu 5",
+        "demo_course_3::Mavzu 2",
+        "demo_course_2::Mavzu 6",
+        "demo_course_5::Mavzu 5",
+        "demo_course_3::Mavzu 9"
+      ],
+      "certificates": [
+        {
+          "courseId": "demo_course_5",
+          "courseTitle": "Vatanparvarlik tarbiyasi",
+          "date": "2026 M05 17",
+          "score": 69
+        }
+      ],
+      "createdAt": 1777091192658
+    },
+    {
+      "username": "demo__6",
+      "name": "Нуриддин Назруллаев",
+      "organization": "Turizm qo'mitasi",
+      "branch": "Namangan viloyati bo'limi",
+      "position": "Bo'lim mudiri o'rinbosari",
+      "gender": "erkak",
+      "age": 37,
+      "marital": "uylangan",
+      "isDemo": true,
+      "coins": 0,
+      "completedLessons": [
+        "demo_course_3::Mavzu 7",
+        "demo_course_3::Mavzu 7",
+        "demo_course_5::Mavzu 7",
+        "demo_course_5::Mavzu 4",
+        "demo_course_5::Mavzu 1",
+        "demo_course_2::Mavzu 10",
+        "demo_course_4::Mavzu 9",
+        "demo_course_5::Mavzu 4",
+        "demo_course_2::Mavzu 2"
+      ],
+      "certificates": [
+        {
+          "courseId": "demo_course_4",
+          "courseTitle": "Tarix va meros",
+          "date": "2026 M04 27",
+          "score": 82
+        }
+      ],
+      "createdAt": 1777955192658
+    },
+    {
+      "username": "demo__7",
+      "name": "Шахноза Тажиддинова",
+      "organization": "Turizm qo'mitasi",
+      "branch": "Xorazm viloyati bo'limi",
+      "position": "Tashqi aloqalar mutaxassisi",
+      "gender": "erkak",
+      "age": 43,
+      "marital": "uylangan",
+      "isDemo": true,
+      "coins": 0,
+      "completedLessons": [
+        "demo_course_1::Mavzu 5",
+        "demo_course_3::Mavzu 10",
+        "demo_course_1::Mavzu 1",
+        "demo_course_5::Mavzu 1",
+        "demo_course_1::Mavzu 10",
+        "demo_course_1::Mavzu 8",
+        "demo_course_5::Mavzu 9",
+        "demo_course_5::Mavzu 5",
+        "demo_course_5::Mavzu 4",
+        "demo_course_5::Mavzu 1",
+        "demo_course_2::Mavzu 2"
+      ],
+      "certificates": [
+        {
+          "courseId": "demo_course_1",
+          "courseTitle": "Vatanparvarlik tarbiyasi",
+          "date": "2026 M04 8",
+          "score": 81
+        }
+      ],
+      "createdAt": 1777004792658
+    },
+    {
+      "username": "demo__8",
+      "name": "Инобат Аҳатова",
+      "organization": "Turizm qo'mitasi",
+      "branch": "Qashqadaryo viloyati bo'limi",
+      "position": "Maslahatchi",
+      "gender": "erkak",
+      "age": 56,
+      "marital": "bo'ydoq",
+      "isDemo": true,
+      "coins": 0,
+      "completedLessons": [
+        "demo_course_5::Mavzu 8",
+        "demo_course_3::Mavzu 5",
+        "demo_course_2::Mavzu 9",
+        "demo_course_1::Mavzu 3",
+        "demo_course_1::Mavzu 5",
+        "demo_course_1::Mavzu 7",
+        "demo_course_3::Mavzu 6",
+        "demo_course_5::Mavzu 8",
+        "demo_course_3::Mavzu 6",
+        "demo_course_3::Mavzu 5",
+        "demo_course_4::Mavzu 6",
+        "demo_course_4::Mavzu 9",
+        "demo_course_5::Mavzu 2",
+        "demo_course_2::Mavzu 5"
+      ],
+      "certificates": [
+        {
+          "courseId": "demo_course_2",
+          "courseTitle": "Vatanparvarlik tarbiyasi",
+          "date": "2026 M04 8",
+          "score": 84
+        }
+      ],
+      "createdAt": 1776313592658
+    },
+    {
+      "username": "demo__9",
+      "name": "Наргиза Одинаева",
+      "organization": "Turizm qo'mitasi",
+      "branch": "Namangan viloyati bo'limi",
+      "position": "Bo'lim mudiri",
+      "gender": "erkak",
+      "age": 42,
+      "marital": "uylangan",
+      "isDemo": true,
+      "coins": 0,
+      "completedLessons": [
+        "demo_course_4::Mavzu 9",
+        "demo_course_4::Mavzu 3",
+        "demo_course_4::Mavzu 10",
+        "demo_course_4::Mavzu 3",
+        "demo_course_2::Mavzu 1",
+        "demo_course_3::Mavzu 1",
+        "demo_course_1::Mavzu 6",
+        "demo_course_1::Mavzu 7",
+        "demo_course_2::Mavzu 5"
+      ],
+      "certificates": [
+        {
+          "courseId": "demo_course_1",
+          "courseTitle": "Hayot tarzi va madaniyat",
+          "date": "2026 M04 8",
+          "score": 75
+        }
+      ],
+      "createdAt": 1779423992658
+    },
+    {
+      "username": "demo__10",
+      "name": "Шахзод Отабоев",
+      "organization": "Turizm qo'mitasi",
+      "branch": "Farg'ona viloyati bo'limi",
+      "position": "Tahlilchi",
+      "gender": "erkak",
+      "age": 53,
+      "marital": "bo'ydoq",
+      "isDemo": true,
+      "coins": 0,
+      "completedLessons": [
+        "demo_course_1::Mavzu 6",
+        "demo_course_3::Mavzu 5",
+        "demo_course_5::Mavzu 7",
+        "demo_course_3::Mavzu 2",
+        "demo_course_1::Mavzu 2",
+        "demo_course_1::Mavzu 3",
+        "demo_course_1::Mavzu 7",
+        "demo_course_4::Mavzu 4",
+        "demo_course_1::Mavzu 8",
+        "demo_course_1::Mavzu 4",
+        "demo_course_2::Mavzu 8",
+        "demo_course_5::Mavzu 9",
+        "demo_course_5::Mavzu 1",
+        "demo_course_5::Mavzu 6"
+      ],
+      "certificates": [
+        {
+          "courseId": "demo_course_3",
+          "courseTitle": "Ma'naviyat asoslari",
+          "date": "2026 M04 16",
+          "score": 87
+        }
+      ],
+      "createdAt": 1772684792658
+    },
+    {
+      "username": "demo__11",
+      "name": "Жамшид Шукуров",
+      "organization": "Turizm qo'mitasi",
+      "branch": "Xorazm viloyati bo'limi",
+      "position": "Bo'lim boshlig'i",
+      "gender": "erkak",
+      "age": 43,
+      "marital": "uylangan",
+      "isDemo": true,
+      "coins": 0,
+      "completedLessons": [
+        "demo_course_3::Mavzu 6",
+        "demo_course_4::Mavzu 2",
+        "demo_course_1::Mavzu 9",
+        "demo_course_4::Mavzu 10",
+        "demo_course_2::Mavzu 5",
+        "demo_course_4::Mavzu 3",
+        "demo_course_1::Mavzu 10",
+        "demo_course_2::Mavzu 5",
+        "demo_course_5::Mavzu 2",
+        "demo_course_1::Mavzu 6",
+        "demo_course_5::Mavzu 5",
+        "demo_course_1::Mavzu 8",
+        "demo_course_4::Mavzu 6",
+        "demo_course_3::Mavzu 8",
+        "demo_course_5::Mavzu 2",
+        "demo_course_1::Mavzu 4",
+        "demo_course_4::Mavzu 8"
+      ],
+      "certificates": [
+        {
+          "courseId": "demo_course_1",
+          "courseTitle": "Ma'naviyat asoslari",
+          "date": "2026 M04 20",
+          "score": 63
+        }
+      ],
+      "createdAt": 1773548792659
+    },
+    {
+      "username": "demo__12",
+      "name": "Масуда Гулметова",
+      "organization": "Turizm qo'mitasi",
+      "branch": "",
+      "position": "Inspektor",
+      "gender": "erkak",
+      "age": 51,
+      "marital": "uylangan",
+      "isDemo": true,
+      "coins": 0,
+      "completedLessons": [
+        "demo_course_4::Mavzu 2",
+        "demo_course_1::Mavzu 6",
+        "demo_course_5::Mavzu 6",
+        "demo_course_3::Mavzu 10",
+        "demo_course_1::Mavzu 3",
+        "demo_course_4::Mavzu 9",
+        "demo_course_5::Mavzu 8",
+        "demo_course_3::Mavzu 5",
+        "demo_course_5::Mavzu 9",
+        "demo_course_3::Mavzu 4"
+      ],
+      "certificates": [
+        {
+          "courseId": "demo_course_5",
+          "courseTitle": "Ma'naviyat asoslari",
+          "date": "2026 M04 20",
+          "score": 63
+        }
+      ],
+      "createdAt": 1778559992659
+    },
+    {
+      "username": "demo__13",
+      "name": "Ойбек Мадаминов",
+      "organization": "Turizm qo'mitasi",
+      "branch": "Andijon viloyati bo'limi",
+      "position": "Yetakchi mutaxassis",
+      "gender": "erkak",
+      "age": 49,
+      "marital": "uylangan",
+      "isDemo": true,
+      "coins": 0,
+      "completedLessons": [
+        "demo_course_1::Mavzu 10",
+        "demo_course_4::Mavzu 8",
+        "demo_course_4::Mavzu 8",
+        "demo_course_5::Mavzu 3",
+        "demo_course_2::Mavzu 9",
+        "demo_course_2::Mavzu 6",
+        "demo_course_2::Mavzu 1",
+        "demo_course_2::Mavzu 7",
+        "demo_course_3::Mavzu 1",
+        "demo_course_2::Mavzu 9",
+        "demo_course_5::Mavzu 6",
+        "demo_course_2::Mavzu 2",
+        "demo_course_3::Mavzu 8",
+        "demo_course_3::Mavzu 6"
+      ],
+      "certificates": [
+        {
+          "courseId": "demo_course_1",
+          "courseTitle": "Ma'naviyat asoslari",
+          "date": "2026 M06 2",
+          "score": 75
+        }
+      ],
+      "createdAt": 1777350392659
+    },
+    {
+      "username": "demo__14",
+      "name": "Жовлон Мансуров",
+      "organization": "Turizm qo'mitasi",
+      "branch": "Namangan viloyati bo'limi",
+      "position": "Maslahatchi",
+      "gender": "erkak",
+      "age": 29,
+      "marital": "bo'ydoq",
+      "isDemo": true,
+      "coins": 0,
+      "completedLessons": [
+        "demo_course_3::Mavzu 2",
+        "demo_course_3::Mavzu 7",
+        "demo_course_5::Mavzu 6",
+        "demo_course_1::Mavzu 5",
+        "demo_course_2::Mavzu 6",
+        "demo_course_3::Mavzu 7",
+        "demo_course_2::Mavzu 8",
+        "demo_course_5::Mavzu 6",
+        "demo_course_5::Mavzu 10",
+        "demo_course_1::Mavzu 9",
+        "demo_course_3::Mavzu 6",
+        "demo_course_3::Mavzu 8",
+        "demo_course_1::Mavzu 5",
+        "demo_course_1::Mavzu 5"
+      ],
+      "certificates": [
+        {
+          "courseId": "demo_course_5",
+          "courseTitle": "Hayot tarzi va madaniyat",
+          "date": "2026 M04 30",
+          "score": 88
+        }
+      ],
+      "createdAt": 1779164792659
+    },
+    {
+      "username": "demo__15",
+      "name": "Муҳаммадқодир Собиров",
+      "organization": "Turizm qo'mitasi",
+      "branch": "Andijon viloyati bo'limi",
+      "position": "Bosh inspektor",
+      "gender": "erkak",
+      "age": 33,
+      "marital": "ajrashgan",
+      "isDemo": true,
+      "coins": 0,
+      "completedLessons": [
+        "demo_course_5::Mavzu 1",
+        "demo_course_1::Mavzu 5",
+        "demo_course_5::Mavzu 9",
+        "demo_course_4::Mavzu 5",
+        "demo_course_2::Mavzu 4",
+        "demo_course_4::Mavzu 9",
+        "demo_course_5::Mavzu 7",
+        "demo_course_5::Mavzu 2",
+        "demo_course_4::Mavzu 8",
+        "demo_course_1::Mavzu 1",
+        "demo_course_5::Mavzu 10",
+        "demo_course_2::Mavzu 1",
+        "demo_course_3::Mavzu 8",
+        "demo_course_4::Mavzu 8",
+        "demo_course_3::Mavzu 1",
+        "demo_course_4::Mavzu 1",
+        "demo_course_4::Mavzu 2"
+      ],
+      "certificates": [
+        {
+          "courseId": "demo_course_2",
+          "courseTitle": "Vatanparvarlik tarbiyasi",
+          "date": "2026 M05 2",
+          "score": 73
+        }
+      ],
+      "createdAt": 1775622392659
+    },
+    {
+      "username": "demo_e_16",
+      "name": "Eлбек Исламов",
+      "organization": "Turizm qo'mitasi",
+      "branch": "Surxondaryo viloyati bo'limi",
+      "position": "Hujjatlar bo'yicha mutaxassis",
+      "gender": "erkak",
+      "age": 23,
+      "marital": "uylangan",
+      "isDemo": true,
+      "coins": 0,
+      "completedLessons": [
+        "demo_course_4::Mavzu 4",
+        "demo_course_1::Mavzu 6",
+        "demo_course_2::Mavzu 2",
+        "demo_course_3::Mavzu 8",
+        "demo_course_4::Mavzu 3",
+        "demo_course_3::Mavzu 10",
+        "demo_course_2::Mavzu 1",
+        "demo_course_2::Mavzu 8",
+        "demo_course_4::Mavzu 2",
+        "demo_course_1::Mavzu 5",
+        "demo_course_1::Mavzu 2",
+        "demo_course_2::Mavzu 3",
+        "demo_course_4::Mavzu 1",
+        "demo_course_3::Mavzu 5",
+        "demo_course_5::Mavzu 9",
+        "demo_course_2::Mavzu 9",
+        "demo_course_2::Mavzu 8"
+      ],
+      "certificates": [
+        {
+          "courseId": "demo_course_1",
+          "courseTitle": "Vatanparvarlik tarbiyasi",
+          "date": "2026 M04 25",
+          "score": 96
+        }
+      ],
+      "createdAt": 1777523192659
+    },
+    {
+      "username": "demo__17",
+      "name": "Феруза Хайруллаева",
+      "organization": "Turizm qo'mitasi",
+      "branch": "Qashqadaryo viloyati bo'limi",
+      "position": "Tahlilchi",
+      "gender": "erkak",
+      "age": 36,
+      "marital": "bo'ydoq",
+      "isDemo": true,
+      "coins": 0,
+      "completedLessons": [
+        "demo_course_4::Mavzu 1",
+        "demo_course_4::Mavzu 3",
+        "demo_course_3::Mavzu 1",
+        "demo_course_2::Mavzu 7",
+        "demo_course_3::Mavzu 2",
+        "demo_course_1::Mavzu 4",
+        "demo_course_1::Mavzu 3",
+        "demo_course_5::Mavzu 1",
+        "demo_course_3::Mavzu 10"
+      ],
+      "certificates": [
+        {
+          "courseId": "demo_course_2",
+          "courseTitle": "Hayot tarzi va madaniyat",
+          "date": "2026 M05 3",
+          "score": 63
+        }
+      ],
+      "createdAt": 1772857592659
+    },
+    {
+      "username": "demo__18",
+      "name": "Зуҳриддин Хасанов",
+      "organization": "Turizm qo'mitasi",
+      "branch": "Surxondaryo viloyati bo'limi",
+      "position": "Loyiha menejeri",
+      "gender": "erkak",
+      "age": 53,
+      "marital": "uylangan",
+      "isDemo": true,
+      "coins": 0,
+      "completedLessons": [
+        "demo_course_3::Mavzu 8",
+        "demo_course_3::Mavzu 8",
+        "demo_course_5::Mavzu 6",
+        "demo_course_3::Mavzu 6",
+        "demo_course_2::Mavzu 3",
+        "demo_course_5::Mavzu 4",
+        "demo_course_5::Mavzu 1",
+        "demo_course_1::Mavzu 8",
+        "demo_course_5::Mavzu 9",
+        "demo_course_1::Mavzu 10",
+        "demo_course_5::Mavzu 7",
+        "demo_course_3::Mavzu 9"
+      ],
+      "certificates": [
+        {
+          "courseId": "demo_course_3",
+          "courseTitle": "Vatanparvarlik tarbiyasi",
+          "date": "2026 M05 25",
+          "score": 76
+        }
+      ],
+      "createdAt": 1778473592659
+    },
+    {
+      "username": "demo__19",
+      "name": "Шомаруф Қосимов",
+      "organization": "Turizm qo'mitasi",
+      "branch": "Samarqand viloyati bo'limi",
+      "position": "Tashqi aloqalar mutaxassisi",
+      "gender": "erkak",
+      "age": 52,
+      "marital": "uylangan",
+      "isDemo": true,
+      "coins": 0,
+      "completedLessons": [
+        "demo_course_1::Mavzu 3",
+        "demo_course_2::Mavzu 10",
+        "demo_course_2::Mavzu 9",
+        "demo_course_2::Mavzu 6",
+        "demo_course_4::Mavzu 2",
+        "demo_course_3::Mavzu 10",
+        "demo_course_1::Mavzu 3",
+        "demo_course_1::Mavzu 7",
+        "demo_course_4::Mavzu 10",
+        "demo_course_5::Mavzu 5"
+      ],
+      "certificates": [
+        {
+          "courseId": "demo_course_4",
+          "courseTitle": "O'zbek adabiyoti",
+          "date": "2026 M04 19",
+          "score": 88
+        }
+      ],
+      "createdAt": 1778473592659
+    },
+    {
+      "username": "demo__20",
+      "name": "Феруза Сайдаматова",
+      "organization": "Turizm qo'mitasi",
+      "branch": "Toshkent shahar bo'limi",
+      "position": "Yetakchi mutaxassis",
+      "gender": "erkak",
+      "age": 22,
+      "marital": "ajrashgan",
+      "isDemo": true,
+      "coins": 0,
+      "completedLessons": [
+        "demo_course_3::Mavzu 6",
+        "demo_course_3::Mavzu 5",
+        "demo_course_2::Mavzu 9",
+        "demo_course_5::Mavzu 3",
+        "demo_course_5::Mavzu 8",
+        "demo_course_5::Mavzu 1",
+        "demo_course_2::Mavzu 6",
+        "demo_course_3::Mavzu 1",
+        "demo_course_2::Mavzu 2",
+        "demo_course_5::Mavzu 2",
+        "demo_course_2::Mavzu 10",
+        "demo_course_3::Mavzu 1",
+        "demo_course_5::Mavzu 3",
+        "demo_course_2::Mavzu 1",
+        "demo_course_5::Mavzu 3",
+        "demo_course_1::Mavzu 1",
+        "demo_course_4::Mavzu 1",
+        "demo_course_2::Mavzu 2"
+      ],
+      "certificates": [
+        {
+          "courseId": "demo_course_2",
+          "courseTitle": "O'zbek adabiyoti",
+          "date": "2026 M05 22",
+          "score": 80
+        }
+      ],
+      "createdAt": 1777609592659
+    },
+    {
+      "username": "demo__21",
+      "name": "Адиба Мирфайзиева",
+      "organization": "Turizm qo'mitasi",
+      "branch": "Samarqand viloyati bo'limi",
+      "position": "Bo'lim boshlig'i",
+      "gender": "erkak",
+      "age": 34,
+      "marital": "bo'ydoq",
+      "isDemo": true,
+      "coins": 0,
+      "completedLessons": [
+        "demo_course_1::Mavzu 2",
+        "demo_course_5::Mavzu 2",
+        "demo_course_3::Mavzu 5",
+        "demo_course_5::Mavzu 2",
+        "demo_course_2::Mavzu 2",
+        "demo_course_4::Mavzu 9",
+        "demo_course_1::Mavzu 4",
+        "demo_course_4::Mavzu 8",
+        "demo_course_3::Mavzu 6",
+        "demo_course_1::Mavzu 2",
+        "demo_course_2::Mavzu 9",
+        "demo_course_4::Mavzu 9",
+        "demo_course_2::Mavzu 5",
+        "demo_course_1::Mavzu 3",
+        "demo_course_2::Mavzu 8",
+        "demo_course_4::Mavzu 2"
+      ],
+      "certificates": [
+        {
+          "courseId": "demo_course_1",
+          "courseTitle": "Hayot tarzi va madaniyat",
+          "date": "2026 M05 7",
+          "score": 86
+        }
+      ],
+      "createdAt": 1773375992659
+    },
+    {
+      "username": "demo__22",
+      "name": "Ойбек Исроилов",
+      "organization": "Turizm qo'mitasi",
+      "branch": "Surxondaryo viloyati bo'limi",
+      "position": "Koordinator",
+      "gender": "erkak",
+      "age": 43,
+      "marital": "bo'ydoq",
+      "isDemo": true,
+      "coins": 0,
+      "completedLessons": [
+        "demo_course_3::Mavzu 2",
+        "demo_course_3::Mavzu 6",
+        "demo_course_4::Mavzu 2",
+        "demo_course_5::Mavzu 2",
+        "demo_course_3::Mavzu 1",
+        "demo_course_1::Mavzu 10",
+        "demo_course_5::Mavzu 7",
+        "demo_course_3::Mavzu 1",
+        "demo_course_2::Mavzu 1",
+        "demo_course_1::Mavzu 7",
+        "demo_course_5::Mavzu 7",
+        "demo_course_4::Mavzu 7",
+        "demo_course_2::Mavzu 4",
+        "demo_course_1::Mavzu 8",
+        "demo_course_2::Mavzu 2",
+        "demo_course_3::Mavzu 1",
+        "demo_course_1::Mavzu 10"
+      ],
+      "certificates": [
+        {
+          "courseId": "demo_course_5",
+          "courseTitle": "Ma'naviyat asoslari",
+          "date": "2026 M04 15",
+          "score": 64
+        }
+      ],
+      "createdAt": 1774931192659
+    },
+    {
+      "username": "demo__23",
+      "name": "Пардахол Норқобилова",
+      "organization": "Turizm qo'mitasi",
+      "branch": "Buxoro viloyati bo'limi",
+      "position": "Tahlilchi",
+      "gender": "erkak",
+      "age": 56,
+      "marital": "ajrashgan",
+      "isDemo": true,
+      "coins": 0,
+      "completedLessons": [
+        "demo_course_2::Mavzu 1",
+        "demo_course_5::Mavzu 8",
+        "demo_course_3::Mavzu 1",
+        "demo_course_4::Mavzu 2",
+        "demo_course_1::Mavzu 4",
+        "demo_course_1::Mavzu 4",
+        "demo_course_2::Mavzu 8",
+        "demo_course_3::Mavzu 9",
+        "demo_course_3::Mavzu 3",
+        "demo_course_1::Mavzu 6",
+        "demo_course_4::Mavzu 8",
+        "demo_course_2::Mavzu 8",
+        "demo_course_5::Mavzu 8",
+        "demo_course_3::Mavzu 5",
+        "demo_course_1::Mavzu 1",
+        "demo_course_2::Mavzu 5",
+        "demo_course_4::Mavzu 1",
+        "demo_course_2::Mavzu 9"
+      ],
+      "certificates": [
+        {
+          "courseId": "demo_course_3",
+          "courseTitle": "Tarix va meros",
+          "date": "2026 M04 13",
+          "score": 71
+        }
+      ],
+      "createdAt": 1778041592659
+    },
+    {
+      "username": "demo__24",
+      "name": "Гулшан Саттарова",
+      "organization": "Turizm qo'mitasi",
+      "branch": "Toshkent shahar bo'limi",
+      "position": "Hujjatlar bo'yicha mutaxassis",
+      "gender": "erkak",
+      "age": 48,
+      "marital": "bo'ydoq",
+      "isDemo": true,
+      "coins": 0,
+      "completedLessons": [
+        "demo_course_5::Mavzu 7",
+        "demo_course_3::Mavzu 3",
+        "demo_course_2::Mavzu 1",
+        "demo_course_1::Mavzu 2",
+        "demo_course_1::Mavzu 3",
+        "demo_course_3::Mavzu 7",
+        "demo_course_5::Mavzu 1",
+        "demo_course_5::Mavzu 10",
+        "demo_course_1::Mavzu 8",
+        "demo_course_4::Mavzu 8",
+        "demo_course_5::Mavzu 8",
+        "demo_course_2::Mavzu 8"
+      ],
+      "certificates": [
+        {
+          "courseId": "demo_course_5",
+          "courseTitle": "Ma'naviyat asoslari",
+          "date": "2026 M05 11",
+          "score": 68
+        }
+      ],
+      "createdAt": 1777523192660
+    },
+    {
+      "username": "demo__25",
+      "name": "Адҳам Хасанов",
+      "organization": "Turizm qo'mitasi",
+      "branch": "Toshkent shahar bo'limi",
+      "position": "Maslahatchi",
+      "gender": "erkak",
+      "age": 39,
+      "marital": "uylangan",
+      "isDemo": true,
+      "coins": 0,
+      "completedLessons": [
+        "demo_course_1::Mavzu 2",
+        "demo_course_3::Mavzu 3",
+        "demo_course_5::Mavzu 2",
+        "demo_course_1::Mavzu 6",
+        "demo_course_4::Mavzu 5",
+        "demo_course_4::Mavzu 7",
+        "demo_course_2::Mavzu 7",
+        "demo_course_5::Mavzu 8",
+        "demo_course_1::Mavzu 2",
+        "demo_course_3::Mavzu 6",
+        "demo_course_3::Mavzu 7",
+        "demo_course_2::Mavzu 8",
+        "demo_course_2::Mavzu 2",
+        "demo_course_2::Mavzu 6"
+      ],
+      "certificates": [
+        {
+          "courseId": "demo_course_4",
+          "courseTitle": "Ma'naviyat asoslari",
+          "date": "2026 M05 23",
+          "score": 97
+        }
+      ],
+      "createdAt": 1773721592660
+    },
+    {
+      "username": "demo__26",
+      "name": "Жамолиддин Рахматуллаев",
+      "organization": "Turizm qo'mitasi",
+      "branch": "Namangan viloyati bo'limi",
+      "position": "Bo'lim boshlig'i",
+      "gender": "erkak",
+      "age": 24,
+      "marital": "uylangan",
+      "isDemo": true,
+      "coins": 0,
+      "completedLessons": [
+        "demo_course_5::Mavzu 5",
+        "demo_course_3::Mavzu 2",
+        "demo_course_1::Mavzu 10",
+        "demo_course_1::Mavzu 2",
+        "demo_course_3::Mavzu 5",
+        "demo_course_4::Mavzu 1",
+        "demo_course_1::Mavzu 7",
+        "demo_course_5::Mavzu 6",
+        "demo_course_2::Mavzu 5",
+        "demo_course_4::Mavzu 4"
+      ],
+      "certificates": [
+        {
+          "courseId": "demo_course_5",
+          "courseTitle": "Ma'naviyat asoslari",
+          "date": "2026 M05 2",
+          "score": 92
+        }
+      ],
+      "createdAt": 1773116792660
+    },
+    {
+      "username": "demo__27",
+      "name": "Сабохат Жуманиёзова",
+      "organization": "Turizm qo'mitasi",
+      "branch": "",
+      "position": "Bo'lim boshlig'i",
+      "gender": "erkak",
+      "age": 37,
+      "marital": "bo'ydoq",
+      "isDemo": true,
+      "coins": 0,
+      "completedLessons": [
+        "demo_course_2::Mavzu 7",
+        "demo_course_2::Mavzu 6",
+        "demo_course_2::Mavzu 7",
+        "demo_course_2::Mavzu 9",
+        "demo_course_1::Mavzu 6",
+        "demo_course_2::Mavzu 7",
+        "demo_course_4::Mavzu 10",
+        "demo_course_4::Mavzu 4"
+      ],
+      "certificates": [
+        {
+          "courseId": "demo_course_1",
+          "courseTitle": "Vatanparvarlik tarbiyasi",
+          "date": "2026 M05 29",
+          "score": 82
+        }
+      ],
+      "createdAt": 1778300792660
+    },
+    {
+      "username": "demo__28",
+      "name": "Давлатшох Ҳамроқулов",
+      "organization": "Turizm qo'mitasi",
+      "branch": "Namangan viloyati bo'limi",
+      "position": "Bo'lim mudiri",
+      "gender": "erkak",
+      "age": 50,
+      "marital": "uylangan",
+      "isDemo": true,
+      "coins": 0,
+      "completedLessons": [
+        "demo_course_5::Mavzu 8",
+        "demo_course_1::Mavzu 9",
+        "demo_course_5::Mavzu 8",
+        "demo_course_5::Mavzu 9",
+        "demo_course_4::Mavzu 2",
+        "demo_course_4::Mavzu 4",
+        "demo_course_3::Mavzu 7",
+        "demo_course_5::Mavzu 8",
+        "demo_course_4::Mavzu 7",
+        "demo_course_2::Mavzu 5",
+        "demo_course_2::Mavzu 10",
+        "demo_course_2::Mavzu 1",
+        "demo_course_4::Mavzu 2",
+        "demo_course_2::Mavzu 4",
+        "demo_course_2::Mavzu 1",
+        "demo_course_2::Mavzu 6",
+        "demo_course_2::Mavzu 8",
+        "demo_course_1::Mavzu 8",
+        "demo_course_4::Mavzu 8",
+        "demo_course_4::Mavzu 8"
+      ],
+      "certificates": [
+        {
+          "courseId": "demo_course_5",
+          "courseTitle": "Vatanparvarlik tarbiyasi",
+          "date": "2026 M05 20",
+          "score": 76
+        }
+      ],
+      "createdAt": 1775708792660
+    },
+    {
+      "username": "demo__29",
+      "name": "Дилшод Ахмедов",
+      "organization": "Turizm qo'mitasi",
+      "branch": "Namangan viloyati bo'limi",
+      "position": "Loyihalar koordinatori",
+      "gender": "erkak",
+      "age": 22,
+      "marital": "uylangan",
+      "isDemo": true,
+      "coins": 0,
+      "completedLessons": [
+        "demo_course_4::Mavzu 9",
+        "demo_course_2::Mavzu 4",
+        "demo_course_3::Mavzu 9",
+        "demo_course_3::Mavzu 8",
+        "demo_course_4::Mavzu 4",
+        "demo_course_5::Mavzu 10",
+        "demo_course_2::Mavzu 10",
+        "demo_course_5::Mavzu 3",
+        "demo_course_4::Mavzu 3",
+        "demo_course_5::Mavzu 9",
+        "demo_course_1::Mavzu 2",
+        "demo_course_5::Mavzu 10"
+      ],
+      "certificates": [
+        {
+          "courseId": "demo_course_3",
+          "courseTitle": "Vatanparvarlik tarbiyasi",
+          "date": "2026 M04 9",
+          "score": 92
+        }
+      ],
+      "createdAt": 1778819192660
+    },
+    {
+      "username": "demo__30",
+      "name": "Шахноза Калонхўджаева",
+      "organization": "Turizm qo'mitasi",
+      "branch": "",
+      "position": "Hujjatlar bo'yicha mutaxassis",
+      "gender": "erkak",
+      "age": 36,
+      "marital": "uylangan",
+      "isDemo": true,
+      "coins": 0,
+      "completedLessons": [
+        "demo_course_3::Mavzu 10",
+        "demo_course_4::Mavzu 6",
+        "demo_course_4::Mavzu 3",
+        "demo_course_4::Mavzu 5",
+        "demo_course_2::Mavzu 5",
+        "demo_course_3::Mavzu 10",
+        "demo_course_5::Mavzu 3",
+        "demo_course_3::Mavzu 6",
+        "demo_course_4::Mavzu 8",
+        "demo_course_4::Mavzu 7",
+        "demo_course_4::Mavzu 10",
+        "demo_course_3::Mavzu 4",
+        "demo_course_5::Mavzu 9",
+        "demo_course_3::Mavzu 3",
+        "demo_course_2::Mavzu 7",
+        "demo_course_2::Mavzu 4",
+        "demo_course_5::Mavzu 4",
+        "demo_course_1::Mavzu 3",
+        "demo_course_5::Mavzu 9",
+        "demo_course_4::Mavzu 2"
+      ],
+      "certificates": [
+        {
+          "courseId": "demo_course_4",
+          "courseTitle": "Vatanparvarlik tarbiyasi",
+          "date": "2026 M05 24",
+          "score": 75
+        }
+      ],
+      "createdAt": 1778646392660
+    },
+    {
+      "username": "demo__31",
+      "name": "Ситора Барлибаева",
+      "organization": "Turizm qo'mitasi",
+      "branch": "Buxoro viloyati bo'limi",
+      "position": "Bo'lim mudiri",
+      "gender": "erkak",
+      "age": 47,
+      "marital": "bo'ydoq",
+      "isDemo": true,
+      "coins": 0,
+      "completedLessons": [
+        "demo_course_2::Mavzu 6",
+        "demo_course_4::Mavzu 1",
+        "demo_course_5::Mavzu 8",
+        "demo_course_3::Mavzu 8",
+        "demo_course_4::Mavzu 10",
+        "demo_course_1::Mavzu 7",
+        "demo_course_4::Mavzu 5",
+        "demo_course_5::Mavzu 4",
+        "demo_course_5::Mavzu 4",
+        "demo_course_1::Mavzu 2",
+        "demo_course_1::Mavzu 5",
+        "demo_course_1::Mavzu 3",
+        "demo_course_4::Mavzu 7",
+        "demo_course_1::Mavzu 8",
+        "demo_course_5::Mavzu 5",
+        "demo_course_4::Mavzu 1",
+        "demo_course_4::Mavzu 2",
+        "demo_course_1::Mavzu 3",
+        "demo_course_5::Mavzu 7"
+      ],
+      "certificates": [
+        {
+          "courseId": "demo_course_3",
+          "courseTitle": "Tarix va meros",
+          "date": "2026 M04 28",
+          "score": 65
+        }
+      ],
+      "createdAt": 1780374392660
+    },
+    {
+      "username": "demo__32",
+      "name": "Каримова Ҳамида",
+      "organization": "Turizm qo'mitasi",
+      "branch": "Surxondaryo viloyati bo'limi",
+      "position": "Bosh mutaxassis",
+      "gender": "erkak",
+      "age": 40,
+      "marital": "uylangan",
+      "isDemo": true,
+      "coins": 0,
+      "completedLessons": [
+        "demo_course_4::Mavzu 4",
+        "demo_course_4::Mavzu 3",
+        "demo_course_5::Mavzu 8",
+        "demo_course_5::Mavzu 1",
+        "demo_course_4::Mavzu 7",
+        "demo_course_2::Mavzu 2",
+        "demo_course_1::Mavzu 1",
+        "demo_course_1::Mavzu 7",
+        "demo_course_1::Mavzu 4",
+        "demo_course_1::Mavzu 5",
+        "demo_course_3::Mavzu 9",
+        "demo_course_3::Mavzu 4",
+        "demo_course_5::Mavzu 6",
+        "demo_course_5::Mavzu 4",
+        "demo_course_5::Mavzu 9",
+        "demo_course_3::Mavzu 6"
+      ],
+      "certificates": [
+        {
+          "courseId": "demo_course_5",
+          "courseTitle": "Hayot tarzi va madaniyat",
+          "date": "2026 M05 28",
+          "score": 98
+        }
+      ],
+      "createdAt": 1776486392660
+    },
+    {
+      "username": "demo__33",
+      "name": "Соҳиба Арипова",
+      "organization": "Turizm qo'mitasi",
+      "branch": "Toshkent shahar bo'limi",
+      "position": "Tashqi aloqalar mutaxassisi",
+      "gender": "erkak",
+      "age": 34,
+      "marital": "uylangan",
+      "isDemo": true,
+      "coins": 0,
+      "completedLessons": [
+        "demo_course_3::Mavzu 6",
+        "demo_course_3::Mavzu 4",
+        "demo_course_4::Mavzu 1",
+        "demo_course_2::Mavzu 8",
+        "demo_course_4::Mavzu 9",
+        "demo_course_1::Mavzu 1",
+        "demo_course_4::Mavzu 6",
+        "demo_course_5::Mavzu 8",
+        "demo_course_2::Mavzu 1",
+        "demo_course_3::Mavzu 2",
+        "demo_course_4::Mavzu 3"
+      ],
+      "certificates": [
+        {
+          "courseId": "demo_course_2",
+          "courseTitle": "O'zbek adabiyoti",
+          "date": "2026 M05 15",
+          "score": 67
+        }
+      ],
+      "createdAt": 1777177592660
+    },
+    {
+      "username": "demo__34",
+      "name": "Зиёда Акбарқулова",
+      "organization": "Turizm qo'mitasi",
+      "branch": "Buxoro viloyati bo'limi",
+      "position": "Bo'lim boshlig'i",
+      "gender": "erkak",
+      "age": 25,
+      "marital": "ajrashgan",
+      "isDemo": true,
+      "coins": 0,
+      "completedLessons": [
+        "demo_course_2::Mavzu 1",
+        "demo_course_1::Mavzu 9",
+        "demo_course_1::Mavzu 10",
+        "demo_course_5::Mavzu 2",
+        "demo_course_1::Mavzu 2",
+        "demo_course_5::Mavzu 8",
+        "demo_course_2::Mavzu 2",
+        "demo_course_2::Mavzu 6",
+        "demo_course_3::Mavzu 10",
+        "demo_course_3::Mavzu 7",
+        "demo_course_5::Mavzu 5",
+        "demo_course_4::Mavzu 5",
+        "demo_course_2::Mavzu 3",
+        "demo_course_2::Mavzu 3"
+      ],
+      "certificates": [
+        {
+          "courseId": "demo_course_2",
+          "courseTitle": "Ma'naviyat asoslari",
+          "date": "2026 M04 9",
+          "score": 99
+        }
+      ],
+      "createdAt": 1777523192660
+    },
+    {
+      "username": "demo__35",
+      "name": "Муқаддас Мусаева",
+      "organization": "Turizm qo'mitasi",
+      "branch": "Xorazm viloyati bo'limi",
+      "position": "Koordinator",
+      "gender": "erkak",
+      "age": 46,
+      "marital": "uylangan",
+      "isDemo": true,
+      "coins": 0,
+      "completedLessons": [
+        "demo_course_3::Mavzu 5",
+        "demo_course_2::Mavzu 6",
+        "demo_course_2::Mavzu 5",
+        "demo_course_2::Mavzu 10",
+        "demo_course_1::Mavzu 4",
+        "demo_course_1::Mavzu 2",
+        "demo_course_3::Mavzu 10",
+        "demo_course_3::Mavzu 4",
+        "demo_course_1::Mavzu 1",
+        "demo_course_2::Mavzu 5",
+        "demo_course_1::Mavzu 8",
+        "demo_course_4::Mavzu 3",
+        "demo_course_3::Mavzu 4",
+        "demo_course_5::Mavzu 2",
+        "demo_course_4::Mavzu 4",
+        "demo_course_5::Mavzu 3",
+        "demo_course_5::Mavzu 10",
+        "demo_course_2::Mavzu 8",
+        "demo_course_1::Mavzu 3",
+        "demo_course_5::Mavzu 4"
+      ],
+      "certificates": [
+        {
+          "courseId": "demo_course_1",
+          "courseTitle": "Hayot tarzi va madaniyat",
+          "date": "2026 M04 27",
+          "score": 98
+        }
+      ],
+      "createdAt": 1778127992660
+    },
+    {
+      "username": "demo__36",
+      "name": "Дилфуза Маҳкамова",
+      "organization": "Turizm qo'mitasi",
+      "branch": "",
+      "position": "Bo'lim boshlig'i",
+      "gender": "erkak",
+      "age": 42,
+      "marital": "ajrashgan",
+      "isDemo": true,
+      "coins": 0,
+      "completedLessons": [
+        "demo_course_3::Mavzu 4",
+        "demo_course_1::Mavzu 2",
+        "demo_course_1::Mavzu 3",
+        "demo_course_1::Mavzu 6",
+        "demo_course_5::Mavzu 1",
+        "demo_course_1::Mavzu 8",
+        "demo_course_1::Mavzu 10",
+        "demo_course_3::Mavzu 10",
+        "demo_course_5::Mavzu 9",
+        "demo_course_5::Mavzu 3",
+        "demo_course_2::Mavzu 2",
+        "demo_course_4::Mavzu 4",
+        "demo_course_5::Mavzu 8",
+        "demo_course_2::Mavzu 3",
+        "demo_course_1::Mavzu 2"
+      ],
+      "certificates": [
+        {
+          "courseId": "demo_course_5",
+          "courseTitle": "Ma'naviyat asoslari",
+          "date": "2026 M04 26",
+          "score": 82
+        }
+      ],
+      "createdAt": 1773635192660
+    },
+    {
+      "username": "demo__37",
+      "name": "Насиба Алданазарова",
+      "organization": "Turizm qo'mitasi",
+      "branch": "Toshkent shahar bo'limi",
+      "position": "Maslahatchi",
+      "gender": "erkak",
+      "age": 39,
+      "marital": "uylangan",
+      "isDemo": true,
+      "coins": 0,
+      "completedLessons": [
+        "demo_course_2::Mavzu 10",
+        "demo_course_1::Mavzu 5",
+        "demo_course_4::Mavzu 5",
+        "demo_course_1::Mavzu 6",
+        "demo_course_4::Mavzu 6",
+        "demo_course_1::Mavzu 8",
+        "demo_course_2::Mavzu 1",
+        "demo_course_4::Mavzu 9",
+        "demo_course_1::Mavzu 1",
+        "demo_course_2::Mavzu 2"
+      ],
+      "certificates": [
+        {
+          "courseId": "demo_course_4",
+          "courseTitle": "Hayot tarzi va madaniyat",
+          "date": "2026 M04 20",
+          "score": 70
+        }
+      ],
+      "createdAt": 1777091192660
+    },
+    {
+      "username": "demo__38",
+      "name": "Гуласал Янгибоева",
+      "organization": "Turizm qo'mitasi",
+      "branch": "",
+      "position": "Tashqi aloqalar mutaxassisi",
+      "gender": "erkak",
+      "age": 50,
+      "marital": "bo'ydoq",
+      "isDemo": true,
+      "coins": 0,
+      "completedLessons": [
+        "demo_course_5::Mavzu 4",
+        "demo_course_1::Mavzu 6",
+        "demo_course_5::Mavzu 4",
+        "demo_course_3::Mavzu 3",
+        "demo_course_5::Mavzu 7",
+        "demo_course_2::Mavzu 8",
+        "demo_course_1::Mavzu 3",
+        "demo_course_5::Mavzu 3",
+        "demo_course_3::Mavzu 6",
+        "demo_course_5::Mavzu 9",
+        "demo_course_3::Mavzu 5",
+        "demo_course_5::Mavzu 5",
+        "demo_course_3::Mavzu 5",
+        "demo_course_3::Mavzu 7",
+        "demo_course_5::Mavzu 5",
+        "demo_course_3::Mavzu 3",
+        "demo_course_2::Mavzu 7",
+        "demo_course_5::Mavzu 10"
+      ],
+      "certificates": [
+        {
+          "courseId": "demo_course_4",
+          "courseTitle": "Tarix va meros",
+          "date": "2026 M04 5",
+          "score": 100
+        }
+      ],
+      "createdAt": 1773289592661
+    },
+    {
+      "username": "demo__39",
+      "name": "Ботир Чинибеков",
+      "organization": "Turizm qo'mitasi",
+      "branch": "Farg'ona viloyati bo'limi",
+      "position": "Direktor o'rinbosari",
+      "gender": "erkak",
+      "age": 44,
+      "marital": "ajrashgan",
+      "isDemo": true,
+      "coins": 0,
+      "completedLessons": [
+        "demo_course_4::Mavzu 10",
+        "demo_course_1::Mavzu 3",
+        "demo_course_5::Mavzu 7",
+        "demo_course_2::Mavzu 8",
+        "demo_course_2::Mavzu 8",
+        "demo_course_2::Mavzu 7",
+        "demo_course_5::Mavzu 10",
+        "demo_course_2::Mavzu 6",
+        "demo_course_3::Mavzu 10",
+        "demo_course_1::Mavzu 5",
+        "demo_course_1::Mavzu 6",
+        "demo_course_2::Mavzu 6",
+        "demo_course_4::Mavzu 10",
+        "demo_course_1::Mavzu 10"
+      ],
+      "certificates": [
+        {
+          "courseId": "demo_course_2",
+          "courseTitle": "O'zbek adabiyoti",
+          "date": "2026 M04 28",
+          "score": 90
+        }
+      ],
+      "createdAt": 1779596792661
+    },
+    {
+      "username": "demo__40",
+      "name": "Тохир Аҳмедов",
+      "organization": "Turizm qo'mitasi",
+      "branch": "Samarqand viloyati bo'limi",
+      "position": "Direktor o'rinbosari",
+      "gender": "erkak",
+      "age": 40,
+      "marital": "uylangan",
+      "isDemo": true,
+      "coins": 0,
+      "completedLessons": [
+        "demo_course_3::Mavzu 5",
+        "demo_course_5::Mavzu 5",
+        "demo_course_3::Mavzu 7",
+        "demo_course_4::Mavzu 6",
+        "demo_course_3::Mavzu 8",
+        "demo_course_3::Mavzu 1",
+        "demo_course_5::Mavzu 3",
+        "demo_course_2::Mavzu 3",
+        "demo_course_5::Mavzu 5",
+        "demo_course_3::Mavzu 6",
+        "demo_course_5::Mavzu 1",
+        "demo_course_1::Mavzu 5",
+        "demo_course_4::Mavzu 4",
+        "demo_course_1::Mavzu 3",
+        "demo_course_4::Mavzu 3",
+        "demo_course_2::Mavzu 3",
+        "demo_course_5::Mavzu 5",
+        "demo_course_1::Mavzu 2",
+        "demo_course_4::Mavzu 4"
+      ],
+      "certificates": [
+        {
+          "courseId": "demo_course_1",
+          "courseTitle": "Vatanparvarlik tarbiyasi",
+          "date": "2026 M04 24",
+          "score": 66
+        }
+      ],
+      "createdAt": 1778732792661
+    },
+    {
+      "username": "demo__41",
+      "name": "Артем величкин",
+      "organization": "Turizm qo'mitasi",
+      "branch": "Farg'ona viloyati bo'limi",
+      "position": "Mutaxassis",
+      "gender": "erkak",
+      "age": 31,
+      "marital": "uylangan",
+      "isDemo": true,
+      "coins": 0,
+      "completedLessons": [
+        "demo_course_2::Mavzu 7",
+        "demo_course_1::Mavzu 5",
+        "demo_course_3::Mavzu 2",
+        "demo_course_5::Mavzu 3",
+        "demo_course_3::Mavzu 5",
+        "demo_course_4::Mavzu 2",
+        "demo_course_3::Mavzu 6",
+        "demo_course_5::Mavzu 6",
+        "demo_course_4::Mavzu 6",
+        "demo_course_2::Mavzu 2",
+        "demo_course_2::Mavzu 2",
+        "demo_course_4::Mavzu 3",
+        "demo_course_4::Mavzu 1",
+        "demo_course_5::Mavzu 3",
+        "demo_course_2::Mavzu 10",
+        "demo_course_5::Mavzu 8",
+        "demo_course_3::Mavzu 8",
+        "demo_course_1::Mavzu 3",
+        "demo_course_4::Mavzu 1"
+      ],
+      "certificates": [
+        {
+          "courseId": "demo_course_4",
+          "courseTitle": "Vatanparvarlik tarbiyasi",
+          "date": "2026 M05 29",
+          "score": 88
+        }
+      ],
+      "createdAt": 1776486392661
+    },
+    {
+      "username": "demo__42",
+      "name": "Отабек Хасанов",
+      "organization": "Turizm qo'mitasi",
+      "branch": "Buxoro viloyati bo'limi",
+      "position": "Bo'lim mudiri",
+      "gender": "erkak",
+      "age": 35,
+      "marital": "uylangan",
+      "isDemo": true,
+      "coins": 0,
+      "completedLessons": [
+        "demo_course_3::Mavzu 5",
+        "demo_course_2::Mavzu 7",
+        "demo_course_2::Mavzu 6",
+        "demo_course_2::Mavzu 6",
+        "demo_course_1::Mavzu 7",
+        "demo_course_4::Mavzu 7",
+        "demo_course_1::Mavzu 5",
+        "demo_course_4::Mavzu 7",
+        "demo_course_3::Mavzu 5",
+        "demo_course_1::Mavzu 10",
+        "demo_course_3::Mavzu 6",
+        "demo_course_4::Mavzu 7",
+        "demo_course_5::Mavzu 3",
+        "demo_course_2::Mavzu 9",
+        "demo_course_1::Mavzu 5",
+        "demo_course_1::Mavzu 6",
+        "demo_course_2::Mavzu 10",
+        "demo_course_1::Mavzu 7",
+        "demo_course_3::Mavzu 4"
+      ],
+      "certificates": [
+        {
+          "courseId": "demo_course_3",
+          "courseTitle": "Ma'naviyat asoslari",
+          "date": "2026 M04 30",
+          "score": 73
+        }
+      ],
+      "createdAt": 1777523192661
+    },
+    {
+      "username": "demo__43",
+      "name": "Сарвар Акрамов",
+      "organization": "Turizm qo'mitasi",
+      "branch": "Qashqadaryo viloyati bo'limi",
+      "position": "Bosh inspektor",
+      "gender": "erkak",
+      "age": 24,
+      "marital": "uylangan",
+      "isDemo": true,
+      "coins": 0,
+      "completedLessons": [
+        "demo_course_4::Mavzu 1",
+        "demo_course_1::Mavzu 3",
+        "demo_course_3::Mavzu 6",
+        "demo_course_4::Mavzu 10",
+        "demo_course_2::Mavzu 3",
+        "demo_course_3::Mavzu 8",
+        "demo_course_2::Mavzu 10",
+        "demo_course_5::Mavzu 7",
+        "demo_course_5::Mavzu 7",
+        "demo_course_4::Mavzu 7",
+        "demo_course_2::Mavzu 2",
+        "demo_course_5::Mavzu 5",
+        "demo_course_4::Mavzu 6",
+        "demo_course_2::Mavzu 10",
+        "demo_course_3::Mavzu 3",
+        "demo_course_4::Mavzu 1"
+      ],
+      "certificates": [
+        {
+          "courseId": "demo_course_2",
+          "courseTitle": "Hayot tarzi va madaniyat",
+          "date": "2026 M05 29",
+          "score": 77
+        }
+      ],
+      "createdAt": 1773635192661
+    },
+    {
+      "username": "demo__44",
+      "name": "Шоҳида Ахмедова",
+      "organization": "Turizm qo'mitasi",
+      "branch": "Andijon viloyati bo'limi",
+      "position": "Bo'lim mudiri o'rinbosari",
+      "gender": "erkak",
+      "age": 55,
+      "marital": "ajrashgan",
+      "isDemo": true,
+      "coins": 0,
+      "completedLessons": [
+        "demo_course_4::Mavzu 5",
+        "demo_course_4::Mavzu 3",
+        "demo_course_4::Mavzu 1",
+        "demo_course_5::Mavzu 10",
+        "demo_course_3::Mavzu 8",
+        "demo_course_3::Mavzu 6",
+        "demo_course_2::Mavzu 2",
+        "demo_course_3::Mavzu 9"
+      ],
+      "certificates": [
+        {
+          "courseId": "demo_course_5",
+          "courseTitle": "O'zbek adabiyoti",
+          "date": "2026 M04 12",
+          "score": 73
+        }
+      ],
+      "createdAt": 1778991992661
+    },
+    {
+      "username": "demo__45",
+      "name": "Дилдора Эргашева",
+      "organization": "Turizm qo'mitasi",
+      "branch": "Andijon viloyati bo'limi",
+      "position": "Bosh inspektor",
+      "gender": "erkak",
+      "age": 50,
+      "marital": "ajrashgan",
+      "isDemo": true,
+      "coins": 0,
+      "completedLessons": [
+        "demo_course_2::Mavzu 3",
+        "demo_course_1::Mavzu 8",
+        "demo_course_5::Mavzu 4",
+        "demo_course_4::Mavzu 3",
+        "demo_course_3::Mavzu 8",
+        "demo_course_4::Mavzu 9",
+        "demo_course_2::Mavzu 3",
+        "demo_course_2::Mavzu 5",
+        "demo_course_3::Mavzu 2"
+      ],
+      "certificates": [
+        {
+          "courseId": "demo_course_4",
+          "courseTitle": "Tarix va meros",
+          "date": "2026 M04 22",
+          "score": 96
+        }
+      ],
+      "createdAt": 1772943992661
+    },
+    {
+      "username": "demo__46",
+      "name": "Элёр Милимуҳаммедов",
+      "organization": "Turizm qo'mitasi",
+      "branch": "Samarqand viloyati bo'limi",
+      "position": "Koordinator",
+      "gender": "erkak",
+      "age": 47,
+      "marital": "bo'ydoq",
+      "isDemo": true,
+      "coins": 0,
+      "completedLessons": [
+        "demo_course_1::Mavzu 8",
+        "demo_course_1::Mavzu 2",
+        "demo_course_4::Mavzu 8",
+        "demo_course_1::Mavzu 2",
+        "demo_course_4::Mavzu 10",
+        "demo_course_1::Mavzu 2",
+        "demo_course_5::Mavzu 8",
+        "demo_course_4::Mavzu 1",
+        "demo_course_3::Mavzu 7",
+        "demo_course_1::Mavzu 1",
+        "demo_course_2::Mavzu 7"
+      ],
+      "certificates": [
+        {
+          "courseId": "demo_course_5",
+          "courseTitle": "Ma'naviyat asoslari",
+          "date": "2026 M05 13",
+          "score": 96
+        }
+      ],
+      "createdAt": 1777350392661
+    },
+    {
+      "username": "demo__47",
+      "name": "Азиз Алиев",
+      "organization": "Turizm qo'mitasi",
+      "branch": "Xorazm viloyati bo'limi",
+      "position": "Hujjatlar bo'yicha mutaxassis",
+      "gender": "erkak",
+      "age": 22,
+      "marital": "ajrashgan",
+      "isDemo": true,
+      "coins": 0,
+      "completedLessons": [
+        "demo_course_3::Mavzu 5",
+        "demo_course_2::Mavzu 3",
+        "demo_course_1::Mavzu 5",
+        "demo_course_1::Mavzu 1",
+        "demo_course_1::Mavzu 2",
+        "demo_course_3::Mavzu 6",
+        "demo_course_2::Mavzu 2",
+        "demo_course_2::Mavzu 5",
+        "demo_course_4::Mavzu 6",
+        "demo_course_5::Mavzu 9"
+      ],
+      "certificates": [
+        {
+          "courseId": "demo_course_5",
+          "courseTitle": "Ma'naviyat asoslari",
+          "date": "2026 M05 3",
+          "score": 69
+        }
+      ],
+      "createdAt": 1776140792661
+    },
+    {
+      "username": "demo__48",
+      "name": "Мухтор Ортиқов",
+      "organization": "Turizm qo'mitasi",
+      "branch": "Samarqand viloyati bo'limi",
+      "position": "Tahlilchi",
+      "gender": "erkak",
+      "age": 53,
+      "marital": "uylangan",
+      "isDemo": true,
+      "coins": 0,
+      "completedLessons": [
+        "demo_course_3::Mavzu 10",
+        "demo_course_3::Mavzu 2",
+        "demo_course_1::Mavzu 2",
+        "demo_course_5::Mavzu 9",
+        "demo_course_1::Mavzu 3",
+        "demo_course_4::Mavzu 3",
+        "demo_course_4::Mavzu 5",
+        "demo_course_3::Mavzu 6",
+        "demo_course_3::Mavzu 8",
+        "demo_course_5::Mavzu 4",
+        "demo_course_3::Mavzu 9",
+        "demo_course_5::Mavzu 1"
+      ],
+      "certificates": [
+        {
+          "courseId": "demo_course_4",
+          "courseTitle": "O'zbek adabiyoti",
+          "date": "2026 M06 2",
+          "score": 89
+        }
+      ],
+      "createdAt": 1779337592661
+    },
+    {
+      "username": "demo__49",
+      "name": "Оламгир Абдиев",
+      "organization": "Turizm qo'mitasi",
+      "branch": "Farg'ona viloyati bo'limi",
+      "position": "Loyihalar koordinatori",
+      "gender": "erkak",
+      "age": 22,
+      "marital": "ajrashgan",
+      "isDemo": true,
+      "coins": 0,
+      "completedLessons": [
+        "demo_course_2::Mavzu 1",
+        "demo_course_1::Mavzu 1",
+        "demo_course_2::Mavzu 8",
+        "demo_course_4::Mavzu 8",
+        "demo_course_3::Mavzu 1",
+        "demo_course_5::Mavzu 5",
+        "demo_course_2::Mavzu 1",
+        "demo_course_4::Mavzu 9",
+        "demo_course_5::Mavzu 5",
+        "demo_course_2::Mavzu 9",
+        "demo_course_2::Mavzu 6",
+        "demo_course_5::Mavzu 8"
+      ],
+      "certificates": [
+        {
+          "courseId": "demo_course_4",
+          "courseTitle": "Vatanparvarlik tarbiyasi",
+          "date": "2026 M04 9",
+          "score": 89
+        }
+      ],
+      "createdAt": 1780028792661
+    },
+    {
+      "username": "demo__50",
+      "name": "Фарангиз Нематова",
+      "organization": "Turizm qo'mitasi",
+      "branch": "",
+      "position": "Hujjatlar bo'yicha mutaxassis",
+      "gender": "erkak",
+      "age": 58,
+      "marital": "bo'ydoq",
+      "isDemo": true,
+      "coins": 0,
+      "completedLessons": [
+        "demo_course_3::Mavzu 1",
+        "demo_course_3::Mavzu 5",
+        "demo_course_3::Mavzu 9",
+        "demo_course_2::Mavzu 10",
+        "demo_course_1::Mavzu 9",
+        "demo_course_1::Mavzu 9",
+        "demo_course_5::Mavzu 5",
+        "demo_course_1::Mavzu 3",
+        "demo_course_1::Mavzu 4",
+        "demo_course_1::Mavzu 9",
+        "demo_course_5::Mavzu 6",
+        "demo_course_2::Mavzu 9",
+        "demo_course_2::Mavzu 1",
+        "demo_course_2::Mavzu 3",
+        "demo_course_5::Mavzu 10",
+        "demo_course_2::Mavzu 10",
+        "demo_course_2::Mavzu 3",
+        "demo_course_3::Mavzu 10",
+        "demo_course_2::Mavzu 8"
+      ],
+      "certificates": [
+        {
+          "courseId": "demo_course_1",
+          "courseTitle": "O'zbek adabiyoti",
+          "date": "2026 M05 15",
+          "score": 84
+        }
+      ],
+      "createdAt": 1779769592661
+    },
+    {
+      "username": "demo__51",
+      "name": "Фарход Сиддиқов",
+      "organization": "Turizm qo'mitasi",
+      "branch": "Farg'ona viloyati bo'limi",
+      "position": "Tahlilchi",
+      "gender": "erkak",
+      "age": 43,
+      "marital": "bo'ydoq",
+      "isDemo": true,
+      "coins": 0,
+      "completedLessons": [
+        "demo_course_3::Mavzu 1",
+        "demo_course_5::Mavzu 8",
+        "demo_course_4::Mavzu 4",
+        "demo_course_4::Mavzu 3",
+        "demo_course_2::Mavzu 9",
+        "demo_course_5::Mavzu 6",
+        "demo_course_5::Mavzu 2",
+        "demo_course_4::Mavzu 6",
+        "demo_course_2::Mavzu 4",
+        "demo_course_1::Mavzu 6",
+        "demo_course_1::Mavzu 1",
+        "demo_course_4::Mavzu 7",
+        "demo_course_1::Mavzu 8"
+      ],
+      "certificates": [],
+      "createdAt": 1778991992661
+    },
+    {
+      "username": "demo__52",
+      "name": "Илҳом Хайитмуродов",
+      "organization": "Turizm qo'mitasi",
+      "branch": "Namangan viloyati bo'limi",
+      "position": "Loyiha menejeri",
+      "gender": "erkak",
+      "age": 26,
+      "marital": "bo'ydoq",
+      "isDemo": true,
+      "coins": 0,
+      "completedLessons": [
+        "demo_course_5::Mavzu 5",
+        "demo_course_1::Mavzu 6",
+        "demo_course_2::Mavzu 7",
+        "demo_course_4::Mavzu 2",
+        "demo_course_5::Mavzu 2",
+        "demo_course_2::Mavzu 10",
+        "demo_course_4::Mavzu 9",
+        "demo_course_5::Mavzu 5"
+      ],
+      "certificates": [],
+      "createdAt": 1777091192661
+    },
+    {
+      "username": "demo__53",
+      "name": "Ҳаёт Нуриллаев",
+      "organization": "Turizm qo'mitasi",
+      "branch": "Farg'ona viloyati bo'limi",
+      "position": "Bosh inspektor",
+      "gender": "erkak",
+      "age": 52,
+      "marital": "bo'ydoq",
+      "isDemo": true,
+      "coins": 0,
+      "completedLessons": [
+        "demo_course_4::Mavzu 7",
+        "demo_course_5::Mavzu 10",
+        "demo_course_1::Mavzu 10",
+        "demo_course_1::Mavzu 10",
+        "demo_course_3::Mavzu 1",
+        "demo_course_3::Mavzu 7",
+        "demo_course_3::Mavzu 6",
+        "demo_course_4::Mavzu 8",
+        "demo_course_4::Mavzu 6",
+        "demo_course_4::Mavzu 1",
+        "demo_course_4::Mavzu 10",
+        "demo_course_2::Mavzu 1",
+        "demo_course_5::Mavzu 1",
+        "demo_course_5::Mavzu 2",
+        "demo_course_1::Mavzu 4",
+        "demo_course_5::Mavzu 3",
+        "demo_course_4::Mavzu 8",
+        "demo_course_4::Mavzu 10"
+      ],
+      "certificates": [],
+      "createdAt": 1772684792661
+    },
+    {
+      "username": "demo__54",
+      "name": "Толмас Раззаков",
+      "organization": "Turizm qo'mitasi",
+      "branch": "Qashqadaryo viloyati bo'limi",
+      "position": "Maslahatchi",
+      "gender": "erkak",
+      "age": 55,
+      "marital": "bo'ydoq",
+      "isDemo": true,
+      "coins": 0,
+      "completedLessons": [
+        "demo_course_5::Mavzu 10",
+        "demo_course_5::Mavzu 3",
+        "demo_course_5::Mavzu 5",
+        "demo_course_2::Mavzu 7",
+        "demo_course_1::Mavzu 1",
+        "demo_course_5::Mavzu 7",
+        "demo_course_4::Mavzu 4",
+        "demo_course_2::Mavzu 3",
+        "demo_course_2::Mavzu 1",
+        "demo_course_2::Mavzu 10",
+        "demo_course_4::Mavzu 1",
+        "demo_course_1::Mavzu 8",
+        "demo_course_3::Mavzu 6",
+        "demo_course_5::Mavzu 9",
+        "demo_course_2::Mavzu 8",
+        "demo_course_1::Mavzu 4",
+        "demo_course_4::Mavzu 2"
+      ],
+      "certificates": [],
+      "createdAt": 1780287992661
+    },
+    {
+      "username": "demo__55",
+      "name": "Азамат Жумаев",
+      "organization": "Turizm qo'mitasi",
+      "branch": "Samarqand viloyati bo'limi",
+      "position": "Yetakchi mutaxassis",
+      "gender": "erkak",
+      "age": 35,
+      "marital": "ajrashgan",
+      "isDemo": true,
+      "coins": 0,
+      "completedLessons": [
+        "demo_course_5::Mavzu 9",
+        "demo_course_3::Mavzu 4",
+        "demo_course_3::Mavzu 8",
+        "demo_course_2::Mavzu 1",
+        "demo_course_2::Mavzu 5",
+        "demo_course_5::Mavzu 3",
+        "demo_course_2::Mavzu 3",
+        "demo_course_5::Mavzu 6",
+        "demo_course_1::Mavzu 9",
+        "demo_course_4::Mavzu 3",
+        "demo_course_2::Mavzu 7",
+        "demo_course_5::Mavzu 6",
+        "demo_course_4::Mavzu 10",
+        "demo_course_4::Mavzu 4",
+        "demo_course_5::Mavzu 6"
+      ],
+      "certificates": [],
+      "createdAt": 1778387192661
+    },
+    {
+      "username": "demo__56",
+      "name": "Жасур Болтаев",
+      "organization": "Turizm qo'mitasi",
+      "branch": "Farg'ona viloyati bo'limi",
+      "position": "Bosh inspektor",
+      "gender": "erkak",
+      "age": 31,
+      "marital": "uylangan",
+      "isDemo": true,
+      "coins": 0,
+      "completedLessons": [
+        "demo_course_5::Mavzu 7",
+        "demo_course_3::Mavzu 8",
+        "demo_course_4::Mavzu 1",
+        "demo_course_1::Mavzu 2",
+        "demo_course_2::Mavzu 5",
+        "demo_course_3::Mavzu 8",
+        "demo_course_4::Mavzu 9",
+        "demo_course_5::Mavzu 9",
+        "demo_course_3::Mavzu 1",
+        "demo_course_2::Mavzu 4"
+      ],
+      "certificates": [],
+      "createdAt": 1777695992661
+    },
+    {
+      "username": "demo__57",
+      "name": "Зоҳид Турақулов",
+      "organization": "Turizm qo'mitasi",
+      "branch": "Surxondaryo viloyati bo'limi",
+      "position": "Tahlilchi",
+      "gender": "erkak",
+      "age": 33,
+      "marital": "uylangan",
+      "isDemo": true,
+      "coins": 0,
+      "completedLessons": [
+        "demo_course_3::Mavzu 9",
+        "demo_course_1::Mavzu 2",
+        "demo_course_2::Mavzu 4",
+        "demo_course_2::Mavzu 6",
+        "demo_course_3::Mavzu 1",
+        "demo_course_5::Mavzu 2",
+        "demo_course_2::Mavzu 1",
+        "demo_course_5::Mavzu 6",
+        "demo_course_4::Mavzu 1"
+      ],
+      "certificates": [],
+      "createdAt": 1773635192661
+    },
+    {
+      "username": "demo__58",
+      "name": "Бегмат Очилов",
+      "organization": "Turizm qo'mitasi",
+      "branch": "Xorazm viloyati bo'limi",
+      "position": "Tashqi aloqalar mutaxassisi",
+      "gender": "erkak",
+      "age": 33,
+      "marital": "bo'ydoq",
+      "isDemo": true,
+      "coins": 0,
+      "completedLessons": [
+        "demo_course_2::Mavzu 9",
+        "demo_course_3::Mavzu 10",
+        "demo_course_4::Mavzu 10",
+        "demo_course_3::Mavzu 3",
+        "demo_course_2::Mavzu 7",
+        "demo_course_3::Mavzu 1",
+        "demo_course_5::Mavzu 9",
+        "demo_course_5::Mavzu 6",
+        "demo_course_5::Mavzu 7",
+        "demo_course_2::Mavzu 7",
+        "demo_course_2::Mavzu 3",
+        "demo_course_2::Mavzu 5",
+        "demo_course_3::Mavzu 8"
+      ],
+      "certificates": [],
+      "createdAt": 1773289592661
+    },
+    {
+      "username": "demo__59",
+      "name": "Ахрор Саидов",
+      "organization": "Turizm qo'mitasi",
+      "branch": "Toshkent shahar bo'limi",
+      "position": "Bo'lim mudiri",
+      "gender": "erkak",
+      "age": 44,
+      "marital": "bo'ydoq",
+      "isDemo": true,
+      "coins": 0,
+      "completedLessons": [
+        "demo_course_4::Mavzu 10",
+        "demo_course_4::Mavzu 7",
+        "demo_course_3::Mavzu 1",
+        "demo_course_4::Mavzu 4",
+        "demo_course_1::Mavzu 10",
+        "demo_course_4::Mavzu 10",
+        "demo_course_4::Mavzu 4",
+        "demo_course_1::Mavzu 8",
+        "demo_course_1::Mavzu 8",
+        "demo_course_3::Mavzu 5",
+        "demo_course_2::Mavzu 8"
+      ],
+      "certificates": [],
+      "createdAt": 1776572792661
+    },
+    {
+      "username": "demo__60",
+      "name": "Ойбек Алимхажаев",
+      "organization": "Turizm qo'mitasi",
+      "branch": "Xorazm viloyati bo'limi",
+      "position": "Bo'lim mudiri",
+      "gender": "erkak",
+      "age": 50,
+      "marital": "uylangan",
+      "isDemo": true,
+      "coins": 0,
+      "completedLessons": [
+        "demo_course_1::Mavzu 10",
+        "demo_course_1::Mavzu 4",
+        "demo_course_2::Mavzu 6",
+        "demo_course_3::Mavzu 9",
+        "demo_course_3::Mavzu 8",
+        "demo_course_5::Mavzu 7",
+        "demo_course_2::Mavzu 7",
+        "demo_course_2::Mavzu 2",
+        "demo_course_1::Mavzu 1",
+        "demo_course_2::Mavzu 1",
+        "demo_course_3::Mavzu 8",
+        "demo_course_1::Mavzu 2",
+        "demo_course_3::Mavzu 1",
+        "demo_course_2::Mavzu 4",
+        "demo_course_5::Mavzu 3",
+        "demo_course_4::Mavzu 10",
+        "demo_course_3::Mavzu 4",
+        "demo_course_4::Mavzu 9",
+        "demo_course_5::Mavzu 6"
+      ],
+      "certificates": [],
+      "createdAt": 1774499192661
+    },
+    {
+      "username": "demo__61",
+      "name": "Махфират Зикирова",
+      "organization": "Turizm qo'mitasi",
+      "branch": "Xorazm viloyati bo'limi",
+      "position": "Bosh inspektor",
+      "gender": "erkak",
+      "age": 36,
+      "marital": "uylangan",
+      "isDemo": true,
+      "coins": 0,
+      "completedLessons": [
+        "demo_course_3::Mavzu 4",
+        "demo_course_3::Mavzu 3",
+        "demo_course_1::Mavzu 6",
+        "demo_course_2::Mavzu 3",
+        "demo_course_2::Mavzu 8",
+        "demo_course_2::Mavzu 10",
+        "demo_course_3::Mavzu 4",
+        "demo_course_2::Mavzu 5"
+      ],
+      "certificates": [],
+      "createdAt": 1777004792661
+    },
+    {
+      "username": "demo__62",
+      "name": "Улугбек Исаналиев",
+      "organization": "Turizm qo'mitasi",
+      "branch": "Namangan viloyati bo'limi",
+      "position": "Yetakchi mutaxassis",
+      "gender": "erkak",
+      "age": 58,
+      "marital": "ajrashgan",
+      "isDemo": true,
+      "coins": 0,
+      "completedLessons": [
+        "demo_course_3::Mavzu 2",
+        "demo_course_3::Mavzu 7",
+        "demo_course_4::Mavzu 5",
+        "demo_course_4::Mavzu 9",
+        "demo_course_4::Mavzu 2",
+        "demo_course_3::Mavzu 3",
+        "demo_course_3::Mavzu 6",
+        "demo_course_1::Mavzu 5",
+        "demo_course_5::Mavzu 1",
+        "demo_course_2::Mavzu 1",
+        "demo_course_2::Mavzu 1",
+        "demo_course_4::Mavzu 2",
+        "demo_course_1::Mavzu 7",
+        "demo_course_1::Mavzu 5",
+        "demo_course_2::Mavzu 7",
+        "demo_course_1::Mavzu 1",
+        "demo_course_4::Mavzu 3",
+        "demo_course_5::Mavzu 10",
+        "demo_course_3::Mavzu 5"
+      ],
+      "certificates": [],
+      "createdAt": 1776486392661
+    },
+    {
+      "username": "demo__63",
+      "name": "Аслиддин Бобохужаев",
+      "organization": "Turizm qo'mitasi",
+      "branch": "Xorazm viloyati bo'limi",
+      "position": "Bo'lim boshlig'i",
+      "gender": "erkak",
+      "age": 28,
+      "marital": "bo'ydoq",
+      "isDemo": true,
+      "coins": 0,
+      "completedLessons": [
+        "demo_course_3::Mavzu 6",
+        "demo_course_3::Mavzu 9",
+        "demo_course_1::Mavzu 4",
+        "demo_course_3::Mavzu 8",
+        "demo_course_5::Mavzu 1",
+        "demo_course_4::Mavzu 4",
+        "demo_course_5::Mavzu 9",
+        "demo_course_4::Mavzu 1",
+        "demo_course_1::Mavzu 9",
+        "demo_course_4::Mavzu 2",
+        "demo_course_2::Mavzu 1",
+        "demo_course_2::Mavzu 10",
+        "demo_course_5::Mavzu 2",
+        "demo_course_1::Mavzu 8"
+      ],
+      "certificates": [],
+      "createdAt": 1776054392661
+    },
+    {
+      "username": "demo__64",
+      "name": "Жалолиддин Маннонов",
+      "organization": "Turizm qo'mitasi",
+      "branch": "Xorazm viloyati bo'limi",
+      "position": "Loyiha menejeri",
+      "gender": "erkak",
+      "age": 36,
+      "marital": "uylangan",
+      "isDemo": true,
+      "coins": 0,
+      "completedLessons": [
+        "demo_course_4::Mavzu 5",
+        "demo_course_3::Mavzu 1",
+        "demo_course_2::Mavzu 8",
+        "demo_course_2::Mavzu 2",
+        "demo_course_3::Mavzu 8",
+        "demo_course_5::Mavzu 2",
+        "demo_course_3::Mavzu 5",
+        "demo_course_4::Mavzu 8",
+        "demo_course_1::Mavzu 10",
+        "demo_course_1::Mavzu 8",
+        "demo_course_1::Mavzu 8",
+        "demo_course_4::Mavzu 6",
+        "demo_course_4::Mavzu 10",
+        "demo_course_1::Mavzu 10",
+        "demo_course_3::Mavzu 8",
+        "demo_course_2::Mavzu 8"
+      ],
+      "certificates": [],
+      "createdAt": 1773375992661
+    },
+    {
+      "username": "demo__65",
+      "name": "Козимжон Исроилжонов",
+      "organization": "Turizm qo'mitasi",
+      "branch": "Andijon viloyati bo'limi",
+      "position": "Maslahatchi",
+      "gender": "erkak",
+      "age": 45,
+      "marital": "bo'ydoq",
+      "isDemo": true,
+      "coins": 0,
+      "completedLessons": [
+        "demo_course_4::Mavzu 10",
+        "demo_course_2::Mavzu 2",
+        "demo_course_4::Mavzu 10",
+        "demo_course_1::Mavzu 2",
+        "demo_course_3::Mavzu 10",
+        "demo_course_4::Mavzu 9",
+        "demo_course_4::Mavzu 9",
+        "demo_course_2::Mavzu 3",
+        "demo_course_5::Mavzu 6",
+        "demo_course_3::Mavzu 3",
+        "demo_course_4::Mavzu 5",
+        "demo_course_1::Mavzu 7",
+        "demo_course_4::Mavzu 9",
+        "demo_course_3::Mavzu 10",
+        "demo_course_3::Mavzu 7",
+        "demo_course_4::Mavzu 2",
+        "demo_course_4::Mavzu 7"
+      ],
+      "certificates": [],
+      "createdAt": 1774499192661
+    },
+    {
+      "username": "demo__66",
+      "name": "Ўткирбек Исмаилов",
+      "organization": "Turizm qo'mitasi",
+      "branch": "Surxondaryo viloyati bo'limi",
+      "position": "Loyihalar koordinatori",
+      "gender": "erkak",
+      "age": 37,
+      "marital": "uylangan",
+      "isDemo": true,
+      "coins": 0,
+      "completedLessons": [
+        "demo_course_5::Mavzu 7",
+        "demo_course_3::Mavzu 8",
+        "demo_course_2::Mavzu 3",
+        "demo_course_4::Mavzu 8",
+        "demo_course_4::Mavzu 10",
+        "demo_course_5::Mavzu 10",
+        "demo_course_1::Mavzu 7",
+        "demo_course_5::Mavzu 9",
+        "demo_course_1::Mavzu 7",
+        "demo_course_3::Mavzu 7",
+        "demo_course_1::Mavzu 8",
+        "demo_course_5::Mavzu 5"
+      ],
+      "certificates": [],
+      "createdAt": 1776572792662
+    },
+    {
+      "username": "demo__67",
+      "name": "Боту Алимов",
+      "organization": "Turizm qo'mitasi",
+      "branch": "Farg'ona viloyati bo'limi",
+      "position": "Bo'lim mudiri o'rinbosari",
+      "gender": "erkak",
+      "age": 36,
+      "marital": "bo'ydoq",
+      "isDemo": true,
+      "coins": 0,
+      "completedLessons": [
+        "demo_course_4::Mavzu 8",
+        "demo_course_1::Mavzu 4",
+        "demo_course_1::Mavzu 2",
+        "demo_course_4::Mavzu 3",
+        "demo_course_3::Mavzu 3",
+        "demo_course_2::Mavzu 3",
+        "demo_course_1::Mavzu 7",
+        "demo_course_1::Mavzu 3",
+        "demo_course_4::Mavzu 3",
+        "demo_course_4::Mavzu 3"
+      ],
+      "certificates": [],
+      "createdAt": 1780201592662
+    },
+    {
+      "username": "demo__68",
+      "name": "Сухроб Хидиров",
+      "organization": "Turizm qo'mitasi",
+      "branch": "",
+      "position": "Tahlilchi",
+      "gender": "erkak",
+      "age": 36,
+      "marital": "uylangan",
+      "isDemo": true,
+      "coins": 0,
+      "completedLessons": [
+        "demo_course_1::Mavzu 2",
+        "demo_course_1::Mavzu 1",
+        "demo_course_1::Mavzu 4",
+        "demo_course_2::Mavzu 8",
+        "demo_course_5::Mavzu 4",
+        "demo_course_1::Mavzu 4",
+        "demo_course_3::Mavzu 6",
+        "demo_course_2::Mavzu 10",
+        "demo_course_2::Mavzu 7",
+        "demo_course_1::Mavzu 1",
+        "demo_course_3::Mavzu 1",
+        "demo_course_2::Mavzu 6",
+        "demo_course_4::Mavzu 9"
+      ],
+      "certificates": [],
+      "createdAt": 1775967992662
+    }
+  ],
   "tgLogChatId": "https://t.me/MarifatCupLoglar",
   "labels": {
     "courses_desc": "Video darslar, testlar va amaliy mashg‘ulotlar orqali bilim oling",
