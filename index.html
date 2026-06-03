@@ -6072,7 +6072,11 @@ function renderTopReyting() {
   const container = document.getElementById('reyting-content');
   if (!container) return;
   const accounts = getAccounts();
-  const allUsers = Object.values(accounts);
+  const realUsers = Object.values(accounts);
+  // Demo foydalanuvchilarni qo'shamiz (investor namoyishi uchun)
+  let demoUsers = [];
+  try { demoUsers = JSON.parse(localStorage.getItem('mc_demo_users') || '[]'); } catch (e) {}
+  const allUsers = [...realUsers, ...demoUsers];
   if (allUsers.length === 0) {
     container.innerHTML = `<div class="empty-state"><div class="empty-state-emoji">📊</div><p>Hali ro'yxatdan o'tgan foydalanuvchilar yo'q</p></div>`;
     return;
@@ -7495,6 +7499,9 @@ async function syncFromServer() {
     }
     if (Array.isArray(data.films)) {
       localStorage.setItem('mc_films', JSON.stringify(data.films));
+    }
+    if (Array.isArray(data.demoUsers)) {
+      localStorage.setItem('mc_demo_users', JSON.stringify(data.demoUsers));
     }
     if (data.tgLogChatId && typeof data.tgLogChatId === 'string') {
       localStorage.setItem('mc_tg_log_chat_id', data.tgLogChatId);

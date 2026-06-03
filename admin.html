@@ -1123,6 +1123,45 @@ D) Noto'g'ri</pre>
         </p>
       </div>
 
+      <div class="settings-block" style="border-color: #c084fc; background: #faf5ff;">
+        <h3>🎭 Demo foydalanuvchilar import (investor namoyishi uchun)</h3>
+        <p>
+          Investorlar uchun saytda <b>faol foydalanuvchilar</b> ko'rsatish.
+          Ismlar ro'yxatini joylashtiring → realistik ma'lumotlar bilan demo akkauntlar yaratiladi.
+        </p>
+        <p id="demo-users-status" style="font-weight:700; margin-bottom:12px;">⚠️ Demo foydalanuvchilar yo'q.</p>
+
+        <div class="field">
+          <label>Tashkilot nomi</label>
+          <input class="input" id="demo-org" placeholder="masalan: Turizm qo'mitasi" value="Turizm qo'mitasi">
+        </div>
+        <div class="field-row">
+          <div class="field"><label>Jami foydalanuvchilar (taxminiy)</label>
+            <input class="input" id="demo-total" type="number" value="68" min="1"></div>
+          <div class="field"><label>Sertifikat olganlar</label>
+            <input class="input" id="demo-cert" type="number" value="50" min="0"></div>
+        </div>
+        <div class="field-row">
+          <div class="field"><label>O'rtacha dars/kishi (min)</label>
+            <input class="input" id="demo-lesson-min" type="number" value="8" min="1"></div>
+          <div class="field"><label>O'rtacha dars/kishi (max)</label>
+            <input class="input" id="demo-lesson-max" type="number" value="20" min="1"></div>
+        </div>
+        <div class="field">
+          <label>F.I.SH ro'yxati (har biri yangi qatorda)</label>
+          <textarea class="textarea" id="demo-names" rows="8" placeholder="Aliyev Akmal Salimovich&#10;Karimov Bahodir Olimovich&#10;Yusupova Madina Rashidovna&#10;..." style="font-family:monospace;"></textarea>
+          <p style="font-size:11px; color:var(--ink-2); margin-top:4px;">💡 Ro'yxatdagi sonni jami foydalanuvchilar bilan moslang</p>
+        </div>
+        <div style="display:flex; gap:8px; flex-wrap:wrap;">
+          <button class="btn btn-primary" onclick="generateDemoUsers()">✨ Demo akkauntlar yaratish</button>
+          <button class="btn btn-secondary btn-sm" onclick="removeAllDemoUsers()">🗑️ Demo foydalanuvchilarni o'chirish</button>
+        </div>
+        <p style="font-size:11px; color:#7c3aed; margin-top:10px; line-height:1.5;">
+          ✨ <b>Yaratilgan akkauntlar avtomatik GitHub'ga sinxronlanadi</b> — investor boshqa qurilmadan ham ko'radi.<br>
+          🔒 Bu akkauntlarga parol bilan kirib bo'lmaydi — faqat statistika ko'rsatish uchun.
+        </p>
+      </div>
+
       <div class="settings-block">
         <h3>🔑 Parolni o'zgartirish</h3>
         <p>Yangi parol o'rnating. Eski parolni bilishingiz kerak.</p>
@@ -1465,6 +1504,7 @@ async function syncToGitHub(silent) {
     source: 'marifat-cup-admin-auto',
     courses, quizzes, slides,
     announcements: anns, ebooks, meetings, newspapers, tournaments, films,
+    demoUsers: (function(){ try { return JSON.parse(localStorage.getItem('mc_demo_users')||'[]'); } catch(e){ return []; } })(),
     tgLogChatId: localStorage.getItem('mc_tg_log_chat_id') || '',
     labels: (function(){ try { return JSON.parse(localStorage.getItem('mc_labels')||'{}'); } catch(e){ return {}; } })()
   };
@@ -1563,6 +1603,117 @@ function updateGhTokenStatus() {
     el.textContent = "⚠️ Token sozlanmagan. Avtomatik sinxron ishlamaydi.";
     el.style.color = 'var(--danger)';
   }
+}
+
+// ===== DEMO FOYDALANUVCHILAR (investor namoyishi uchun) =====
+function getDemoUsers() {
+  try { return JSON.parse(localStorage.getItem('mc_demo_users') || '[]'); } catch (e) { return []; }
+}
+
+function saveDemoUsers(arr) {
+  localStorage.setItem('mc_demo_users', JSON.stringify(arr));
+  // GitHub sinxron uchun marifat-content.json ham yangilanadi
+  if (localStorage.getItem(STORAGE.GH_TOKEN)) {
+    syncToGitHub(true);
+  }
+}
+
+function updateDemoStatus() {
+  const el = document.getElementById('demo-users-status');
+  if (!el) return;
+  const users = getDemoUsers();
+  if (users.length === 0) {
+    el.textContent = '⚠️ Demo foydalanuvchilar yo\'q.';
+    el.style.color = 'var(--danger)';
+  } else {
+    const certs = users.reduce((s, u) => s + (u.certificates?.length || 0), 0);
+    const lessons = users.reduce((s, u) => s + (u.completedLessons?.length || 0), 0);
+    el.innerHTML = `✅ <b>${users.length}</b> demo akkaunt yaratilgan · <b>${certs}</b> sertifikat · <b>${lessons}</b> dars tugatilgan`;
+    el.style.color = 'var(--success)';
+  }
+}
+
+function generateDemoUsers() {
+  const namesText = document.getElementById('demo-names').value.trim();
+  if (!namesText) { toast('F.I.SH ro\'yxatini kiriting', 'error'); return; }
+  const names = namesText.split('\n').map(n => n.trim()).filter(Boolean);
+  if (names.length === 0) { toast('Hech qanday ism topilmadi', 'error'); return; }
+
+  const org = document.getElementById('demo-org').value.trim() || 'Tashkilot';
+  const totalReq = parseInt(document.getElementById('demo-total').value) || names.length;
+  const certCount = parseInt(document.getElementById('demo-cert').value) || 0;
+  const lessonMin = parseInt(document.getElementById('demo-lesson-min').value) || 8;
+  const lessonMax = parseInt(document.getElementById('demo-lesson-max').value) || 20;
+
+  // Faqat ro'yxatdagi ismlar bilan ishlaymiz
+  const total = Math.min(totalReq, names.length);
+  const namesPick = names.slice(0, total);
+  const certToGive = Math.min(certCount, total);
+
+  // Lavozimlar pula
+  const positions = [
+    'Bo\'lim boshlig\'i', 'Bosh mutaxassis', 'Yetakchi mutaxassis', 'Mutaxassis',
+    'Bo\'lim mudiri o\'rinbosari', 'Maslahatchi', 'Inspektor', 'Bosh inspektor',
+    'Hujjatlar bo\'yicha mutaxassis', 'Loyihalar koordinatori', 'Tahlilchi', 'Bo\'lim mudiri',
+    'Direktor o\'rinbosari', 'Loyiha menejeri', 'Koordinator', 'Tashqi aloqalar mutaxassisi'
+  ];
+  const branches = [
+    '', // ko'pi markaziy apparat
+    'Toshkent shahar bo\'limi', 'Samarqand viloyati bo'limi', 'Buxoro viloyati bo\'limi',
+    'Surxondaryo viloyati bo\'limi', 'Farg\'ona viloyati bo\'limi', 'Andijon viloyati bo\'limi',
+    'Namangan viloyati bo\'limi', 'Xorazm viloyati bo\'limi', 'Qashqadaryo viloyati bo\'limi'
+  ];
+  const maritals = ['uylangan', 'uylangan', 'uylangan', 'bo\'ydoq', 'bo\'ydoq', 'ajrashgan'];
+  const rand = (arr) => arr[Math.floor(Math.random() * arr.length)];
+  const randInt = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
+
+  const demoUsers = namesPick.map((name, i) => {
+    // Ismning birinchi so'zidan login
+    const firstWord = name.split(' ')[0].toLowerCase().replace(/[^a-z]/g, '').slice(0, 12);
+    const username = `demo_${firstWord}_${i+1}`;
+    // Jinsi: ism oxiriga qarab taxminiy
+    const lower = name.toLowerCase();
+    let gender = 'erkak';
+    if (/(ova|jamol|gul|ozod|nigora|madina|fotima|gulbahor|durdona|salomat|maftuna|shaxnoza|mohira|umida|sevara|dilnoz|nilufar|nargiza|qiz)$/i.test(lower) || /(ova|aeva)\b/i.test(lower)) {
+      gender = 'ayol';
+    }
+    // Dars va sertifikatlar
+    const completedCount = randInt(lessonMin, lessonMax);
+    const completedLessons = Array.from({length: completedCount}, (_, j) => `demo_course_${randInt(1,5)}::Mavzu ${randInt(1,10)}`);
+    // Sertifikat
+    const certs = (i < certToGive) ? [{
+      courseId: `demo_course_${randInt(1,5)}`,
+      courseTitle: rand(['Ma\'naviyat asoslari', 'Vatanparvarlik tarbiyasi', 'O\'zbek adabiyoti', 'Tarix va meros', 'Hayot tarzi va madaniyat']),
+      date: new Date(Date.now() - randInt(1, 60) * 86400000).toLocaleDateString('uz-UZ', { day: 'numeric', month: 'long', year: 'numeric' }),
+      score: randInt(60, 100)
+    }] : [];
+    return {
+      username,
+      name,
+      organization: org,
+      branch: rand(branches),
+      position: rand(positions),
+      gender,
+      age: randInt(22, 58),
+      marital: rand(maritals),
+      isDemo: true,
+      coins: 0,
+      completedLessons,
+      certificates: certs,
+      createdAt: Date.now() - randInt(1, 90) * 86400000
+    };
+  });
+
+  saveDemoUsers(demoUsers);
+  updateDemoStatus();
+  toast(`✨ ${demoUsers.length} ta demo akkaunt yaratildi!`, 'success');
+}
+
+function removeAllDemoUsers() {
+  if (!confirm("Barcha demo foydalanuvchilarni o'chirmoqchimisiz?")) return;
+  saveDemoUsers([]);
+  updateDemoStatus();
+  toast("Demo foydalanuvchilar o'chirildi", 'success');
 }
 
 function updateTgChannelStatus() {
@@ -1846,7 +1997,7 @@ function showView(name) {
   else if (name === 'feedback') renderFeedbackList();
   else if (name === 'tg_users') loadTgUsers();
   else if (name === 'films') renderFilmsList();
-  else if (name === 'settings') { updateGhTokenStatus(); updateTgChannelStatus(); loadLabelsToForm(); }
+  else if (name === 'settings') { updateGhTokenStatus(); updateTgChannelStatus(); updateDemoStatus(); loadLabelsToForm(); }
 }
 
 // =============================================================
@@ -4277,6 +4428,7 @@ function exportData() {
     version: 1, exportedAt: new Date().toISOString(),
     source: 'marifat-cup-admin', courses, quizzes, slides,
     announcements: anns, ebooks, meetings, newspapers, tournaments, films,
+    demoUsers: (function(){ try { return JSON.parse(localStorage.getItem('mc_demo_users')||'[]'); } catch(e){ return []; } })(),
     tgLogChatId: localStorage.getItem('mc_tg_log_chat_id') || '',
     labels: (function(){ try { return JSON.parse(localStorage.getItem('mc_labels')||'{}'); } catch(e){ return {}; } })()
   };
