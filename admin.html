@@ -1156,6 +1156,16 @@ D) Noto'g'ri</pre>
           <button class="btn btn-primary" onclick="generateDemoUsers()">✨ Demo akkauntlar yaratish</button>
           <button class="btn btn-secondary btn-sm" onclick="removeAllDemoUsers()">🗑️ Demo foydalanuvchilarni o'chirish</button>
         </div>
+
+        <div style="margin-top:18px; padding:14px; background:#dbeafe; border:2px solid #1e40af; border-radius:10px;">
+          <p style="font-weight:800; color:#1e3a8a; margin-bottom:6px;">🚀 TEZKOR IMPORT</p>
+          <p style="font-size:13px; color:#1e3a8a; margin-bottom:10px;">
+            Tayyor ro'yxat: <b>Turizm qo'mitasi — 91 xodim</b> · 68 ta dars tugatgan · 50 ta sertifikat
+          </p>
+          <button class="btn btn-accent" onclick="importTurizmKomitasi()" style="width:100%;">
+            🇺🇿 Turizm qo'mitasi (91 kishi) — bitta bosishda import qilish
+          </button>
+        </div>
         <p style="font-size:11px; color:#7c3aed; margin-top:10px; line-height:1.5;">
           ✨ <b>Yaratilgan akkauntlar avtomatik GitHub'ga sinxronlanadi</b> — investor boshqa qurilmadan ham ko'radi.<br>
           🔒 Bu akkauntlarga parol bilan kirib bo'lmaydi — faqat statistika ko'rsatish uchun.
@@ -1714,6 +1724,136 @@ function removeAllDemoUsers() {
   saveDemoUsers([]);
   updateDemoStatus();
   toast("Demo foydalanuvchilar o'chirildi", 'success');
+}
+
+// 🇺🇿 TURIZM QO'MITASI — 91 xodimni bitta bosishda import qilish
+function importTurizmKomitasi() {
+  const turizmNames = [
+    'Абдуфаттох Абдусаматов', 'Абдураззоқ Шаймарданов', 'Тўхтасин Арслонов', 'Бахора Ахмедова',
+    'Шохиста Юнусалиева', 'Нуриддин Назруллаев', 'Шахноза Тажиддинова', 'Инобат Аҳатова',
+    'Наргиза Одинаева', 'Шахзод Отабоев', 'Жамшид Шукуров', 'Масуда Гулметова',
+    'Ойбек Мадаминов', 'Жовлон Мансуров', 'Муҳаммадқодир Собиров', 'Eлбек Исламов',
+    'Феруза Хайруллаева', 'Зуҳриддин Хасанов', 'Шомаруф Қосимов', 'Феруза Сайдаматова',
+    'Адиба Мирфайзиева', 'Ойбек Исроилов', 'Пардахол Норқобилова', 'Гулшан Саттарова',
+    'Адҳам Хасанов', 'Жамолиддин Рахматуллаев', 'Сабохат Жуманиёзова', 'Давлатшох Ҳамроқулов',
+    'Дилшод Ахмедов', 'Шахноза Калонхўджаева', 'Ситора Барлибаева', 'Каримова Ҳамида',
+    'Соҳиба Арипова', 'Зиёда Акбарқулова', 'Муқаддас Мусаева', 'Дилфуза Маҳкамова',
+    'Насиба Алданазарова', 'Гуласал Янгибоева', 'Ботир Чинибеков', 'Тохир Аҳмедов',
+    'Артем Величкин', 'Отабек Хасанов', 'Сарвар Акрамов', 'Шоҳида Ахмедова',
+    'Дилдора Эргашева', 'Элёр Милимуҳаммедов', 'Азиз Алиев', 'Мухтор Ортиқов',
+    'Оламгир Абдиев', 'Фарангиз Нематова', 'Фарход Сиддиқов', 'Илҳом Хайитмуродов',
+    'Ҳаёт Нуриллаев', 'Толмас Раззаков', 'Азамат Жумаев', 'Жасур Болтаев',
+    'Зоҳид Турақулов', 'Бегмат Очилов', 'Ахрор Саидов', 'Ойбек Алимхажаев',
+    'Махфират Зикирова', 'Улугбек Исаналиев', 'Аслиддин Бобохужаев', 'Жалолиддин Маннонов',
+    'Козимжон Исроилжонов', 'Ўткирбек Исмаилов', 'Боту Алимов', 'Сухроб Хидиров',
+    'Чарос Турсонова', 'Учқун Султонов', 'Умаров Рахматжон', 'Тураев Дониёр',
+    'Утаганов Равшан', 'Абдуллаев Азамат', 'Тагаев Бехзад', 'Ибрагимов Бехзод',
+    'Аҳматов Шоҳруҳ', 'Очилов Маъруф', 'Норматов Жасур', 'Жонимқулов Арслон',
+    'Тошпўлатова Шахноза', 'Низомиддинов Оматилло', 'Исламов Хамид', 'Мирзоалиев Элёр',
+    'Бобоқулов Акмал', 'Авезмуратов Музроб', 'Муратова Гулҳаё', 'Сидиков Тулкин',
+    'Саидов Ахрор', 'Олмагул Якупова', 'Мафтуна Мелиева'
+  ];
+
+  // Tayyor sozlamalar: 68 ta dars tugatdi, 50 ta sertifikat oldi
+  const positions = [
+    'Қўмита раиси', 'Қўмита раиси ўринбосари', 'Бўлим бошлиғи', 'Бўлим бошлиғи ўринбосари',
+    'Бош мутахассис', 'Етакчи мутахассис', 'Мутахассис', 'Бош инспектор',
+    'Инспектор', 'Бош маслаҳатчи', 'Маслаҳатчи', 'Бўлим мудири',
+    'Лойиҳалар координатори', 'Халқаро алоқалар бўлими мутахассиси', 'Туризм маркетинги мутахассиси',
+    'Меҳмонхона хизматлари мутахассиси', 'Гидлар бўйича мутахассис', 'Туризм статистикаси таҳлилчиси',
+    'Ҳужжатлар бўлими мудири', 'Бошлиқ ёрдамчиси', 'Котиб', 'Бухгалтер',
+    'Бош бухгалтер', 'Кадрлар бўлими бошлиғи', 'Юрист', 'Тажриба ўрганувчи мутахассис'
+  ];
+  const branches = [
+    '', '', '', '', '', // 50% markaziy apparat
+    'Тошкент шаҳар бўлими', 'Самарқанд вилояти бўлими', 'Бухоро вилояти бўлими',
+    'Сурхондарё вилояти бўлими', 'Фарғона вилояти бўлими', 'Андижон вилояти бўлими',
+    'Наманган вилояти бўлими', 'Хоразм вилояти бўлими', 'Қашқадарё вилояти бўлими',
+    'Сирдарё вилояти бўлими', 'Жиззах вилояти бўлими', 'Навоий вилояти бўлими',
+    'Қорақалпоғистон Республикаси бўлими'
+  ];
+  const courseTitles = [
+    "Ма'навият асослари", "Ватанпарварлик тарбияси", "Ўзбек адабиёти ва маданияти",
+    "Тарих ва меросимиз", "Хаёт тарзи ва маданият", "Сайёҳлик ва меҳмондўстлик",
+    "Ўзбекистон туризм потенциали", "Маданий мерос ва ҳунармандчилик"
+  ];
+  const maritals = ['уйланган', 'уйланган', 'уйланган', 'уйланган', 'бўйдоқ', 'бўйдоқ', 'ажрашган'];
+  const rand = (arr) => arr[Math.floor(Math.random() * arr.length)];
+  const randInt = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
+
+  // 91 ta xodim: 68 ta "dars tugatdi" (ko'p dars), shundan 50 ta sertifikat oldi, qolgan 18 ta past ball
+  // Qolgan 23 ta (91-68) — kam dars (1-7)
+  const totalUsers = turizmNames.length; // 91
+  const finishedCourse = 68;
+  const gotCert = 50;
+
+  // Aralashtiramiz
+  const shuffled = [...turizmNames].sort(() => Math.random() - 0.5);
+
+  const demoUsers = shuffled.map((name, i) => {
+    // Login generatsiya
+    let firstWord = name.split(' ')[0]
+      .replace(/[А-Я]/g, ch => ({
+        'А':'a','Б':'b','В':'v','Г':'g','Д':'d','Е':'e','Ё':'yo','Ж':'j','З':'z','И':'i','Й':'y',
+        'К':'k','Л':'l','М':'m','Н':'n','О':'o','П':'p','Р':'r','С':'s','Т':'t','У':'u','Ф':'f','Х':'x',
+        'Ц':'ts','Ч':'ch','Ш':'sh','Щ':'sh','Ъ':"'",'Ы':'i','Э':'e','Ю':'yu','Я':'ya',
+        'Ў':'o','Ғ':'g','Қ':'q','Ҳ':'h'
+      }[ch] || ''))
+      .replace(/[а-я]/g, ch => ({
+        'а':'a','б':'b','в':'v','г':'g','д':'d','е':'e','ё':'yo','ж':'j','з':'z','и':'i','й':'y',
+        'к':'k','л':'l','м':'m','н':'n','о':'o','п':'p','р':'r','с':'s','т':'t','у':'u','ф':'f','х':'x',
+        'ц':'ts','ч':'ch','ш':'sh','щ':'sh','ъ':"'",'ы':'i','э':'e','ю':'yu','я':'ya',
+        'ў':'o','ғ':'g','қ':'q','ҳ':'h'
+      }[ch] || ch))
+      .toLowerCase()
+      .replace(/[^a-z]/g, '')
+      .slice(0, 12);
+    if (!firstWord) firstWord = 'user';
+    const username = `turizm_${firstWord}_${i+1}`;
+
+    // Jinsi: oxirgi familiya/ism qarab
+    const lower = name.toLowerCase();
+    let gender = 'erkak';
+    if (/(ова|аева|иева|ёва|жен|евна|гул|нозим|нозиз|нозу|бек|зум|ноза|ҳида|ҳиа|ёшида|ҳаво)/.test(lower)) {
+      gender = 'ayol';
+    }
+
+    // Kursni tugatgan yoki yo'q
+    const finished = i < finishedCourse; // birinchi 68 ta tugatdi
+    const completedCount = finished
+      ? randInt(10, 22)  // tugatganlar 10-22 dars
+      : randInt(1, 7);   // tugatmaganlar 1-7 dars
+    const completedLessons = Array.from({length: completedCount}, (_, j) => `demo_course_${randInt(1,5)}::Mavzu ${randInt(1,10)}`);
+
+    // Sertifikat: birinchi 50 olishdi
+    const hasCert = i < gotCert;
+    const certs = hasCert ? [{
+      courseId: `demo_course_${randInt(1,5)}`,
+      courseTitle: rand(courseTitles),
+      date: new Date(Date.now() - randInt(1, 90) * 86400000).toLocaleDateString('uz-UZ', { day: 'numeric', month: 'long', year: 'numeric' }),
+      score: randInt(60, 100)
+    }] : [];
+
+    return {
+      username,
+      name,
+      organization: "Туризм қўмитаси",
+      branch: rand(branches),
+      position: rand(positions),
+      gender,
+      age: randInt(22, 58),
+      marital: rand(maritals),
+      isDemo: true,
+      coins: 0,
+      completedLessons,
+      certificates: certs,
+      createdAt: Date.now() - randInt(1, 120) * 86400000
+    };
+  });
+
+  saveDemoUsers(demoUsers);
+  updateDemoStatus();
+  toast(`🎉 91 ta Turizm qo'mitasi xodimi import qilindi! 68 ta dars tugatdi, 50 ta sertifikat oldi.`, 'success');
 }
 
 function updateTgChannelStatus() {
