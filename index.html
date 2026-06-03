@@ -1461,8 +1461,120 @@
         <input class="input" id="reg-name" placeholder="masalan: Davlatov Olimjon Karim o'g'li" maxlength="80">
       </div>
       <div class="field">
-        <label>Tashkilot nomi (to'liq) *</label>
-        <input class="input" id="reg-organization" placeholder="masalan: Respublika Ma'naviyat va ma'rifat markazi" maxlength="120">
+        <label>Tashkilot nomi *</label>
+        <select class="input" id="reg-organization-select" onchange="onOrgSelectChange()">
+          <option value="">— ro'yxatdan tanlang —</option>
+          <optgroup label="🏛️ Vazirliklar">
+            <option>Qishloq xo'jaligi vazirligi</option>
+            <option>Qurilish va uy-joy kommunal xo'jaligi vazirligi</option>
+            <option>Ichki ishlar vazirligi</option>
+            <option>Favqulodda vaziyatlar vazirligi</option>
+            <option>Raqamli texnologiyalar vazirligi</option>
+            <option>Tashqi ishlar vazirligi</option>
+            <option>Iqtisodiyot va moliya vazirligi</option>
+            <option>Tog'-kon sanoati va geologiya vazirligi</option>
+            <option>Sport vazirligi</option>
+            <option>Mudofaa vazirligi</option>
+            <option>Transport vazirligi</option>
+            <option>Investitsiyalar, sanoat va savdo vazirligi</option>
+            <option>Madaniyat vazirligi</option>
+            <option>Suv xo'jaligi vazirligi</option>
+            <option>Sog'liqni saqlash vazirligi</option>
+            <option>Kambag'allikni qisqartirish va bandlik vazirligi</option>
+            <option>Ekologiya va atrof muhitni muhofaza qilish vazirligi</option>
+            <option>Adliya vazirligi</option>
+            <option>Maktabgacha va maktab ta'limi vazirligi</option>
+            <option>Oliy ta'lim, fan va innovatsiyalar vazirligi</option>
+            <option>Energetika vazirligi</option>
+          </optgroup>
+          <optgroup label="📋 Qo'mitalar">
+            <option>Raqobatni rivojlantirish va iste'molchilar huquqlarini himoya qilish qo'mitasi</option>
+            <option>O'zbekiston Milliy Olimpiya qo'mitasi</option>
+            <option>Oila va xotin-qizlar qo'mitasi</option>
+            <option>Davlat Soliq qo'mitasi</option>
+            <option>Bojxona qo'mitasi</option>
+            <option>Din ishlari bo'yicha qo'mita</option>
+            <option>Turizm qo'mitasi</option>
+          </optgroup>
+          <optgroup label="🏢 Agentliklar">
+            <option>Prezident huzuridagi Davlat xizmatini rivojlantirish agentligi</option>
+            <option>Ijtimoiy himoya milliy agentligi</option>
+            <option>Kinematografiya agentligi</option>
+            <option>Milliy antidoping agentligi</option>
+            <option>Madaniy meros agentligi</option>
+            <option>Energetika bozorini rivojlantirish va tartibga solish agentligi</option>
+            <option>Davlat aktivlarini boshqarish agentligi</option>
+            <option>Yoshlar ishlari agentligi</option>
+            <option>Axborot va ommaviy kommunikatsiyalar agentligi</option>
+            <option>Milliy axborot agentligi - O'zA</option>
+            <option>Statistika agentligi</option>
+            <option>O'rmon xo'jaligi agentligi</option>
+          </optgroup>
+          <optgroup label="⚖️ Sud, prokuratura, xavfsizlik">
+            <option>O'zbekiston Respublikasi Oliy sudi</option>
+            <option>Davlat xavfsizlik xizmati chegara qo'shinlari</option>
+            <option>O'zbekiston Respublikasi Davlat xavfsizlik xizmati</option>
+            <option>O'zbekiston Respublikasi Milliy gvardiyasi</option>
+            <option>O'zbekiston Respublikasi Bosh prokuraturasi</option>
+            <option>O'zbekiston Savdo-sanoat palatasi</option>
+            <option>O'zbekiston Respublikasi Hisob palatasi</option>
+            <option>Inson huquqlari bo'yicha Milliy markazi</option>
+          </optgroup>
+          <optgroup label="🎓 Akademiya, markaz, kutubxona">
+            <option>O'zbekiston Respublikasi Prezidenti huzuridagi Davlat boshqaruvi akademiyasi</option>
+            <option>O'zbekiston Badiiy Akademiyasi</option>
+            <option>«Elektromagnit moslashuv markazi» DUK</option>
+            <option>Alisher Navoiy nomidagi O'zbekiston Milliy kutubxonasi</option>
+            <option>"Nuroniy" jamg'armasi</option>
+            <option>O'zbekiston Milliy teleradiokompaniyasi</option>
+          </optgroup>
+          <optgroup label="🤝 Uyushmalar va federatsiyalar">
+            <option>O'zbekiston Kasaba uyushmalari federatsiyasi</option>
+            <option>O'zbekiston mahallalari uyushmasi</option>
+            <option>"Tasviriy oyina" ijodiy uyushmasi</option>
+            <option>"Hunarmand" uyushmasi</option>
+            <option>O'zbekiston kompozitorlari va bastakorlari uyushmasi</option>
+            <option>O'zbekiston Yozuvchilar uyushmasi</option>
+            <option>O'zbekiston Jurnalistlari ijodiy uyushmasi</option>
+          </optgroup>
+          <optgroup label="🏭 Aksiyadorlik jamiyatlari (AJ)">
+            <option>"O'zbekiston milliy elektr tarmoqlari" AJ</option>
+            <option>"O'zbekgidroenergo" AJ</option>
+            <option>"Navoiy kon-metallurgiya kombinat" AJ</option>
+            <option>Olmaliq kon-metallurgiya kombinati</option>
+            <option>"Uzbekistan Aerports" AJ</option>
+            <option>"O'zkimyosanoat" AJ</option>
+            <option>O'zbekiston Respublika valyuta birjasi</option>
+            <option>"Uzbekistan Airways" AJ</option>
+            <option>"O'zbekiston temir yo'llari" AJ</option>
+            <option>"Toshshahartransxizmat" AJ</option>
+            <option>"O'zmetkombinat" AJ</option>
+            <option>Hududiy elektr tarmoqlari AJ</option>
+            <option>"Hududgazta'minot" AJ</option>
+            <option>"UzGasTrade" AJ</option>
+            <option>O'zsuvta'minot AJ</option>
+            <option>"Issiqlik elektr stansiyalari" AJ</option>
+            <option>"Navoiazot" AJ</option>
+            <option>"Sharq" nashriyot-matbaa AJ</option>
+          </optgroup>
+          <optgroup label="🏦 Banklar">
+            <option>Markaziy bank</option>
+            <option>"Xalq banki" ATB</option>
+            <option>"Turonbank" ATB</option>
+            <option>"Biznesni rivojlantirish banki" ATB</option>
+            <option>"Asakabank" ATB</option>
+            <option>"Ipak yo'li" AITB</option>
+            <option>"Agrobank" ATB</option>
+            <option>"Hamkorbank" ATB</option>
+            <option>"Mikrokreditbank" ATB</option>
+            <option>"O'zsanoatqurilishbank" ATB</option>
+            <option>"O'zmilliybank" ATB</option>
+          </optgroup>
+          <optgroup label="✏️ Boshqa">
+            <option value="__other__">Boshqa (qo'lda yozish)...</option>
+          </optgroup>
+        </select>
+        <input class="input" id="reg-organization-other" placeholder="Tashkilot nomini to'liq yozing" maxlength="160" style="display:none; margin-top:8px;">
       </div>
       <div class="field">
         <label>Bo'linma / Filial / Hudud <span style="color:var(--ink-2); font-weight:500;">(ixtiyoriy)</span></label>
@@ -3116,9 +3228,30 @@ function switchSignInTab(tabName) {
 
 // (Mehmon sifatida kirish olib tashlandi — faqat ro'yxatdan o'tish va kirish)
 
+function onOrgSelectChange() {
+  const sel = document.getElementById('reg-organization-select');
+  const other = document.getElementById('reg-organization-other');
+  if (!sel || !other) return;
+  if (sel.value === '__other__') {
+    other.style.display = '';
+    other.focus();
+  } else {
+    other.style.display = 'none';
+    other.value = '';
+  }
+}
+
 function registerUser() {
   const name = document.getElementById('reg-name').value.trim();
-  const organization = document.getElementById('reg-organization').value.trim();
+  // Tashkilot — select yoki "Boshqa" tanlansa qo'lda yozilgan
+  const orgSel = document.getElementById('reg-organization-select');
+  const orgOther = document.getElementById('reg-organization-other');
+  let organization = '';
+  if (orgSel.value === '__other__') {
+    organization = orgOther.value.trim();
+  } else {
+    organization = orgSel.value.trim();
+  }
   const branch = document.getElementById('reg-branch').value.trim(); // ixtiyoriy
   const position = document.getElementById('reg-position').value.trim();
   const gender = document.getElementById('reg-gender').value;
@@ -3132,7 +3265,7 @@ function registerUser() {
   errEl.style.display = 'none';
 
   if (!name || name.split(' ').length < 2) return showErr("F.I.SH ni to'liq kiriting (kamida 2 ta so'z)");
-  if (!organization) return showErr("Tashkilot nomini kiriting");
+  if (!organization) return showErr("Tashkilotni ro'yxatdan tanlang yoki 'Boshqa' tanlab qo'lda yozing");
   if (!position) return showErr("Lavozimingizni kiriting");
   if (!gender) return showErr("Jinsingizni tanlang");
   if (!age || age < 10 || age > 100) return showErr("Yoshingizni to'g'ri kiriting (10-100)");
