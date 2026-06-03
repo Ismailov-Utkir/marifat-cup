@@ -6059,13 +6059,25 @@ function goToTopReyting() {
   renderTopReyting();
 }
 
-function getLevelInfo(score) {
-  // Daraja: olingan sertifikatlar va tugatilgan darslar miqdoriga qarab
-  if (score >= 50) return { label: 'Usta', color: '#dc2626', icon: '🏆', min: 50 };
-  if (score >= 30) return { label: 'Mutaxassis', color: '#f59e0b', icon: '🥇', min: 30 };
-  if (score >= 15) return { label: 'Ilg\'or', color: '#3b82f6', icon: '🥈', min: 15 };
-  if (score >= 5) return { label: 'O\'rtacha', color: '#10b981', icon: '🥉', min: 5 };
-  return { label: 'Boshlovchi', color: '#6b7280', icon: '🌱', min: 0 };
+// Foydalanuvchining "ballini" hisoblash (0-100 oralig'ida)
+function getUserBall(u) {
+  const certs = u.certificates || [];
+  const lessons = (u.completedLessons || []).length;
+  if (certs.length > 0) {
+    // Sertifikat bo'lsa — eng yuqori ball
+    const maxScore = Math.max(...certs.map(c => c.score || 0));
+    return maxScore;
+  }
+  // Sertifikat yo'q — darslar soni asosida 0-40
+  return Math.min(40, lessons * 4);
+}
+
+// Daraja oralig'ini aniqlash
+function getBallRange(ball) {
+  if (ball >= 86) return { label: '86-100 ball', color: '#dc2626', min: 86, max: 100 };
+  if (ball >= 66) return { label: '66-85 ball', color: '#f59e0b', min: 66, max: 85 };
+  if (ball >= 41) return { label: '41-65 ball', color: '#3b82f6', min: 41, max: 65 };
+  return { label: '0-40 ball', color: '#10b981', min: 0, max: 40 };
 }
 
 function renderTopReyting() {
@@ -6081,52 +6093,52 @@ function renderTopReyting() {
     container.innerHTML = `<div class="empty-state"><div class="empty-state-emoji">📊</div><p>Hali ro'yxatdan o'tgan foydalanuvchilar yo'q</p></div>`;
     return;
   }
-  // Har bir foydalanuvchi uchun ball hisoblash
+  // Har bir foydalanuvchi uchun ball hisoblash (0-100 oralig'ida)
   const scored = allUsers.map(u => {
     const lessonCount = (u.completedLessons || []).length;
     const certCount = (u.certificates || []).length;
-    const score = certCount * 5 + lessonCount; // sertifikat = 5 ball, dars = 1 ball
+    const ball = getUserBall(u);
     return {
       ...u,
-      score,
+      ball,
       lessonCount,
       certCount,
-      level: getLevelInfo(score)
+      range: getBallRange(ball)
     };
-  }).sort((a, b) => b.score - a.score);
-  // Daraja bo'yicha guruhlash
-  const levels = ['Usta', 'Mutaxassis', 'Ilg\'or', 'O\'rtacha', 'Boshlovchi'];
-  const byLevel = {};
-  levels.forEach(l => byLevel[l] = []);
-  scored.forEach(s => byLevel[s.level.label].push(s));
+  }).sort((a, b) => b.ball - a.ball);
+  // Ball oralig'i bo'yicha guruhlash (eng yuqoridan boshlab)
+  const ranges = [
+    { label: '86-100 ball', color: '#dc2626', min: 86, max: 100 },
+    { label: '66-85 ball', color: '#f59e0b', min: 66, max: 85 },
+    { label: '41-65 ball', color: '#3b82f6', min: 41, max: 65 },
+    { label: '0-40 ball', color: '#10b981', min: 0, max: 40 },
+  ];
+  const byRange = {};
+  ranges.forEach(r => byRange[r.label] = []);
+  scored.forEach(s => byRange[s.range.label].push(s));
   // DIAGRAMMA — bar chart
-  const maxCount = Math.max(...levels.map(l => byLevel[l].length), 1);
+  const maxCount = Math.max(...ranges.map(r => byRange[r.label].length), 1);
   const diagramHtml = `
     <div style="background: white; border-radius: 20px; padding: 24px; margin-bottom: 24px; box-shadow: 0 2px 10px rgba(0,0,0,0.05);">
-      <h3 style="color: var(--primary-dark); font-family: 'Bricolage Grotesque', sans-serif; font-size: 22px; margin-bottom: 16px;">📊 Daraja diagrammasi</h3>
-      <p style="color: var(--ink-2); margin-bottom: 20px; font-size: 13px;">
-        🏆 <b>Usta</b> — 50+ ball  ·  🥇 <b>Mutaxassis</b> — 30+ ball  ·  🥈 <b>Ilg'or</b> — 15+ ball  ·  🥉 <b>O'rtacha</b> — 5+ ball  ·  🌱 <b>Boshlovchi</b><br>
-        <small>Ball: har bir sertifikat = 5 ball, har bir tugatilgan dars = 1 ball</small>
-      </p>
+      <h3 style="color: var(--primary-dark); font-family: 'Bricolage Grotesque', sans-serif; font-size: 22px; margin-bottom: 16px;">📊 Ball oralig'i bo'yicha reyting</h3>
       <div style="display: flex; flex-direction: column; gap: 14px;">
-        ${levels.map(l => {
-          const info = getLevelInfo(l === 'Usta' ? 50 : l === 'Mutaxassis' ? 30 : l === 'Ilg\'or' ? 15 : l === 'O\'rtacha' ? 5 : 0);
-          const count = byLevel[l].length;
+        ${ranges.map(r => {
+          const count = byRange[r.label].length;
           const percent = Math.round((count / maxCount) * 100);
           return `
             <div>
-              <div style="display:flex; justify-content:space-between; margin-bottom:4px;">
-                <span style="font-weight: 700; font-size: 14px;">${info.icon} ${l}</span>
-                <span style="font-weight: 800; color: ${info.color};">${count} kishi</span>
+              <div style="display:flex; justify-content:space-between; margin-bottom:6px;">
+                <span style="font-weight: 800; font-size: 16px; color: ${r.color};">${r.label}</span>
+                <span style="font-weight: 800; color: ${r.color}; font-size: 16px;">${count} kishi</span>
               </div>
-              <div style="background: #f3f4f6; height: 24px; border-radius: 12px; overflow: hidden;">
-                <div style="background: ${info.color}; height: 100%; width: ${percent}%; border-radius: 12px; transition: width 0.6s ease; display: flex; align-items: center; justify-content: flex-end; padding-right: 8px; color: white; font-weight: 700; font-size: 12px;">${count > 0 ? count : ''}</div>
+              <div style="background: #f3f4f6; height: 28px; border-radius: 14px; overflow: hidden;">
+                <div style="background: ${r.color}; height: 100%; width: ${percent}%; border-radius: 14px; transition: width 0.6s ease; display: flex; align-items: center; justify-content: flex-end; padding-right: 10px; color: white; font-weight: 800; font-size: 13px;">${count > 0 ? count : ''}</div>
               </div>
             </div>
           `;
         }).join('')}
       </div>
-      <div style="margin-top: 20px; padding-top: 20px; border-top: 1px solid #e5e7eb; display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px;">
+      <div style="margin-top: 24px; padding-top: 20px; border-top: 1px solid #e5e7eb; display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px;">
         <div style="text-align: center;">
           <div style="font-size: 28px; font-weight: 900; color: var(--primary-dark);">${scored.length}</div>
           <div style="font-size: 12px; color: var(--ink-2); text-transform: uppercase; letter-spacing: 0.05em;">Jami foydalanuvchi</div>
@@ -6148,11 +6160,11 @@ function renderTopReyting() {
           <div style="display: flex; align-items: center; gap: 12px; padding: 12px; border-radius: 12px; background: ${i < 3 ? 'linear-gradient(135deg, #fef3c7, #fde68a)' : '#f9fafb'};">
             <div style="background: ${i === 0 ? '#fbbf24' : i === 1 ? '#94a3b8' : i === 2 ? '#cd7f32' : 'var(--primary)'}; color: white; width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; flex-shrink: 0;">${i + 1}</div>
             <div style="flex: 1; min-width: 0;">
-              <div style="font-weight: 700; color: var(--ink); margin-bottom: 2px;">${escapeHtml(u.name)} <span style="background:${u.level.color}; color:white; font-size:10px; padding:2px 6px; border-radius:8px; vertical-align:middle; margin-left:4px;">${u.level.icon} ${u.level.label}</span></div>
+              <div style="font-weight: 700; color: var(--ink); margin-bottom: 2px;">${escapeHtml(u.name)} <span style="background:${u.range.color}; color:white; font-size:10px; padding:2px 6px; border-radius:8px; vertical-align:middle; margin-left:4px;">${u.range.label}</span></div>
               <div style="font-size: 12px; color: var(--ink-2);">${escapeHtml(u.organization || '')}${u.branch ? ' — ' + escapeHtml(u.branch) : ''}${u.position ? ' · ' + escapeHtml(u.position) : ''}</div>
             </div>
             <div style="text-align: right; flex-shrink: 0;">
-              <div style="font-size: 18px; font-weight: 900; color: var(--primary-dark);">${u.score}</div>
+              <div style="font-size: 22px; font-weight: 900; color: ${u.range.color};">${u.ball}</div>
               <div style="font-size: 10px; color: var(--ink-2);">${u.certCount} 📜 · ${u.lessonCount} 📚</div>
             </div>
           </div>
