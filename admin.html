@@ -370,6 +370,7 @@
     <button class="nav-tab" data-tab="films" onclick="showView('films'); renderFilmsList();">🎬 Filmlar</button>
     <button class="nav-tab" data-tab="newspapers" onclick="showView('newspapers')">📰 Gazetalar</button>
     <button class="nav-tab" data-tab="tournaments" onclick="showView('tournaments'); renderTournamentsList();">🏆 Musobaqalar</button>
+    <button class="nav-tab" data-tab="partner_orgs" onclick="showView('partner_orgs')" style="background:linear-gradient(135deg,#dbeafe,#bfdbfe); color:#1e3a8a;">🤝 Hamkorlik</button>
     <button class="nav-tab" data-tab="tg_users" onclick="showView('tg_users')">📨 Ro'yxatdan o'tganlar</button>
     <button class="nav-tab" data-tab="announcements" onclick="showView('announcements')">📢 E'lonlar</button>
     <button class="nav-tab" data-tab="feedback" onclick="showView('feedback')">✉️ Murojaatlar <span id="feedback-count-badge" style="display:none; background:#ef4444; color:white; padding:1px 7px; border-radius:100px; font-size:10px; margin-left:4px;"></span></button>
@@ -1003,6 +1004,177 @@ D) Noto'g'ri</pre>
       </div>
     </div>
 
+    <!-- ====== HAMKORLIK TIZIMI ====== -->
+    <div class="view" id="view-partner_orgs">
+      <div class="view-header">
+        <h1>🤝 Hamkorlik bo'limi</h1>
+        <button class="btn btn-secondary btn-sm" onclick="showView('dashboard')">← Boshqaruv</button>
+      </div>
+      <p class="sub">Tashkilotlardan tadbir hisobotlarini yig'ish tizimi (Telegram guruh o'rnini bosadi)</p>
+
+      <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(220px, 1fr)); gap:12px; margin-bottom:20px;">
+        <button class="action-card" onclick="showView('partner_orgs_list'); renderPartnerOrgs();" style="cursor:pointer; padding:18px; background:#dbeafe; border:2px solid #1e40af; border-radius:14px; text-align:left;">
+          <div style="font-size:32px;">🏢</div>
+          <h3 style="color:#1e3a8a; margin:8px 0 4px;">Tashkilotlar</h3>
+          <p style="font-size:13px; color:#1e40af;">Login va parol berish, holatini boshqarish</p>
+        </button>
+        <button class="action-card" onclick="showView('partner_directions'); renderPartnerDirections();" style="cursor:pointer; padding:18px; background:#dcfce7; border:2px solid #16a34a; border-radius:14px; text-align:left;">
+          <div style="font-size:32px;">📚</div>
+          <h3 style="color:#14532d; margin:8px 0 4px;">Yo'nalishlar</h3>
+          <p style="font-size:13px; color:#166534;">O'zbekcha va ruscha nomlar bilan ma'lumotnoma</p>
+        </button>
+        <button class="action-card" onclick="showView('partner_activities'); renderPartnerActivities();" style="cursor:pointer; padding:18px; background:#fef3c7; border:2px solid #d97706; border-radius:14px; text-align:left;">
+          <div style="font-size:32px;">📋</div>
+          <h3 style="color:#78350f; margin:8px 0 4px;">Xizmat paneli</h3>
+          <p style="font-size:13px; color:#92400e;">Barcha tadbirlar, filtr, eksport</p>
+        </button>
+        <button class="action-card" onclick="showView('partner_roadmaps'); renderPartnerRoadmaps();" style="cursor:pointer; padding:18px; background:#fce7f3; border:2px solid #be185d; border-radius:14px; text-align:left;">
+          <div style="font-size:32px;">🗺️</div>
+          <h3 style="color:#831843; margin:8px 0 4px;">Yo'l xaritalari</h3>
+          <p style="font-size:13px; color:#9d174d;">Tashkilot uchun Word/PDF fayl yuklash</p>
+        </button>
+      </div>
+
+      <div style="background:white; padding:18px; border-radius:14px;">
+        <h3 style="color:var(--primary-dark); margin-bottom:12px;">📊 Statistika</h3>
+        <div id="partner-stats" style="display:grid; grid-template-columns:repeat(auto-fit, minmax(140px,1fr)); gap:12px;"></div>
+      </div>
+    </div>
+
+    <!-- Tashkilotlar ro'yxati -->
+    <div class="view" id="view-partner_orgs_list">
+      <div class="view-header">
+        <h1>🏢 Tashkilotlar</h1>
+        <div style="display:flex; gap:8px;">
+          <button class="btn btn-secondary btn-sm" onclick="showView('partner_orgs')">← Ortga</button>
+          <button class="btn btn-primary" onclick="openPartnerOrgEditor()">+ Yangi tashkilot</button>
+        </div>
+      </div>
+      <p class="sub">Login va parol berib tashkilot uchun hisob yarating</p>
+      <div style="margin-bottom:12px;">
+        <input class="input" id="partner-orgs-search" placeholder="🔍 Tashkilot nomi yoki login bo'yicha..." oninput="renderPartnerOrgs()">
+      </div>
+      <div id="partner-orgs-list" class="item-list"></div>
+    </div>
+
+    <!-- Tashkilot editor -->
+    <div class="view" id="view-partner_org_editor">
+      <div class="view-header">
+        <h1 id="partner-org-editor-title">Yangi tashkilot</h1>
+        <button class="btn btn-secondary btn-sm" onclick="showView('partner_orgs_list')">← Ortga</button>
+      </div>
+      <div class="field"><label>Tashkilot nomi (to'liq) *</label>
+        <input class="input" id="partner-org-name" placeholder="masalan: Madaniyat vazirligi"></div>
+      <div class="field"><label>Qisqa nom (jadvallar uchun)</label>
+        <input class="input" id="partner-org-short" placeholder="masalan: Madaniyat vaz."></div>
+      <div class="field"><label>Aloqa shaxsi (ixtiyoriy)</label>
+        <input class="input" id="partner-org-contact" placeholder="F.I.SH, telefon, email"></div>
+      <h3 class="section-divider">🔐 Kirish ma'lumotlari</h3>
+      <p class="sub" style="margin-top:-4px; margin-bottom:12px;">💡 Bu login va parolni tashkilot xodimiga bering — saytga shu bilan kiradi.</p>
+      <div class="field-row">
+        <div class="field"><label>Login *</label>
+          <input class="input" id="partner-org-login" placeholder="masalan: madaniyat_vaz"></div>
+        <div class="field"><label>Parol *</label>
+          <input class="input" type="text" id="partner-org-password" placeholder="kamida 4 ta belgi"></div>
+      </div>
+      <div class="field"><label>Holat</label>
+        <select class="input" id="partner-org-status">
+          <option value="active">✅ Faol</option>
+          <option value="blocked">🚫 Bloklangan</option>
+        </select>
+      </div>
+      <div class="actions-bar">
+        <button class="btn btn-secondary" onclick="showView('partner_orgs_list')">Bekor qilish</button>
+        <button class="btn btn-primary" onclick="savePartnerOrg()">💾 Saqlash</button>
+      </div>
+    </div>
+
+    <!-- Yo'nalishlar -->
+    <div class="view" id="view-partner_directions">
+      <div class="view-header">
+        <h1>📚 Yo'nalishlar ma'lumotnomasi</h1>
+        <div style="display:flex; gap:8px;">
+          <button class="btn btn-secondary btn-sm" onclick="showView('partner_orgs')">← Ortga</button>
+          <button class="btn btn-primary" onclick="openDirectionEditor()">+ Yangi yo'nalish</button>
+        </div>
+      </div>
+      <p class="sub">Har bir yo'nalishni O'zbekcha va Ruscha nomi bilan kiriting</p>
+      <div id="partner-directions-list" class="item-list"></div>
+    </div>
+
+    <!-- Yo'nalish editor -->
+    <div class="view" id="view-partner_direction_editor">
+      <div class="view-header">
+        <h1 id="direction-editor-title">Yangi yo'nalish</h1>
+        <button class="btn btn-secondary btn-sm" onclick="showView('partner_directions')">← Ortga</button>
+      </div>
+      <div class="field"><label>Nomi (O'zbekcha) *</label>
+        <input class="input" id="direction-name-uz" placeholder="masalan: Madaniy-ma'naviy tadbirlar"></div>
+      <div class="field"><label>Nomi (Русский) *</label>
+        <input class="input" id="direction-name-ru" placeholder="например: Культурно-духовные мероприятия"></div>
+      <div class="actions-bar">
+        <button class="btn btn-secondary" onclick="showView('partner_directions')">Bekor qilish</button>
+        <button class="btn btn-primary" onclick="saveDirection()">💾 Saqlash</button>
+      </div>
+    </div>
+
+    <!-- Xizmat paneli (barcha tadbirlar) -->
+    <div class="view" id="view-partner_activities">
+      <div class="view-header">
+        <h1>📋 Xizmat paneli — Tadbirlar</h1>
+        <div style="display:flex; gap:8px;">
+          <button class="btn btn-secondary btn-sm" onclick="showView('partner_orgs')">← Ortga</button>
+          <button class="btn btn-accent" onclick="exportPartnerActivities()">📥 Davr uchun eksport</button>
+        </div>
+      </div>
+      <p class="sub">Barcha tashkilotlardan kelgan tadbirlar — tashkilot, davr va yo'nalish bo'yicha filtrlash mumkin</p>
+
+      <div style="background:white; padding:14px; border-radius:12px; margin-bottom:14px; display:grid; grid-template-columns:repeat(auto-fit, minmax(180px, 1fr)); gap:10px;">
+        <div class="field" style="margin:0;">
+          <label style="font-size:12px;">Tashkilot</label>
+          <select class="input" id="filter-org" onchange="renderPartnerActivities()">
+            <option value="">Hammasi</option>
+          </select>
+        </div>
+        <div class="field" style="margin:0;">
+          <label style="font-size:12px;">Yo'nalish</label>
+          <select class="input" id="filter-direction" onchange="renderPartnerActivities()">
+            <option value="">Hammasi</option>
+          </select>
+        </div>
+        <div class="field" style="margin:0;">
+          <label style="font-size:12px;">Boshlanish sanasi</label>
+          <input class="input" type="date" id="filter-date-from" onchange="renderPartnerActivities()">
+        </div>
+        <div class="field" style="margin:0;">
+          <label style="font-size:12px;">Tugash sanasi</label>
+          <input class="input" type="date" id="filter-date-to" onchange="renderPartnerActivities()">
+        </div>
+      </div>
+
+      <div id="partner-activities-summary" style="background:#f0fdfa; padding:12px 14px; border-radius:10px; margin-bottom:14px; font-size:13px;"></div>
+      <div id="partner-activities-list" class="item-list"></div>
+    </div>
+
+    <!-- Tadbir tafsiloti -->
+    <div class="view" id="view-partner_activity_detail">
+      <div class="view-header">
+        <h1>📄 Tadbir tafsiloti</h1>
+        <button class="btn btn-secondary btn-sm" onclick="showView('partner_activities'); renderPartnerActivities();">← Ortga</button>
+      </div>
+      <div id="partner-activity-detail-content"></div>
+    </div>
+
+    <!-- Yo'l xaritalari -->
+    <div class="view" id="view-partner_roadmaps">
+      <div class="view-header">
+        <h1>🗺️ Yo'l xaritalari</h1>
+        <button class="btn btn-secondary btn-sm" onclick="showView('partner_orgs')">← Ortga</button>
+      </div>
+      <p class="sub">Har bir tashkilot uchun yo'l xaritasi faylini (Word/PDF) yuklash</p>
+      <div id="partner-roadmaps-list" class="item-list"></div>
+    </div>
+
     <div class="view" id="view-feedback">
       <div class="view-header">
         <h1>✉️ Foydalanuvchi murojaatlari</h1>
@@ -1514,6 +1686,7 @@ async function syncToGitHub(silent) {
     source: 'marifat-cup-admin-auto',
     courses, quizzes, slides,
     announcements: anns, ebooks, meetings, newspapers, tournaments, films,
+    partnerOrgs, partnerDirections, partnerActivities,
     demoUsers: (function(){ try { return JSON.parse(localStorage.getItem('mc_demo_users')||'[]'); } catch(e){ return []; } })(),
     tgLogChatId: localStorage.getItem('mc_tg_log_chat_id') || '',
     labels: (function(){ try { return JSON.parse(localStorage.getItem('mc_labels')||'{}'); } catch(e){ return {}; } })()
@@ -1883,6 +2056,12 @@ let tournaments = [];
 let editingTournamentId = null;
 let films = [];
 let editingFilmId = null;
+// ===== HAMKORLIK TIZIMI =====
+let partnerOrgs = [];       // tashkilotlar ro'yxati
+let partnerDirections = []; // yo'nalishlar ma'lumotnomasi (uz+ru)
+let partnerActivities = []; // tashkilotlar yuklagan tadbirlar
+let editingPartnerOrgId = null;
+let editingDirectionId = null;
 let editingNewspaperId = null;
 let currentNewspaperIdForIssue = null;
 let editingIssueIdx = null;
@@ -2099,7 +2278,10 @@ function loadData() {
     newspapers = JSON.parse(localStorage.getItem(STORAGE.NEWSPAPERS) || '[]');
     tournaments = JSON.parse(localStorage.getItem('mc_tournaments') || '[]');
     films = JSON.parse(localStorage.getItem('mc_films') || '[]');
-  } catch (e) { courses = []; quizzes = []; slides = []; anns = []; ebooks = []; meetings = []; newspapers = []; tournaments = []; films = []; }
+    partnerOrgs = JSON.parse(localStorage.getItem('mc_partner_orgs') || '[]');
+    partnerDirections = JSON.parse(localStorage.getItem('mc_partner_directions') || '[]');
+    partnerActivities = JSON.parse(localStorage.getItem('mc_partner_activities') || '[]');
+  } catch (e) { courses = []; quizzes = []; slides = []; anns = []; ebooks = []; meetings = []; newspapers = []; tournaments = []; films = []; partnerOrgs = []; partnerDirections = []; partnerActivities = []; }
 }
 function saveData() {
   localStorage.setItem(STORAGE.COURSES, JSON.stringify(courses));
@@ -2109,6 +2291,9 @@ function saveData() {
   localStorage.setItem(STORAGE.NEWSPAPERS, JSON.stringify(newspapers));
   localStorage.setItem('mc_tournaments', JSON.stringify(tournaments));
   localStorage.setItem('mc_films', JSON.stringify(films));
+  localStorage.setItem('mc_partner_orgs', JSON.stringify(partnerOrgs));
+  localStorage.setItem('mc_partner_directions', JSON.stringify(partnerDirections));
+  localStorage.setItem('mc_partner_activities', JSON.stringify(partnerActivities));
   try {
     localStorage.setItem(STORAGE.SLIDES, JSON.stringify(slides));
     localStorage.setItem(STORAGE.EBOOKS, JSON.stringify(ebooks));
@@ -2137,6 +2322,11 @@ function showView(name) {
   else if (name === 'feedback') renderFeedbackList();
   else if (name === 'tg_users') loadTgUsers();
   else if (name === 'films') renderFilmsList();
+  else if (name === 'partner_orgs') renderPartnerStats();
+  else if (name === 'partner_orgs_list') renderPartnerOrgs();
+  else if (name === 'partner_directions') renderPartnerDirections();
+  else if (name === 'partner_activities') renderPartnerActivities();
+  else if (name === 'partner_roadmaps') renderPartnerRoadmaps();
   else if (name === 'settings') { updateGhTokenStatus(); updateTgChannelStatus(); updateDemoStatus(); loadLabelsToForm(); }
 }
 
@@ -3876,6 +4066,424 @@ function deleteFilm(id) {
   });
 }
 
+// ============================================================
+// HAMKORLIK TIZIMI — Tashkilotlar, yo'nalishlar, tadbirlar
+// ============================================================
+
+// ===== STATISTIKA =====
+function renderPartnerStats() {
+  const el = document.getElementById('partner-stats');
+  if (!el) return;
+  const orgs = partnerOrgs.length;
+  const dirs = partnerDirections.length;
+  const acts = partnerActivities.length;
+  const activeOrgs = partnerOrgs.filter(o => o.status !== 'blocked').length;
+  el.innerHTML = `
+    <div style="text-align:center; padding:14px; background:#dbeafe; border-radius:10px;">
+      <div style="font-size:28px; font-weight:900; color:#1e3a8a;">${orgs}</div>
+      <div style="font-size:11px; color:#1e40af; font-weight:700;">JAMI TASHKILOT</div>
+    </div>
+    <div style="text-align:center; padding:14px; background:#dcfce7; border-radius:10px;">
+      <div style="font-size:28px; font-weight:900; color:#14532d;">${activeOrgs}</div>
+      <div style="font-size:11px; color:#166534; font-weight:700;">FAOL</div>
+    </div>
+    <div style="text-align:center; padding:14px; background:#fef3c7; border-radius:10px;">
+      <div style="font-size:28px; font-weight:900; color:#78350f;">${dirs}</div>
+      <div style="font-size:11px; color:#92400e; font-weight:700;">YO'NALISH</div>
+    </div>
+    <div style="text-align:center; padding:14px; background:#fce7f3; border-radius:10px;">
+      <div style="font-size:28px; font-weight:900; color:#831843;">${acts}</div>
+      <div style="font-size:11px; color:#9d174d; font-weight:700;">TADBIR</div>
+    </div>
+  `;
+}
+
+// ===== TASHKILOTLAR =====
+function renderPartnerOrgs() {
+  const list = document.getElementById('partner-orgs-list');
+  if (!list) return;
+  const search = (document.getElementById('partner-orgs-search')?.value || '').toLowerCase().trim();
+  let items = partnerOrgs;
+  if (search) {
+    items = items.filter(o => (o.name || '').toLowerCase().includes(search) || (o.login || '').toLowerCase().includes(search));
+  }
+  if (items.length === 0) {
+    list.innerHTML = `<div class="empty-msg"><div class="ico">🏢</div>${search ? "Hech narsa topilmadi" : "Hali tashkilot qo'shilmagan."}<br><br>
+      ${!search ? `<button class="btn btn-primary" onclick="openPartnerOrgEditor()">+ Birinchi tashkilotni qo'shish</button>` : ''}
+    </div>`;
+    return;
+  }
+  list.innerHTML = items.map(o => {
+    const actCount = partnerActivities.filter(a => a.orgId === o.id).length;
+    const statusBadge = o.status === 'blocked'
+      ? '<span style="background:#dc2626; color:white; padding:2px 8px; border-radius:8px; font-size:10px; font-weight:700;">🚫 BLOKLANGAN</span>'
+      : '<span style="background:#10b981; color:white; padding:2px 8px; border-radius:8px; font-size:10px; font-weight:700;">✅ FAOL</span>';
+    return `
+      <div class="item-row">
+        <div class="ico" style="background:linear-gradient(135deg, #1e40af, #3b82f6); color:white;">🏢</div>
+        <div class="info">
+          <h3>${esc(o.name)} ${statusBadge}</h3>
+          <p>🔐 Login: <b>${esc(o.login)}</b> · 📋 ${actCount} ta tadbir ${o.contact ? '· 📞 ' + esc(o.contact) : ''}</p>
+        </div>
+        <div class="actions">
+          <button class="icon-btn edit" onclick="openPartnerOrgEditor('${o.id}')" title="Tahrirlash">✏️</button>
+          <button class="icon-btn del" onclick="deletePartnerOrg('${o.id}')" title="O'chirish">🗑️</button>
+        </div>
+      </div>`;
+  }).join('');
+}
+
+function openPartnerOrgEditor(id = null) {
+  editingPartnerOrgId = id;
+  const o = id ? partnerOrgs.find(x => x.id === id) : null;
+  document.getElementById('partner-org-editor-title').textContent = o ? 'Tashkilotni tahrirlash' : 'Yangi tashkilot';
+  document.getElementById('partner-org-name').value = o?.name || '';
+  document.getElementById('partner-org-short').value = o?.shortName || '';
+  document.getElementById('partner-org-contact').value = o?.contact || '';
+  document.getElementById('partner-org-login').value = o?.login || '';
+  document.getElementById('partner-org-password').value = o?.password || '';
+  document.getElementById('partner-org-status').value = o?.status || 'active';
+  showView('partner_org_editor');
+}
+
+function savePartnerOrg() {
+  const name = document.getElementById('partner-org-name').value.trim();
+  const login = document.getElementById('partner-org-login').value.trim().toLowerCase();
+  const password = document.getElementById('partner-org-password').value.trim();
+  if (!name) { toast('Tashkilot nomini kiriting', 'error'); return; }
+  if (!login || login.length < 3) { toast('Login kamida 3 ta belgi bo\'lsin', 'error'); return; }
+  if (!/^[a-z0-9_]+$/.test(login)) { toast('Login faqat lotin harf, raqam va _ belgisi', 'error'); return; }
+  if (!password || password.length < 4) { toast('Parol kamida 4 ta belgi bo\'lsin', 'error'); return; }
+  // Login takrorlanish tekshiruvi
+  const existing = partnerOrgs.find(o => o.login === login && o.id !== editingPartnerOrgId);
+  if (existing) { toast('Bu login allaqachon band: ' + existing.name, 'error'); return; }
+
+  const org = {
+    id: editingPartnerOrgId || ('org_' + Date.now()),
+    name,
+    shortName: document.getElementById('partner-org-short').value.trim() || name,
+    contact: document.getElementById('partner-org-contact').value.trim(),
+    login,
+    password, // ochiq saqlanadi (admin ko'rsata olishi uchun)
+    status: document.getElementById('partner-org-status').value || 'active',
+    createdAt: editingPartnerOrgId ? (partnerOrgs.find(o => o.id === editingPartnerOrgId)?.createdAt || Date.now()) : Date.now()
+  };
+  if (editingPartnerOrgId) {
+    const idx = partnerOrgs.findIndex(o => o.id === editingPartnerOrgId);
+    if (idx >= 0) partnerOrgs[idx] = org;
+  } else {
+    partnerOrgs.push(org);
+  }
+  saveData();
+  toast('Tashkilot saqlandi ✓', 'success');
+  editingPartnerOrgId = null;
+  showView('partner_orgs_list');
+  renderPartnerOrgs();
+}
+
+function deletePartnerOrg(id) {
+  const o = partnerOrgs.find(x => x.id === id);
+  if (!o) return;
+  const actCount = partnerActivities.filter(a => a.orgId === id).length;
+  const warning = actCount > 0 ? `\n\n⚠️ Bu tashkilotda ${actCount} ta tadbir yozuvi bor — ular ham o'chiriladi!` : '';
+  showModal("O'chirishni tasdiqlang", `"${o.name}" tashkilotini o'chirmoqchimisiz?${warning}`, () => {
+    partnerOrgs = partnerOrgs.filter(x => x.id !== id);
+    partnerActivities = partnerActivities.filter(a => a.orgId !== id);
+    saveData();
+    renderPartnerOrgs();
+    toast("O'chirildi", 'success');
+  });
+}
+
+// ===== YO'NALISHLAR =====
+function renderPartnerDirections() {
+  const list = document.getElementById('partner-directions-list');
+  if (!list) return;
+  if (partnerDirections.length === 0) {
+    list.innerHTML = `<div class="empty-msg"><div class="ico">📚</div>Hali yo'nalishlar qo'shilmagan.<br><br>
+      <button class="btn btn-primary" onclick="openDirectionEditor()">+ Birinchi yo'nalishni qo'shish</button>
+    </div>`;
+    return;
+  }
+  list.innerHTML = partnerDirections.map(d => {
+    const actCount = partnerActivities.filter(a => a.directionId === d.id).length;
+    return `
+      <div class="item-row">
+        <div class="ico" style="background:linear-gradient(135deg, #16a34a, #22c55e); color:white;">📚</div>
+        <div class="info">
+          <h3>${esc(d.nameUz)}</h3>
+          <p>🇷🇺 ${esc(d.nameRu)} · 📋 ${actCount} ta tadbir</p>
+        </div>
+        <div class="actions">
+          <button class="icon-btn edit" onclick="openDirectionEditor('${d.id}')">✏️</button>
+          <button class="icon-btn del" onclick="deleteDirection('${d.id}')">🗑️</button>
+        </div>
+      </div>`;
+  }).join('');
+}
+
+function openDirectionEditor(id = null) {
+  editingDirectionId = id;
+  const d = id ? partnerDirections.find(x => x.id === id) : null;
+  document.getElementById('direction-editor-title').textContent = d ? "Yo'nalishni tahrirlash" : "Yangi yo'nalish";
+  document.getElementById('direction-name-uz').value = d?.nameUz || '';
+  document.getElementById('direction-name-ru').value = d?.nameRu || '';
+  showView('partner_direction_editor');
+}
+
+function saveDirection() {
+  const uz = document.getElementById('direction-name-uz').value.trim();
+  const ru = document.getElementById('direction-name-ru').value.trim();
+  if (!uz) { toast("O'zbekcha nomini kiriting", 'error'); return; }
+  if (!ru) { toast("Ruscha nomini kiriting", 'error'); return; }
+  const dir = {
+    id: editingDirectionId || ('dir_' + Date.now()),
+    nameUz: uz,
+    nameRu: ru,
+    createdAt: editingDirectionId ? (partnerDirections.find(d => d.id === editingDirectionId)?.createdAt || Date.now()) : Date.now()
+  };
+  if (editingDirectionId) {
+    const idx = partnerDirections.findIndex(d => d.id === editingDirectionId);
+    if (idx >= 0) partnerDirections[idx] = dir;
+  } else {
+    partnerDirections.push(dir);
+  }
+  saveData();
+  toast("Yo'nalish saqlandi ✓", 'success');
+  editingDirectionId = null;
+  showView('partner_directions');
+  renderPartnerDirections();
+}
+
+function deleteDirection(id) {
+  const d = partnerDirections.find(x => x.id === id);
+  if (!d) return;
+  const actCount = partnerActivities.filter(a => a.directionId === id).length;
+  if (actCount > 0) {
+    toast(`Bu yo'nalishda ${actCount} ta tadbir bor — avval ularni o'chiring`, 'error');
+    return;
+  }
+  showModal("O'chirishni tasdiqlang", `"${d.nameUz}" yo'nalishini o'chirmoqchimisiz?`, () => {
+    partnerDirections = partnerDirections.filter(x => x.id !== id);
+    saveData();
+    renderPartnerDirections();
+    toast("O'chirildi", 'success');
+  });
+}
+
+// ===== XIZMAT PANELI (BARCHA TADBIRLAR) =====
+function renderPartnerActivities() {
+  const list = document.getElementById('partner-activities-list');
+  const summary = document.getElementById('partner-activities-summary');
+  if (!list) return;
+
+  // Filtr dropdownlarini to'ldirish
+  const orgSel = document.getElementById('filter-org');
+  const dirSel = document.getElementById('filter-direction');
+  if (orgSel && orgSel.options.length <= 1) {
+    partnerOrgs.forEach(o => {
+      const opt = document.createElement('option');
+      opt.value = o.id; opt.textContent = o.name;
+      orgSel.appendChild(opt);
+    });
+  }
+  if (dirSel && dirSel.options.length <= 1) {
+    partnerDirections.forEach(d => {
+      const opt = document.createElement('option');
+      opt.value = d.id; opt.textContent = d.nameUz;
+      dirSel.appendChild(opt);
+    });
+  }
+
+  // Filtrlash
+  const orgFilter = orgSel?.value || '';
+  const dirFilter = dirSel?.value || '';
+  const dateFrom = document.getElementById('filter-date-from')?.value || '';
+  const dateTo = document.getElementById('filter-date-to')?.value || '';
+
+  let items = partnerActivities.slice();
+  if (orgFilter) items = items.filter(a => a.orgId === orgFilter);
+  if (dirFilter) items = items.filter(a => a.directionId === dirFilter);
+  if (dateFrom) items = items.filter(a => a.eventDate >= dateFrom);
+  if (dateTo) items = items.filter(a => a.eventDate <= dateTo);
+  items.sort((a, b) => (b.eventDate || '').localeCompare(a.eventDate || ''));
+
+  // Statistika
+  const totalOrgs = new Set(items.map(a => a.orgId)).size;
+  const orgsWithoutSubmissions = partnerOrgs.length - new Set(partnerActivities.map(a => a.orgId)).size;
+  summary.innerHTML = `
+    📊 <b>${items.length}</b> ta tadbir · <b>${totalOrgs}</b> ta tashkilotdan
+    ${orgsWithoutSubmissions > 0 ? ` · ⚠️ <b>${orgsWithoutSubmissions}</b> ta tashkilot hali yuklamasiz` : ''}
+  `;
+
+  if (items.length === 0) {
+    list.innerHTML = `<div class="empty-msg"><div class="ico">📋</div>Tadbirlar topilmadi</div>`;
+    return;
+  }
+
+  list.innerHTML = items.map(a => {
+    const org = partnerOrgs.find(o => o.id === a.orgId);
+    const dir = partnerDirections.find(d => d.id === a.directionId);
+    const filesCount = (a.files || []).length;
+    return `
+      <div class="item-row" style="cursor:pointer;" onclick="openPartnerActivityDetail('${a.id}')">
+        <div class="ico" style="background:linear-gradient(135deg, #d97706, #f59e0b); color:white;">📋</div>
+        <div class="info">
+          <h3>${esc(a.title || 'Tadbir')}</h3>
+          <p>🏢 ${esc(org?.shortName || org?.name || "Noma'lum")} · 📚 ${esc(dir?.nameUz || '-')} · 📅 ${esc(a.eventDate || '-')} ${filesCount > 0 ? '· 📎 ' + filesCount + ' fayl' : ''}</p>
+        </div>
+        <div class="actions">
+          <button class="icon-btn" onclick="event.stopPropagation(); openPartnerActivityDetail('${a.id}')" title="Ochish">👁️</button>
+          <button class="icon-btn del" onclick="event.stopPropagation(); deletePartnerActivity('${a.id}')" title="O'chirish">🗑️</button>
+        </div>
+      </div>`;
+  }).join('');
+}
+
+function openPartnerActivityDetail(id) {
+  const a = partnerActivities.find(x => x.id === id);
+  if (!a) return;
+  const org = partnerOrgs.find(o => o.id === a.orgId);
+  const dir = partnerDirections.find(d => d.id === a.directionId);
+  const detail = document.getElementById('partner-activity-detail-content');
+  const filesHtml = (a.files || []).map(f => `
+    <a href="${esc(f.url)}" target="_blank" style="display:inline-flex; align-items:center; gap:6px; padding:8px 12px; background:#f3f4f6; border-radius:8px; margin:4px; text-decoration:none; color:var(--ink);">
+      📎 ${esc(f.name)} <span style="color:var(--ink-2); font-size:11px;">(${(f.size/1024/1024).toFixed(1)} MB)</span>
+    </a>
+  `).join('');
+  detail.innerHTML = `
+    <div style="background:white; padding:20px; border-radius:14px; margin-bottom:14px;">
+      <h2 style="color:var(--primary-dark); margin-bottom:14px;">${esc(a.title || 'Tadbir')}</h2>
+      <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(180px,1fr)); gap:12px; margin-bottom:18px;">
+        <div><strong>🏢 Tashkilot:</strong><br>${esc(org?.name || "Noma'lum")}</div>
+        <div><strong>📚 Yo'nalish:</strong><br>${esc(dir?.nameUz || '-')}</div>
+        <div><strong>📅 O'tkazilgan sana:</strong><br>${esc(a.eventDate || '-')}</div>
+        <div><strong>📤 Yuklangan:</strong><br>${new Date(a.uploadedAt).toLocaleString('uz-UZ')}</div>
+      </div>
+      <h3 style="margin-bottom:8px;">📝 Tavsif:</h3>
+      <p style="background:#f9fafb; padding:14px; border-radius:10px; white-space:pre-wrap; line-height:1.6;">${esc(a.description || '-')}</p>
+      ${filesHtml ? `<h3 style="margin-top:18px; margin-bottom:8px;">📎 Ilovalar (${(a.files||[]).length}):</h3><div>${filesHtml}</div>` : ''}
+    </div>
+  `;
+  showView('partner_activity_detail');
+}
+
+function deletePartnerActivity(id) {
+  const a = partnerActivities.find(x => x.id === id);
+  if (!a) return;
+  showModal("O'chirishni tasdiqlang", `"${a.title || 'Tadbir'}" yozuvini o'chirmoqchimisiz?`, () => {
+    partnerActivities = partnerActivities.filter(x => x.id !== id);
+    saveData();
+    renderPartnerActivities();
+    toast("O'chirildi", 'success');
+  });
+}
+
+// ===== EKSPORT (CSV) =====
+function exportPartnerActivities() {
+  const orgFilter = document.getElementById('filter-org')?.value || '';
+  const dirFilter = document.getElementById('filter-direction')?.value || '';
+  const dateFrom = document.getElementById('filter-date-from')?.value || '';
+  const dateTo = document.getElementById('filter-date-to')?.value || '';
+
+  let items = partnerActivities.slice();
+  if (orgFilter) items = items.filter(a => a.orgId === orgFilter);
+  if (dirFilter) items = items.filter(a => a.directionId === dirFilter);
+  if (dateFrom) items = items.filter(a => a.eventDate >= dateFrom);
+  if (dateTo) items = items.filter(a => a.eventDate <= dateTo);
+
+  if (items.length === 0) { toast('Eksport uchun ma\'lumot yo\'q', 'error'); return; }
+  items.sort((a, b) => (b.eventDate || '').localeCompare(a.eventDate || ''));
+
+  // CSV
+  const headers = ['Tashkilot', 'Yo\'nalish', 'O\'tkazilgan sana', 'Tadbir nomi', 'Tavsif', 'Fayllar soni', 'Fayllar nomlari', 'Yuklangan sana'];
+  const escCsv = (v) => '"' + String(v || '').replace(/"/g, '""').replace(/\n/g, ' ') + '"';
+  const rows = items.map(a => {
+    const org = partnerOrgs.find(o => o.id === a.orgId);
+    const dir = partnerDirections.find(d => d.id === a.directionId);
+    const fileNames = (a.files || []).map(f => f.name).join('; ');
+    return [
+      org?.name || '-', dir?.nameUz || '-', a.eventDate || '-',
+      a.title || '-', a.description || '-',
+      (a.files || []).length, fileNames,
+      new Date(a.uploadedAt).toLocaleDateString('uz-UZ')
+    ].map(escCsv).join(';');
+  });
+  const csv = '﻿' + headers.map(escCsv).join(';') + '\n' + rows.join('\n');
+  const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  const periodStr = dateFrom && dateTo ? `_${dateFrom}_${dateTo}` : '';
+  a.download = `hamkorlik_tadbirlar${periodStr}_${new Date().toISOString().slice(0,10)}.csv`;
+  a.click();
+  URL.revokeObjectURL(url);
+  toast(`📥 ${items.length} ta tadbir eksport qilindi! Excel'da oching.`, 'success');
+}
+
+// ===== YO'L XARITALARI =====
+function renderPartnerRoadmaps() {
+  const list = document.getElementById('partner-roadmaps-list');
+  if (!list) return;
+  if (partnerOrgs.length === 0) {
+    list.innerHTML = `<div class="empty-msg"><div class="ico">🗺️</div>Avval tashkilot qo'shing</div>`;
+    return;
+  }
+  list.innerHTML = partnerOrgs.map(o => {
+    const hasMap = !!o.roadmapUrl;
+    return `
+      <div class="item-row">
+        <div class="ico" style="background:linear-gradient(135deg, #be185d, #ec4899); color:white;">🗺️</div>
+        <div class="info">
+          <h3>${esc(o.name)}</h3>
+          <p>${hasMap
+            ? `✅ <b>Mavjud:</b> <a href="${esc(o.roadmapUrl)}" target="_blank" style="color:var(--primary);">${esc(o.roadmapName || "Yo'l xaritasi")}</a>`
+            : "⚠️ Yo'l xaritasi yuklanmagan"}</p>
+        </div>
+        <div class="actions">
+          <input type="file" id="rm-file-${o.id}" accept=".pdf,.doc,.docx" style="display:none;" onchange="uploadRoadmap(event, '${o.id}')">
+          <button class="btn btn-primary btn-sm" onclick="document.getElementById('rm-file-${o.id}').click()">📤 Yuklash</button>
+          ${hasMap ? `<button class="icon-btn del" onclick="removeRoadmap('${o.id}')" title="O'chirish">🗑️</button>` : ''}
+        </div>
+      </div>`;
+  }).join('');
+}
+
+async function uploadRoadmap(event, orgId) {
+  const file = event.target.files[0];
+  if (!file) return;
+  const sizeMB = file.size / 1024 / 1024;
+  if (sizeMB > 95) { toast(`Fayl 95 MB dan katta (${sizeMB.toFixed(1)} MB)`, 'error'); return; }
+  if (!localStorage.getItem(STORAGE.GH_TOKEN)) { toast('GitHub token sozlanmagan', 'error'); return; }
+  toast(`🔄 Yuklanmoqda (${sizeMB.toFixed(1)} MB)...`, '');
+  try {
+    const githubPath = `files/roadmaps/${orgId}_${safeFileName(file.name)}`;
+    const url = await ghUploadBinaryFile(file, githubPath);
+    const org = partnerOrgs.find(o => o.id === orgId);
+    if (org) {
+      org.roadmapUrl = url;
+      org.roadmapName = file.name;
+      saveData();
+      renderPartnerRoadmaps();
+      toast('✅ Yo\'l xaritasi yuklandi!', 'success');
+    }
+  } catch (e) {
+    toast('❌ Xato: ' + e.message, 'error');
+  }
+}
+
+function removeRoadmap(orgId) {
+  const org = partnerOrgs.find(o => o.id === orgId);
+  if (!org) return;
+  showModal("O'chirishni tasdiqlang", `"${org.name}" yo'l xaritasini o'chirmoqchimisiz?`, () => {
+    delete org.roadmapUrl;
+    delete org.roadmapName;
+    saveData();
+    renderPartnerRoadmaps();
+    toast("O'chirildi", 'success');
+  });
+}
+
 function renderAnnList() {
   const list = document.getElementById('ann-list');
   if (anns.length === 0) {
@@ -4568,6 +5176,7 @@ function exportData() {
     version: 1, exportedAt: new Date().toISOString(),
     source: 'marifat-cup-admin', courses, quizzes, slides,
     announcements: anns, ebooks, meetings, newspapers, tournaments, films,
+    partnerOrgs, partnerDirections, partnerActivities,
     demoUsers: (function(){ try { return JSON.parse(localStorage.getItem('mc_demo_users')||'[]'); } catch(e){ return []; } })(),
     tgLogChatId: localStorage.getItem('mc_tg_log_chat_id') || '',
     labels: (function(){ try { return JSON.parse(localStorage.getItem('mc_labels')||'{}'); } catch(e){ return {}; } })()
