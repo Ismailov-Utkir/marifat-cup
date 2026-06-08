@@ -2039,6 +2039,154 @@
 </div>
 
 <!-- ====== EBOOKS LIST ====== -->
+<!-- ====== HAMKORLIK TIZIMI — TASHKILOT ISH O'RNI ====== -->
+<div id="partner-home-screen" class="screen">
+  <div class="topbar">
+    <div class="logo-mini" onclick="goToPartnerHome()">
+      <span class="logo-mark"></span> Ma'rifat <span class="badge">CUP</span> · 🤝
+    </div>
+    <div class="topbar-right">
+      <button class="theme-toggle-btn" onclick="toggleTheme()" title="Tungi rejim" style="background: rgba(255,255,255,0.1); border: 2px solid rgba(255,255,255,0.2); color: white; width: 40px; height: 40px; border-radius: 50%; font-size: 18px; cursor: pointer;">🌙</button>
+      <button class="profile-btn" onclick="signOut()">
+        <span class="avatar" id="partner-avatar">🏢</span>
+        <span id="partner-name">Tashkilot</span>
+      </button>
+    </div>
+  </div>
+  <div class="home-wrap">
+    <div class="hero-banner" style="background: linear-gradient(135deg, #1e40af, #3b82f6);">
+      <h1 class="hero-title">Xush kelibsiz, <span id="partner-org-name-display">Tashkilot</span>!</h1>
+      <p class="hero-sub">Bajarilgan tadbirlaringizni fayllar bilan birga yuklang. Hamkorlik bo'limi ma'lumotlarni qabul qiladi va davriy hisobotlar uchun foydalanadi.</p>
+    </div>
+
+    <div id="partner-stats-summary" style="display:grid; grid-template-columns:repeat(auto-fit, minmax(140px,1fr)); gap:12px; margin: 16px 0;"></div>
+
+    <div class="section-header">
+      <h2>📂 Mening ish o'rnim</h2>
+    </div>
+    <div class="grid-3">
+      <button class="action-card" onclick="showScreen('partner-activity-form-screen'); openPartnerActivityForm();" style="background: linear-gradient(135deg, #dcfce7, #86efac);">
+        <span class="ac-icon">➕</span>
+        <h3>Bajarilgan tadbirni qo'shish</h3>
+        <p>Yo'nalish, sana, tavsif va fayllarni yuklang</p>
+      </button>
+      <button class="action-card" onclick="showScreen('partner-history-screen'); renderPartnerHistory();" style="background: linear-gradient(135deg, #fef3c7, #fde68a);">
+        <span class="ac-icon">📋</span>
+        <h3>Mening yuklamalarim</h3>
+        <p>Avval yuborilgan tadbirlar ro'yxati va filtrlar</p>
+      </button>
+      <button class="action-card" onclick="showScreen('partner-roadmap-screen'); renderPartnerRoadmap();" style="background: linear-gradient(135deg, #fce7f3, #f9a8d4);">
+        <span class="ac-icon">🗺️</span>
+        <h3>Mening yo'l xaritam</h3>
+        <p>Yillik yo'l xaritasi (faqat o'qish)</p>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ====== TADBIR QO'SHISH FORMASI ====== -->
+<div id="partner-activity-form-screen" class="screen">
+  <div class="topbar">
+    <div class="logo-mini" onclick="goToPartnerHome()"><span class="logo-mark"></span> Ma'rifat <span class="badge">CUP</span> · 🤝</div>
+    <button class="btn-back" onclick="goToPartnerHome()">← Bosh sahifa</button>
+  </div>
+  <div style="max-width: 800px; margin: auto;">
+    <div class="section-header">
+      <h2>➕ Bajarilgan tadbirni qo'shish</h2>
+    </div>
+    <div style="background: white; padding: 24px; border-radius: 16px; box-shadow: 0 2px 10px rgba(0,0,0,0.05);">
+      <div style="margin-bottom: 16px;">
+        <label style="font-weight: 700; display: block; margin-bottom: 6px; color: var(--ink);">📚 Yo'nalish *</label>
+        <select id="activity-direction" class="input" style="width:100%;">
+          <option value="">— Yo'nalishni tanlang —</option>
+        </select>
+      </div>
+      <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px;">
+        <div>
+          <label style="font-weight: 700; display: block; margin-bottom: 6px; color: var(--ink);">📅 O'tkazilgan sana *</label>
+          <input type="date" id="activity-date" class="input" style="width:100%;">
+        </div>
+        <div>
+          <label style="font-weight: 700; display: block; margin-bottom: 6px; color: var(--ink);">🏷️ Tadbir nomi *</label>
+          <input type="text" id="activity-title" class="input" placeholder="Masalan: Madaniy tadbir o'tkazildi" style="width:100%;">
+        </div>
+      </div>
+      <div style="margin-bottom: 16px;">
+        <label style="font-weight: 700; display: block; margin-bottom: 6px; color: var(--ink);">📝 Tavsif *</label>
+        <textarea id="activity-description" class="input" placeholder="Tadbir qanday o'tkazilganligi, kim ishtirok etgani, qanday natijalar olingani..." style="width:100%; min-height: 140px; padding: 12px; resize: vertical; font-family: inherit;"></textarea>
+      </div>
+      <div style="background: #f0fdfa; padding: 14px; border: 2px dashed #5eead4; border-radius: 12px; margin-bottom: 16px;">
+        <label style="font-weight: 700; display: block; margin-bottom: 8px; color: var(--primary-dark);">📎 Fayllar (rasm, hujjat) — ixtiyoriy</label>
+        <input type="file" id="activity-files" multiple accept=".jpg,.jpeg,.png,.pdf,.docx,.xlsx,.doc,.xls" style="width:100%;">
+        <p style="font-size: 12px; color: var(--ink-2); margin-top: 8px;">
+          ✓ <b>Ruxsat etilgan turlar:</b> JPG, PNG, PDF, DOC, DOCX, XLS, XLSX<br>
+          ✓ <b>Maksimal hajm:</b> bitta fayl 25 MB gacha
+        </p>
+        <div id="activity-files-status" style="margin-top: 8px; font-size: 13px;"></div>
+      </div>
+      <div style="display: flex; gap: 12px; justify-content: flex-end;">
+        <button class="btn btn-secondary" onclick="goToPartnerHome()">Bekor qilish</button>
+        <button class="btn btn-primary" onclick="submitPartnerActivity()">📤 Yuborish</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== MENING YUKLAMALARIM (TARIXI) ====== -->
+<div id="partner-history-screen" class="screen">
+  <div class="topbar">
+    <div class="logo-mini" onclick="goToPartnerHome()"><span class="logo-mark"></span> Ma'rifat <span class="badge">CUP</span> · 🤝</div>
+    <button class="btn-back" onclick="goToPartnerHome()">← Bosh sahifa</button>
+  </div>
+  <div class="home-wrap">
+    <div class="section-header">
+      <h2>📋 Mening yuklamalarim</h2>
+    </div>
+    <div style="background: white; padding: 14px; border-radius: 12px; margin-bottom: 14px; display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 10px;">
+      <div>
+        <label style="font-size: 12px; font-weight: 700;">Yo'nalish</label>
+        <select id="my-history-direction" onchange="renderPartnerHistory()" style="width:100%; padding: 8px; border-radius: 8px; border: 2px solid #e5e7eb;">
+          <option value="">Hammasi</option>
+        </select>
+      </div>
+      <div>
+        <label style="font-size: 12px; font-weight: 700;">Boshlanish sana</label>
+        <input type="date" id="my-history-date-from" onchange="renderPartnerHistory()" style="width:100%; padding: 8px; border-radius: 8px; border: 2px solid #e5e7eb;">
+      </div>
+      <div>
+        <label style="font-size: 12px; font-weight: 700;">Tugash sana</label>
+        <input type="date" id="my-history-date-to" onchange="renderPartnerHistory()" style="width:100%; padding: 8px; border-radius: 8px; border: 2px solid #e5e7eb;">
+      </div>
+    </div>
+    <div id="my-history-list" class="item-list"></div>
+  </div>
+</div>
+
+<!-- ====== TADBIR TAFSILOTI (TASHKILOT KO'RADIGAN) ====== -->
+<div id="partner-activity-detail-screen" class="screen">
+  <div class="topbar">
+    <div class="logo-mini" onclick="goToPartnerHome()"><span class="logo-mark"></span> Ma'rifat <span class="badge">CUP</span> · 🤝</div>
+    <button class="btn-back" onclick="showScreen('partner-history-screen'); renderPartnerHistory();">← Tarixga qaytish</button>
+  </div>
+  <div class="home-wrap">
+    <div id="partner-activity-detail-content"></div>
+  </div>
+</div>
+
+<!-- ====== MENING YO'L XARITAM ====== -->
+<div id="partner-roadmap-screen" class="screen">
+  <div class="topbar">
+    <div class="logo-mini" onclick="goToPartnerHome()"><span class="logo-mark"></span> Ma'rifat <span class="badge">CUP</span> · 🤝</div>
+    <button class="btn-back" onclick="goToPartnerHome()">← Bosh sahifa</button>
+  </div>
+  <div class="home-wrap">
+    <div class="section-header">
+      <h2>🗺️ Mening yo'l xaritam</h2>
+    </div>
+    <div id="my-roadmap-content"></div>
+  </div>
+</div>
+
 <!-- ====== FILMLAR ====== -->
 <div id="films-screen" class="screen">
   <div class="topbar">
@@ -3328,6 +3476,28 @@ function loginUser() {
   errEl.style.display = 'none';
 
   if (!username || !pwd) return showErr("Login va parolni to'ldiring");
+
+  // 1-NAVBAT: Hamkor tashkilot login tekshirish
+  let partnerOrgs = [];
+  try { partnerOrgs = JSON.parse(localStorage.getItem('mc_partner_orgs') || '[]'); } catch (e) {}
+  const partnerOrg = partnerOrgs.find(o => o.login === username);
+  if (partnerOrg) {
+    if (partnerOrg.status === 'blocked') return showErr("Sizning hisobingiz bloklangan. Hamkorlik bo'limi bilan bog'laning.");
+    if (partnerOrg.password !== pwd) return showErr("Parol noto'g'ri");
+    // Tashkilot sifatida kirish
+    user = {
+      isPartner: true,
+      orgId: partnerOrg.id,
+      name: partnerOrg.name,
+      login: partnerOrg.login
+    };
+    localStorage.setItem('mc_user', JSON.stringify(user));
+    toast(`Xush kelibsiz, ${partnerOrg.name}!`, 'success');
+    goToPartnerHome();
+    return;
+  }
+
+  // 2-NAVBAT: Oddiy foydalanuvchi login
   const accounts = getAccounts();
   const acc = accounts[username];
   if (!acc) return showErr("Bu login mavjud emas. Ro'yxatdan o'ting.");
@@ -3381,6 +3551,11 @@ function goHome() {
   clearTimer();
   stopQuizMusic();
   leavePeerConnections();
+  // Tashkilot bo'lsa, partner home'ga
+  if (user && user.isPartner) {
+    goToPartnerHome();
+    return;
+  }
   updateTopbar();
   showScreen('home-screen');
   renderAnnouncementsHome();
@@ -6052,6 +6227,304 @@ async function openFilm(id) {
 }
 
 // ============================================================
+// HAMKORLIK TIZIMI — Tashkilot uchun ish o'rni
+// ============================================================
+function getPartnerOrgs() {
+  try { return JSON.parse(localStorage.getItem('mc_partner_orgs') || '[]'); } catch (e) { return []; }
+}
+function getPartnerDirections() {
+  try { return JSON.parse(localStorage.getItem('mc_partner_directions') || '[]'); } catch (e) { return []; }
+}
+function getPartnerActivities() {
+  try { return JSON.parse(localStorage.getItem('mc_partner_activities') || '[]'); } catch (e) { return []; }
+}
+function savePartnerActivities(arr) {
+  try { localStorage.setItem('mc_partner_activities', JSON.stringify(arr)); } catch (e) {}
+}
+
+function goToPartnerHome() {
+  if (!user || !user.isPartner) {
+    showScreen('signin-screen');
+    return;
+  }
+  // Tashkilot ma'lumotini yangilash (sinxrondan keyin nom o'zgargan bo'lishi mumkin)
+  const orgs = getPartnerOrgs();
+  const org = orgs.find(o => o.id === user.orgId);
+  if (!org) {
+    // Tashkilot o'chirilgan
+    toast("Sizning hisobingiz o'chirilgan", 'error');
+    signOut();
+    return;
+  }
+  if (org.status === 'blocked') {
+    toast("Hisobingiz bloklangan. Hamkorlik bo'limi bilan bog'laning.", 'error');
+    signOut();
+    return;
+  }
+  user.name = org.name;
+  document.getElementById('partner-org-name-display').textContent = org.name;
+  document.getElementById('partner-name').textContent = org.shortName || org.name;
+  // Statistika
+  const activities = getPartnerActivities().filter(a => a.orgId === org.id);
+  const totalFiles = activities.reduce((s, a) => s + (a.files?.length || 0), 0);
+  const last30 = activities.filter(a => {
+    const d = new Date(a.eventDate);
+    const diff = Date.now() - d.getTime();
+    return diff < 30 * 24 * 60 * 60 * 1000;
+  });
+  const summary = document.getElementById('partner-stats-summary');
+  if (summary) {
+    summary.innerHTML = `
+      <div style="text-align:center; padding:14px; background:#dbeafe; border-radius:12px;">
+        <div style="font-size:28px; font-weight:900; color:#1e3a8a;">${activities.length}</div>
+        <div style="font-size:11px; color:#1e40af; font-weight:700;">JAMI TADBIR</div>
+      </div>
+      <div style="text-align:center; padding:14px; background:#dcfce7; border-radius:12px;">
+        <div style="font-size:28px; font-weight:900; color:#14532d;">${last30.length}</div>
+        <div style="font-size:11px; color:#166534; font-weight:700;">OXIRGI 30 KUN</div>
+      </div>
+      <div style="text-align:center; padding:14px; background:#fef3c7; border-radius:12px;">
+        <div style="font-size:28px; font-weight:900; color:#78350f;">${totalFiles}</div>
+        <div style="font-size:11px; color:#92400e; font-weight:700;">YUKLANGAN FAYL</div>
+      </div>
+      <div style="text-align:center; padding:14px; background:#fce7f3; border-radius:12px;">
+        <div style="font-size:28px; font-weight:900; color:#831843;">${org.roadmapUrl ? '✅' : '⚠️'}</div>
+        <div style="font-size:11px; color:#9d174d; font-weight:700;">YO'L XARITASI</div>
+      </div>
+    `;
+  }
+  showScreen('partner-home-screen');
+}
+
+// ===== TADBIR QO'SHISH =====
+function openPartnerActivityForm() {
+  // Yo'nalishlar dropdown'ni to'ldirish
+  const dirSel = document.getElementById('activity-direction');
+  if (dirSel) {
+    dirSel.innerHTML = '<option value="">— Yo\'nalishni tanlang —</option>';
+    getPartnerDirections().forEach(d => {
+      const opt = document.createElement('option');
+      opt.value = d.id;
+      opt.textContent = _siteLang === 'ru' ? d.nameRu : d.nameUz;
+      dirSel.appendChild(opt);
+    });
+  }
+  // Sanani bugungiga
+  const today = new Date().toISOString().slice(0, 10);
+  document.getElementById('activity-date').value = today;
+  document.getElementById('activity-title').value = '';
+  document.getElementById('activity-description').value = '';
+  document.getElementById('activity-files').value = '';
+  document.getElementById('activity-files-status').innerHTML = '';
+}
+
+async function submitPartnerActivity() {
+  if (!user || !user.isPartner) { toast("Tizimga kiring", 'error'); return; }
+  const directionId = document.getElementById('activity-direction').value;
+  const eventDate = document.getElementById('activity-date').value;
+  const title = document.getElementById('activity-title').value.trim();
+  const description = document.getElementById('activity-description').value.trim();
+  const files = document.getElementById('activity-files').files;
+
+  if (!directionId) { toast("Yo'nalishni tanlang", 'error'); return; }
+  if (!eventDate) { toast("Sanani kiriting", 'error'); return; }
+  if (!title) { toast("Tadbir nomini kiriting", 'error'); return; }
+  if (!description) { toast("Tavsifni kiriting", 'error'); return; }
+
+  // Fayllarni yuklashga harakat — admin'ning GitHub tokeniga muhtoj emas, sayt nima yuklashi mumkin?
+  // Static rejimda: sayt GitHub token holatda emas (admin'da bor). Demak fayllarni ko'rib hamkorlikka maktub yuborish:
+  // — IndexedDB'ga saqlash + admin'ga xabar.
+  // Ammo bu yaxshi yo'l emas. Yaxshisi: faylsiz tadbir yozish yoki kichik base64'da metadata bilan yuborish.
+  // Hozircha: fayllarni file URL/blob sifatida saqlamaymiz, faqat ism va hajmni saqlaymiz.
+  // To'liq xil bo'lishi uchun keyinroq admin Bo'lim panel'iga fayllarni alohida yuklash imkoniyati qo'shamiz.
+
+  // YANGI ECHIM: Telegram bot orqali fayllarni yuborish. Bot adminda
+  // borligi sababli, foydalanuvchi fayllarni Telegram'ga qo'lda yuborishi mumkin.
+
+  toast('⏳ Yuborilmoqda...', '');
+  const statusEl = document.getElementById('activity-files-status');
+
+  // Fayllarni base64 ga aylantirib metadata sifatida saqlash (kichik fayllar uchun)
+  const filesList = [];
+  let largeFileWarning = false;
+  for (const f of files) {
+    const sizeMB = f.size / 1024 / 1024;
+    if (sizeMB > 25) {
+      largeFileWarning = true;
+      filesList.push({ name: f.name, size: f.size, type: f.type, tooLarge: true });
+      continue;
+    }
+    // 5 MB dan kichik bo'lsa base64 sifatida saqlaymiz (localStorage da)
+    // Aks holda metadata
+    if (sizeMB > 5) {
+      filesList.push({ name: f.name, size: f.size, type: f.type, metadataOnly: true });
+    } else {
+      try {
+        const b64 = await fileToBase64(f);
+        filesList.push({ name: f.name, size: f.size, type: f.type, data: b64 });
+      } catch (e) {
+        filesList.push({ name: f.name, size: f.size, type: f.type });
+      }
+    }
+  }
+
+  if (largeFileWarning) {
+    statusEl.innerHTML = '⚠️ 25 MB dan katta fayllar yuborilmadi';
+    statusEl.style.color = '#dc2626';
+  }
+
+  // Activity yozuvi
+  const activity = {
+    id: 'act_' + Date.now() + '_' + Math.random().toString(36).slice(2, 7),
+    orgId: user.orgId,
+    directionId,
+    eventDate,
+    title,
+    description,
+    files: filesList,
+    uploadedAt: Date.now(),
+    authorLogin: user.login
+  };
+
+  // Saqlash
+  const activities = getPartnerActivities();
+  activities.push(activity);
+  savePartnerActivities(activities);
+
+  // Telegram bot orqali xabar (admin uchun)
+  const dir = getPartnerDirections().find(d => d.id === directionId);
+  const orgs = getPartnerOrgs();
+  const org = orgs.find(o => o.id === user.orgId);
+  const filesText = filesList.length > 0
+    ? '\n📎 <b>Fayllar:</b>\n' + filesList.map(f => `• ${f.name} (${(f.size/1024/1024).toFixed(2)} MB)${f.tooLarge ? ' ⚠️ katta' : ''}`).join('\n')
+    : '';
+  sendTelegramNotification(
+    `🆕 <b>YANGI TADBIR — HAMKORLIK</b>\n\n` +
+    `🏢 <b>Tashkilot:</b> ${org?.name || user.name}\n` +
+    `📚 <b>Yo'nalish:</b> ${dir?.nameUz || '-'}\n` +
+    `📅 <b>Sana:</b> ${eventDate}\n` +
+    `🏷️ <b>Tadbir:</b> ${title}\n\n` +
+    `📝 <b>Tavsif:</b>\n${description}` +
+    filesText +
+    `\n\n📤 <b>Yuklangan:</b> ${new Date().toLocaleString('uz-UZ')}`
+  );
+
+  toast('✅ Tadbir yuborildi!', 'success');
+  setTimeout(() => goToPartnerHome(), 800);
+}
+
+function fileToBase64(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = () => reject(new Error('Read error'));
+    reader.readAsDataURL(file);
+  });
+}
+
+// ===== MENING TARIXIM =====
+function renderPartnerHistory() {
+  if (!user || !user.isPartner) return;
+  const dirSel = document.getElementById('my-history-direction');
+  if (dirSel && dirSel.options.length <= 1) {
+    getPartnerDirections().forEach(d => {
+      const opt = document.createElement('option');
+      opt.value = d.id;
+      opt.textContent = _siteLang === 'ru' ? d.nameRu : d.nameUz;
+      dirSel.appendChild(opt);
+    });
+  }
+  let items = getPartnerActivities().filter(a => a.orgId === user.orgId);
+  const dirFilter = dirSel?.value || '';
+  const dateFrom = document.getElementById('my-history-date-from')?.value || '';
+  const dateTo = document.getElementById('my-history-date-to')?.value || '';
+  if (dirFilter) items = items.filter(a => a.directionId === dirFilter);
+  if (dateFrom) items = items.filter(a => a.eventDate >= dateFrom);
+  if (dateTo) items = items.filter(a => a.eventDate <= dateTo);
+  items.sort((a, b) => (b.eventDate || '').localeCompare(a.eventDate || ''));
+
+  const list = document.getElementById('my-history-list');
+  if (items.length === 0) {
+    list.innerHTML = `<div class="empty-state"><div class="empty-state-emoji">📭</div><p>Hozircha tadbirlar yo'q</p></div>`;
+    return;
+  }
+  const directions = getPartnerDirections();
+  list.innerHTML = items.map(a => {
+    const dir = directions.find(d => d.id === a.directionId);
+    const filesCount = (a.files || []).length;
+    return `
+      <div onclick="openPartnerMyActivityDetail('${a.id}')" style="background: white; padding: 14px; border-radius: 12px; cursor: pointer; display: flex; align-items: center; gap: 12px; box-shadow: 0 1px 4px rgba(0,0,0,0.05);">
+        <div style="background: linear-gradient(135deg, #d97706, #f59e0b); color: white; width: 48px; height: 48px; border-radius: 12px; display: flex; align-items: center; justify-content: center; font-size: 22px; flex-shrink: 0;">📋</div>
+        <div style="flex: 1; min-width: 0;">
+          <div style="font-weight: 700; color: var(--ink); margin-bottom: 4px;">${escapeHtml(a.title)}</div>
+          <div style="font-size: 13px; color: var(--ink-2);">📚 ${escapeHtml(dir?.nameUz || '-')} · 📅 ${escapeHtml(a.eventDate)} ${filesCount > 0 ? '· 📎 ' + filesCount + ' fayl' : ''}</div>
+        </div>
+        <div style="color: var(--ink-2);">→</div>
+      </div>
+    `;
+  }).join('');
+}
+
+function openPartnerMyActivityDetail(id) {
+  const activities = getPartnerActivities();
+  const a = activities.find(x => x.id === id);
+  if (!a) return;
+  const dir = getPartnerDirections().find(d => d.id === a.directionId);
+  const filesHtml = (a.files || []).map(f => {
+    if (f.data) {
+      return `<a href="${f.data}" download="${escapeHtml(f.name)}" style="display:inline-flex; align-items:center; gap:6px; padding:10px 14px; background:#f3f4f6; border-radius:8px; margin:4px; text-decoration:none; color:var(--ink); font-weight:700;">📎 ${escapeHtml(f.name)} <span style="color:var(--ink-2); font-size:11px;">(${(f.size/1024/1024).toFixed(2)} MB)</span></a>`;
+    }
+    return `<span style="display:inline-flex; align-items:center; gap:6px; padding:10px 14px; background:#fef3c7; border-radius:8px; margin:4px; color:#78350f;">📎 ${escapeHtml(f.name)} <span style="font-size:11px;">(${(f.size/1024/1024).toFixed(2)} MB - katta fayl)</span></span>`;
+  }).join('');
+
+  document.getElementById('partner-activity-detail-content').innerHTML = `
+    <div style="background: white; padding: 24px; border-radius: 16px; box-shadow: 0 2px 10px rgba(0,0,0,0.05);">
+      <h2 style="color: var(--primary-dark); margin-bottom: 16px;">${escapeHtml(a.title)}</h2>
+      <div style="display:grid; grid-template-columns:repeat(auto-fit, minmax(180px,1fr)); gap:12px; margin-bottom:20px; background:#f9fafb; padding:14px; border-radius:10px;">
+        <div><strong>📚 Yo'nalish:</strong><br>${escapeHtml(dir?.nameUz || '-')}</div>
+        <div><strong>📅 O'tkazilgan sana:</strong><br>${escapeHtml(a.eventDate)}</div>
+        <div><strong>📤 Yuklangan:</strong><br>${new Date(a.uploadedAt).toLocaleString('uz-UZ')}</div>
+      </div>
+      <h3 style="margin-bottom:8px; color: var(--primary-dark);">📝 Tavsif</h3>
+      <p style="background:#f0fdfa; padding:14px; border-radius:10px; white-space:pre-wrap; line-height:1.6;">${escapeHtml(a.description)}</p>
+      ${filesHtml ? `<h3 style="margin-top:18px; margin-bottom:8px; color: var(--primary-dark);">📎 Ilovalar (${(a.files||[]).length})</h3><div>${filesHtml}</div>` : ''}
+    </div>
+  `;
+  showScreen('partner-activity-detail-screen');
+}
+
+// ===== MENING YO'L XARITAM =====
+function renderPartnerRoadmap() {
+  if (!user || !user.isPartner) return;
+  const orgs = getPartnerOrgs();
+  const org = orgs.find(o => o.id === user.orgId);
+  const content = document.getElementById('my-roadmap-content');
+  if (!org) { content.innerHTML = ''; return; }
+  if (!org.roadmapUrl) {
+    content.innerHTML = `
+      <div class="empty-state">
+        <div class="empty-state-emoji">🗺️</div>
+        <h3 style="color: var(--ink); margin: 12px 0;">Yo'l xaritasi hali yuklanmagan</h3>
+        <p style="color: var(--ink-2);">Hamkorlik bo'limi tez orada sizning yillik yo'l xaritangizni yuklaydi.</p>
+      </div>
+    `;
+    return;
+  }
+  content.innerHTML = `
+    <div style="background: white; padding: 24px; border-radius: 16px; text-align: center; box-shadow: 0 2px 10px rgba(0,0,0,0.05);">
+      <div style="font-size: 64px; margin-bottom: 16px;">🗺️</div>
+      <h3 style="color: var(--primary-dark); margin-bottom: 8px;">${escapeHtml(org.roadmapName || "Yo'l xaritasi")}</h3>
+      <p style="color: var(--ink-2); margin-bottom: 20px;">Fayl: ${escapeHtml(org.name)}</p>
+      <div style="display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;">
+        <a href="${escapeHtml(org.roadmapUrl)}" target="_blank" class="btn btn-primary" style="text-decoration: none;">👁️ Brauzerda ochish</a>
+        <a href="${escapeHtml(org.roadmapUrl)}" download class="btn btn-secondary" style="text-decoration: none;">⬇️ Yuklab olish</a>
+      </div>
+      <p style="margin-top: 18px; font-size: 12px; color: var(--ink-2);">Bu fayl <b>faqat o'qish</b> uchun. Tahrirlash uchun Hamkorlik bo'limi bilan bog'laning.</p>
+    </div>
+  `;
+}
+
+// ============================================================
 // TOP REYTING — Ro'yxatdan o'tgan xodimlar diagrammasi
 // ============================================================
 function goToTopReyting() {
@@ -7515,6 +7988,15 @@ async function syncFromServer() {
     if (Array.isArray(data.demoUsers)) {
       localStorage.setItem('mc_demo_users', JSON.stringify(data.demoUsers));
     }
+    if (Array.isArray(data.partnerOrgs)) {
+      localStorage.setItem('mc_partner_orgs', JSON.stringify(data.partnerOrgs));
+    }
+    if (Array.isArray(data.partnerDirections)) {
+      localStorage.setItem('mc_partner_directions', JSON.stringify(data.partnerDirections));
+    }
+    if (Array.isArray(data.partnerActivities)) {
+      localStorage.setItem('mc_partner_activities', JSON.stringify(data.partnerActivities));
+    }
     if (data.tgLogChatId && typeof data.tgLogChatId === 'string') {
       localStorage.setItem('mc_tg_log_chat_id', data.tgLogChatId);
     }
@@ -7573,6 +8055,11 @@ async function initApp() {
   });
   loadFilms();
   if (user) {
+    // Hamkor tashkilot bo'lsa, alohida bosh sahifa
+    if (user.isPartner) {
+      goToPartnerHome();
+      return;
+    }
     updateTopbar();
     trackUserActivity();
     showScreen('home-screen');
