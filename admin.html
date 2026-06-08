@@ -364,13 +364,8 @@
     <button class="nav-tab active" data-tab="dashboard" onclick="showView('dashboard')">📊 Boshqaruv</button>
     <button class="nav-tab" data-tab="courses" onclick="showView('courses')">📚 Kurslar</button>
     <button class="nav-tab" data-tab="quizzes" onclick="showView('quizzes')">🎯 Quizlar</button>
-    <button class="nav-tab" data-tab="slides" onclick="showView('slides')">📊 Slaydlar</button>
     <button class="nav-tab" data-tab="ebooks" onclick="showView('ebooks')">📖 E-kitoblar</button>
-    <button class="nav-tab" data-tab="meetings" onclick="showView('meetings')">📹 Yig'ilishlar</button>
     <button class="nav-tab" data-tab="films" onclick="showView('films'); renderFilmsList();">🎬 Filmlar</button>
-    <button class="nav-tab" data-tab="newspapers" onclick="showView('newspapers')">📰 Gazetalar</button>
-    <button class="nav-tab" data-tab="tournaments" onclick="showView('tournaments'); renderTournamentsList();">🏆 Musobaqalar</button>
-    <button class="nav-tab" data-tab="partner_orgs" onclick="showView('partner_orgs')" style="background:linear-gradient(135deg,#dbeafe,#bfdbfe); color:#1e3a8a;">🤝 Hamkorlik</button>
     <button class="nav-tab" data-tab="tg_users" onclick="showView('tg_users')">📨 Ro'yxatdan o'tganlar</button>
     <button class="nav-tab" data-tab="announcements" onclick="showView('announcements')">📢 E'lonlar</button>
     <button class="nav-tab" data-tab="feedback" onclick="showView('feedback')">✉️ Murojaatlar <span id="feedback-count-badge" style="display:none; background:#ef4444; color:white; padding:1px 7px; border-radius:100px; font-size:10px; margin-left:4px;"></span></button>
@@ -385,9 +380,8 @@
         <div class="stat-card"><div class="num" id="stat-courses">0</div><div class="label">Kurslar</div></div>
         <div class="stat-card"><div class="num" id="stat-lessons">0</div><div class="label">Mavzular</div></div>
         <div class="stat-card"><div class="num" id="stat-quizzes">0</div><div class="label">Quizlar</div></div>
-        <div class="stat-card"><div class="num" id="stat-slides">0</div><div class="label">Slaydlar</div></div>
         <div class="stat-card"><div class="num" id="stat-ebooks">0</div><div class="label">E-kitoblar</div></div>
-        <div class="stat-card"><div class="num" id="stat-meetings">0</div><div class="label">Yig'ilishlar</div></div>
+        <div class="stat-card"><div class="num" id="stat-films">0</div><div class="label">Filmlar</div></div>
         <div class="stat-card"><div class="num" id="stat-questions">0</div><div class="label">Savollar</div></div>
       </div>
 
@@ -2636,9 +2630,9 @@ function deleteNewspaper(id) {
 function renderDashboard() {
   document.getElementById('stat-courses').textContent = courses.length;
   document.getElementById('stat-quizzes').textContent = quizzes.length;
-  document.getElementById('stat-slides').textContent = slides.length;
   document.getElementById('stat-ebooks').textContent = ebooks.length;
-  document.getElementById('stat-meetings').textContent = meetings.length;
+  const filmsEl = document.getElementById('stat-films');
+  if (filmsEl) filmsEl.textContent = (films || []).length;
   const totalLessons = courses.reduce((s, c) => s + (c.lessons?.length || 0), 0);
   const totalQs = quizzes.reduce((s, q) => s + (q.questions?.length || 0), 0)
     + courses.reduce((s, c) => {
