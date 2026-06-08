@@ -6571,9 +6571,30 @@ function renderTopReyting() {
   // Demo foydalanuvchilarni qo'shamiz (investor namoyishi uchun)
   let demoUsers = [];
   try { demoUsers = JSON.parse(localStorage.getItem('mc_demo_users') || '[]'); } catch (e) {}
-  const allUsers = [...realUsers, ...demoUsers];
+  let allUsers = [...realUsers, ...demoUsers];
+
+  // 🏢 TASHKILOT BO'YICHA FILTRLASH — faqat o'z tashkilotini ko'radi
+  const myOrg = (user?.organization || '').trim();
+  if (myOrg) {
+    allUsers = allUsers.filter(u => (u.organization || '').trim() === myOrg);
+  } else {
+    // Tashkilot belgilanmagan (eski akkaunt) — bo'sh ro'yxat
+    container.innerHTML = `<div class="empty-state"><div class="empty-state-emoji">🏢</div>
+      <h3 style="color: var(--ink); margin: 12px 0;">Tashkilotingiz belgilanmagan</h3>
+      <p style="color: var(--ink-2); line-height: 1.6;">
+        Reytingda ko'rinish uchun profilingizda tashkilotni belgilang.<br>
+        <small>Eski akkauntlar uchun: yangidan ro'yxatdan o'tib, tashkilotni tanlang.</small>
+      </p>
+    </div>`;
+    return;
+  }
+
   if (allUsers.length === 0) {
-    container.innerHTML = `<div class="empty-state"><div class="empty-state-emoji">📊</div><p>Hali ro'yxatdan o'tgan foydalanuvchilar yo'q</p></div>`;
+    container.innerHTML = `<div class="empty-state"><div class="empty-state-emoji">📊</div>
+      <h3 style="color: var(--ink); margin: 12px 0;">${escapeHtml(myOrg)} bo'yicha reyting</h3>
+      <p>Hozircha sizdan boshqa hech kim ro'yxatdan o'tmagan.<br>
+      Hamkasblaringizni saytga taklif qiling!</p>
+    </div>`;
     return;
   }
   // Har bir foydalanuvchi uchun ball hisoblash (0-100 oralig'ida)
@@ -6603,6 +6624,9 @@ function renderTopReyting() {
   const maxCount = Math.max(...ranges.map(r => byRange[r.label].length), 1);
   const diagramHtml = `
     <div style="background: white; border-radius: 20px; padding: 24px; margin-bottom: 24px; box-shadow: 0 2px 10px rgba(0,0,0,0.05);">
+      <div style="background:#dbeafe; border-left:4px solid #1e40af; padding:10px 14px; border-radius:8px; margin-bottom:16px;">
+        <p style="font-size:13px; color:#1e3a8a; margin:0;">🏢 <b>${escapeHtml(myOrg)}</b> — tashkilotingiz xodimlari orasidagi reyting</p>
+      </div>
       <h3 style="color: var(--primary-dark); font-family: 'Bricolage Grotesque', sans-serif; font-size: 22px; margin-bottom: 16px;">📊 Ball oralig'i bo'yicha reyting</h3>
       <div style="display: flex; flex-direction: column; gap: 14px;">
         ${ranges.map(r => {
